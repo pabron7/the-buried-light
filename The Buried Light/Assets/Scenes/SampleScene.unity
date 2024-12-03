@@ -1363,13 +1363,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyPrefabMappings:
-  - type: 1
+  - enemyType: 1
     prefab: {fileID: 7471107917273321913, guid: 01f5b325961d74494a563c3af4ec62a9, type: 3}
-  - type: 2
+  - enemyType: 2
     prefab: {fileID: 6434810599629161644, guid: fa8cf714ce5744e5f975c8f347c47995, type: 3}
-  - type: 3
+  - enemyType: 3
     prefab: {fileID: 7471107917273321913, guid: 9d6d8de39cd7949ef98cccfa7d707ded, type: 3}
-  - type: 4
+  - enemyType: 4
     prefab: {fileID: 7471107917273321913, guid: 3641f1bbd44ac47c28652835442d33da, type: 3}
   waveConfigs:
   - {fileID: 11400000, guid: c332d899e727a429294af185bb7da780, type: 2}

@@ -20,7 +20,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<EnemySpawner>().FromComponentInHierarchy().AsSingle();
 
         // Enemy Systems
-        var prefabMap = new EnemyFactory(enemyPrefabMappings);
-        Container.Bind<EnemyFactory>().FromInstance(prefabMap).AsSingle();
+        Container.Bind<EnemyPrefabMapping[]>().FromInstance(enemyPrefabMappings).AsSingle();
+        Container.Bind<EnemyFactory>().AsSingle();
     }
 }

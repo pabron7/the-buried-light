@@ -15,29 +15,23 @@ public class EnemySpawner : MonoBehaviour
 
     public void SpawnEnemy(WaveConfig waveConfig)
     {
-        for (int i = 0; i < waveConfig.enemyCount; i++)
-        {
-            SpawnSingleEnemy(waveConfig);
-        }
-    }
-
-    private void SpawnSingleEnemy(WaveConfig waveConfig)
-    {
-        if (_enemyFactory == null)
-        {
-            Debug.LogError("_enemyFactory is null. Ensure it is injected properly.");
-            return;
-        }
-
         Vector2 spawnPosition = _gameFrame.GetRandomPositionOutsideFrame();
         Vector2 directionTarget = _gameFrame.GetRandomPositionInsideFrame();
         Vector3 direction = directionTarget - (Vector2)spawnPosition;
 
-        EnemyBase enemy = _enemyFactory.Create(waveConfig.enemyType);
-        if (enemy != null)
+        GameObject enemyObject = _enemyFactory.Create(waveConfig.enemyType);
+        if (enemyObject != null)
         {
-            enemy.transform.position = spawnPosition;
-            enemy.Initialize(waveConfig.enemyType, waveConfig.speed, waveConfig.health, direction);
+            var enemy = enemyObject.GetComponent<EnemyBase>();
+            if (enemy != null)
+            {
+                enemy.transform.position = spawnPosition;
+                enemy.Initialize(waveConfig.enemyType, waveConfig.speed, waveConfig.health, direction);
+            }
+            else
+            {
+                Debug.LogError($"Prefab for {waveConfig.enemyType} does not contain an EnemyBase component!");
+            }
         }
         else
         {

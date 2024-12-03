@@ -1,8 +1,7 @@
 using UnityEngine;
-
 [System.Serializable]
 public class EnemyPrefabMapping
 {
-    public EnemyTypes type;
-    public GameObject prefab;
+    public EnemyTypes enemyType; // Enum type
+    public GameObject prefab;   // Prefab for this enemy type
 }

@@ -1,36 +1,36 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class EnemyFactory
 {
     private readonly Dictionary<EnemyTypes, GameObject> _enemyPrefabMap;
 
-    public EnemyFactory(EnemyPrefabMapping[] enemyPrefabs)
+    [Inject]
+    public EnemyFactory(EnemyPrefabMapping[] mappings)
     {
         _enemyPrefabMap = new Dictionary<EnemyTypes, GameObject>();
-
-        foreach (var mapping in enemyPrefabs)
+        foreach (var mapping in mappings)
         {
-            if (!_enemyPrefabMap.ContainsKey(mapping.type))
+            if (!_enemyPrefabMap.ContainsKey(mapping.enemyType))
             {
-                _enemyPrefabMap.Add(mapping.type, mapping.prefab);
+                _enemyPrefabMap[mapping.enemyType] = mapping.prefab;
             }
             else
             {
-                Debug.LogWarning($"Duplicate prefab for enemy type {mapping.type}. Skipping...");
+                Debug.LogWarning($"Duplicate mapping for {mapping.enemyType}. Skipping...");
             }
         }
     }
 
-    public EnemyBase Create(EnemyTypes type)
+    public GameObject Create(EnemyTypes type)
     {
         if (_enemyPrefabMap.TryGetValue(type, out var prefab))
         {
-            var instance = Object.Instantiate(prefab);
-            return instance.GetComponent<EnemyBase>();
+            return Object.Instantiate(prefab);
         }
 
-        Debug.LogError($"Enemy type {type} does not exist in prefabs!");
+        Debug.LogError($"No prefab mapped for enemy type: {type}");
         return null;
     }
 }

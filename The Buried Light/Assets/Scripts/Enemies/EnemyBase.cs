@@ -1,4 +1,5 @@
 using UnityEngine;
+using Zenject;
 
 public abstract class EnemyBase : MonoBehaviour, IKillable
 {
@@ -12,6 +13,20 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
     private int _spawnCount;
     private int _spawnHealth;
     private float _spawnSpeed;
+
+    // Dependencies
+    protected GameFrame _gameFrame;
+    protected EnemySpawner _enemySpawner;
+
+    [Inject]
+    public void Construct(GameFrame gameFrame, EnemySpawner enemySpawner)
+    {
+        _gameFrame = gameFrame;
+        _enemySpawner = enemySpawner;
+
+        Debug.Log($"EnemyBase injected with GameFrame: {_gameFrame} and EnemySpawner: {_enemySpawner}");
+    }
+
 
     /// <summary>
     /// Initialize the enemy with base stats and type.
@@ -92,9 +107,26 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
     /// </summary>
     protected virtual void SpawnOnDeath()
     {
-        Debug.Log($"Enemy {Type} spawning {_spawnCount} {_spawnType}.");
-        // Custom logic for spawner enemies should go here
+        if (_isSpawner && _spawnCount > 0)
+        {
+            for (int i = 0; i < _spawnCount; i++)
+            {
+                Vector2 spawnPosition = transform.position; // Spawn at the death position
+                Vector2 direction = (Vector2)_gameFrame.GetRandomPositionOutsideFrame() - spawnPosition;
+
+                _enemySpawner.SpawnEnemy(new WaveConfig
+                {
+                    enemyType = _spawnType,
+                    enemyCount = 1,
+                    speed = _spawnSpeed,
+                    health = _spawnHealth,
+                    spawnInterval = 0f,
+                    groupSpawn = false
+                });
+            }
+        }
     }
+
 
     /// <summary>
     /// Deactivates the enemy (for pooling).
