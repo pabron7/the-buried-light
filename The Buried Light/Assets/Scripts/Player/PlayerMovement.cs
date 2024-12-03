@@ -16,12 +16,13 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        // Apply movement
         Vector2 movement = _inputManager.MovementInput;
-        transform.Translate(new Vector3(movement.x, movement.y, 0) * moveSpeed * Time.deltaTime);
+        Vector3 moveDirection = new Vector3(movement.x, movement.y, 0) * moveSpeed * Time.deltaTime;
+        transform.position += moveDirection;
 
-        // Apply rotation
+        // Rotation (J/L or Mouse for aiming)
         float rotation = _inputManager.RotationInput;
-        transform.Rotate(0, 0, -rotation * rotationSpeed * Time.deltaTime); // Negative for clockwise rotation
+        transform.Rotate(0, 0, -rotation * rotationSpeed * Time.deltaTime); 
     }
 }
+

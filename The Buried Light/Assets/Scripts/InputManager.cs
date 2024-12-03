@@ -30,16 +30,8 @@ public class InputManager : ITickable
             RotationInput = 0f;
         }
 
-        // Mouse Rotation (optional if mouse controls rotation)
-        if (Input.GetMouseButton(0))
-        {
-            RotationInput = Input.GetAxis("Mouse X"); // Horizontal mouse movement
-        }
-
-        // Shooting Inputs
         IsShooting = Input.GetKey(KeyCode.I) || Input.GetMouseButton(0);
-
-        // Special Move (Tome)
+  
         IsUsingSpecialMove = Input.GetKey(KeyCode.K) || Input.GetMouseButton(1);
 
         // Debug.Log($"Movement: {MovementInput}, Rotation: {RotationInput}, Shooting: {IsShooting}, SpecialMove: {IsUsingSpecialMove}");
