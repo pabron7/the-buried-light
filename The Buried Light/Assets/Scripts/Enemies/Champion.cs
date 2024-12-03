@@ -1,36 +1,26 @@
 using UnityEngine;
+using Zenject;
 
 public class Champion : EnemyBase, ISpawner
 {
-    public int MinionsToSpawn { get; private set; }
 
-    public void ConfigureOnDeathSpawn(EnemyTypes spawnType, int spawnCount, int spawnHealth, float spawnSpeed)
+    private void Awake()
     {
-  //
+        Initialize(EnemyTypes.champion, 0, 0, Vector3.zero);
     }
 
-    public override void Initialize(
-        float speed,
-        Vector3 direction,
-        int health,
-        int damage,
-        bool isSpawner,
-        EnemyTypes spawnType,
-        int spawnCount,
-        int spawnHealth,
-        float spawnSpeed)
-    {
-        base.Initialize(speed, direction, health, damage, isSpawner, spawnType, spawnCount, spawnHealth, spawnSpeed);
-    }
-
-    protected override void OnDeath()
+    public override void OnDeath()
     {
         base.OnDeath();
 
+        Debug.Log("Champion died and spawned minions.");
+
     }
 
-    public override void OnContact()
+    public override void OnContact(int damage)
     {
-        Debug.Log("Champion dealt damage!");
+        base.OnContact(damage);
+
+        Debug.Log("Champion took damage.");
     }
 }

@@ -2,13 +2,20 @@ using UnityEngine;
 
 public class Charger : EnemyBase
 {
-    public override void Initialize(float speed, Vector3 direction, int health, int damage, bool isSpawner, EnemyTypes spawnType, int spawnCount, int spawnHealth, float spawnSpeed)
+    private void Awake()
     {
-        base.Initialize(speed, direction, health, damage, isSpawner, spawnType, spawnCount, spawnHealth, spawnSpeed);
+        Initialize(EnemyTypes.charger, 0, 0, Vector3.zero);
     }
 
-    public override void OnContact()
+    public override void OnContact(int damage)
     {
-        Debug.Log("Charger dealt damage!");
+        base.OnContact(damage);
+        Debug.Log("Charger took damage.");
+    }
+
+    public override void OnDeath()
+    {
+        base.OnDeath();
+        Debug.Log("Charger died.");
     }
 }

@@ -12,6 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6261355bef48d4991afda9cb337890fc, type: 3}
   m_Name: Level 2
   m_EditorClassIdentifier: 
-  enemyType: Charger
+  enemyType: 2
   enemyCount: 50
   speed: 2
+  health: 1
+  spawnInternal: 0
+  groupSpawn: 1
+  groupSize: 2
+  isSpawner: 0
+  spawnType: 0
+  spawnCount: 0
+  spawnHealth: 0
+  spawnSpeed: 0

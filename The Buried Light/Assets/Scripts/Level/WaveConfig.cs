@@ -4,14 +4,14 @@ using UnityEngine;
 public class WaveConfig : ScriptableObject
 {
     [Header("Base Stats")]
-    public EnemyTypes enemyTypes;
+    public EnemyTypes enemyType;
     public int enemyCount;
     public float speed;
     public int health;
 
     [Header("Time")]
-    [Tooltip("Declare the density of spawns. The spawner will wait for this amount of time between 2 spawns.")]
-    public float spawnInternal;
+    [Tooltip("Declare the density of spawns. !!!This is not related to on death spawns!!! The spawner will wait for this amount of time between 2 spawns.")]
+    public float spawnInterval;
 
     [Header("Group")]
     [Tooltip("Check this box if the monsters should be spawned within groups rather than initially spawning them.")]

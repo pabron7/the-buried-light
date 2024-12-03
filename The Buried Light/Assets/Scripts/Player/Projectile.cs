@@ -22,6 +22,6 @@ public class Projectile : MonoBehaviour
 
     private void DestroyProjectile()
     {
-        gameObject.SetActive(false); // Pooling-friendly
+        gameObject.SetActive(false);
     }
 }

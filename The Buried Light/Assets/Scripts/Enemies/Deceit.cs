@@ -1,32 +1,29 @@
 using UnityEngine;
+using Zenject;
 
 public class Deceit : EnemyBase, ISpawner
 {
-    public int ChampionsToSpawn { get; private set; }
-    public float SpawnInterval { get; private set; }
-    private float _lastSpawnTime;
-
-    public void ConfigureOnDeathSpawn(EnemyTypes spawnType, int spawnCount, int spawnHealth, float spawnSpeed)
+    private void Awake()
     {
-//
+        Initialize(EnemyTypes.deceit, 0, 0, Vector3.zero);
     }
 
-    public override void Initialize(float speed, Vector3 direction, int health, int damage, bool isSpawner, EnemyTypes spawnType, int spawnCount, int spawnHealth, float spawnSpeed)
+    protected override void Move()
     {
-        base.Initialize(speed, direction, health, damage, isSpawner, spawnType, spawnCount, spawnHealth, spawnSpeed);
-        ChampionsToSpawn = spawnCount;
-        SpawnInterval = spawnSpeed;
+        base.Move();
     }
 
-    private void Update()
+    public override void OnDeath()
     {
-        base.Update();
+        base.OnDeath();
 
- 
+        Debug.Log("Deceit died and spawned champions.");
     }
 
-    public override void OnContact()
+    public override void OnContact(int damage)
     {
-        Debug.Log("Creature of Deceit dealt damage!");
+        base.OnContact(damage);
+
+        Debug.Log("Deceit took damage.");
     }
 }

@@ -3,7 +3,7 @@
     /// </summary>
     public enum EnemyTypes
     {
-        empty,
+        none,
         charger,
         minion,
         champion,

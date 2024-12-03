@@ -3,19 +3,24 @@ using UnityEngine;
 
 public class GameInstaller : MonoInstaller
 {
+    [SerializeField] private EnemyPrefabMapping[] enemyPrefabMappings;
+    [SerializeField] private WaveConfig[] waveConfigs;
+
     public override void InstallBindings()
     {
-        //Systems
+        // Systems
         Container.Bind<GameManager>().AsSingle();
         Container.BindInterfacesAndSelfTo<InputManager>().AsSingle();
         Container.Bind<InputTestHarness>().FromNewComponentOnNewGameObject().AsSingle();
+        Container.Bind<GameFrame>().FromComponentInHierarchy().AsSingle();
 
-        //Player Controls
-        Container.Bind<PlayerMovement>().FromComponentInHierarchy().AsSingle();
-        Container.Bind<PlayerShooting>().FromComponentInHierarchy().AsSingle();
-        Container.Bind<SpecialMove>().FromComponentInHierarchy().AsSingle();
+        // Level Systems
+        Container.Bind<WaveConfig[]>().FromInstance(waveConfigs).AsSingle();
+        Container.Bind<WaveManager>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<EnemySpawner>().FromComponentInHierarchy().AsSingle();
 
-        //Enemy Systems
-  
+        // Enemy Systems
+        var prefabMap = new EnemyFactory(enemyPrefabMappings);
+        Container.Bind<EnemyFactory>().FromInstance(prefabMap).AsSingle();
     }
 }

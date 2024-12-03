@@ -123,6 +123,50 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &7338402
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7338404}
+  - component: {fileID: 7338403}
+  m_Layer: 0
+  m_Name: Wave Controller Adaptor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &7338403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7338402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db472aa400f314d69997acc7bf82b02c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &7338404
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7338402}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1750162780}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &151427918
 GameObject:
   m_ObjectHideFlags: 0
@@ -224,7 +268,7 @@ Transform:
   m_GameObject: {fileID: 308753702}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.068, z: 0}
+  m_LocalPosition: {x: 0, y: 0.1157, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -841,9 +885,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1750162781}
-        m_TargetAssemblyTypeName: WaveManager, Assembly-CSharp
-        m_MethodName: StartWave
+      - m_Target: {fileID: 7338403}
+        m_TargetAssemblyTypeName: WaveManagerButtonAdapter, Assembly-CSharp
+        m_MethodName: StartNextWave
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -920,13 +964,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3238a1692db394795965bec61ac3156e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameFrame: {fileID: 644728745}
-  enemyPrefabs:
-  - {fileID: 3722302248138772023, guid: fa8cf714ce5744e5f975c8f347c47995, type: 3}
-  - {fileID: 4957177600323657970, guid: 01f5b325961d74494a563c3af4ec62a9, type: 3}
-  - {fileID: 5221818193339303148, guid: 9d6d8de39cd7949ef98cccfa7d707ded, type: 3}
-  - {fileID: 1647833774683228394, guid: 3641f1bbd44ac47c28652835442d33da, type: 3}
-  poolSize: 100
 --- !u!4 &1429486884
 Transform:
   m_ObjectHideFlags: 0
@@ -939,8 +976,7 @@ Transform:
   m_LocalPosition: {x: 0.576911, y: 3.188783, z: -0.06797978}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1750162780}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1669893227
@@ -1083,7 +1119,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 10911, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 136dd0dec7faf46a091731deb7873caa, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1119,12 +1155,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1750162779}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.576911, y: 3.188783, z: -0.06797978}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1429486884}
+  m_Children:
+  - {fileID: 7338404}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1750162781
 MonoBehaviour:
@@ -1138,12 +1175,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b17d1a7b2bbbd4c5f96c3fe48eb4df09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawner: {fileID: 1429486883}
-  waves:
-  - {fileID: 11400000, guid: c332d899e727a429294af185bb7da780, type: 2}
-  - {fileID: 11400000, guid: f5d9c74d35e2a4c9eae285b93c822df4, type: 2}
-  - {fileID: 11400000, guid: 1a48a1b474ae84e598eb5bc58e00a193, type: 2}
-  spawnInterval: 0.5
 --- !u!1 &1750407053
 GameObject:
   m_ObjectHideFlags: 0
@@ -1331,6 +1362,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cdd29614517a4b87b9aa269717ccfbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyPrefabMappings:
+  - type: 1
+    prefab: {fileID: 7471107917273321913, guid: 01f5b325961d74494a563c3af4ec62a9, type: 3}
+  - type: 2
+    prefab: {fileID: 6434810599629161644, guid: fa8cf714ce5744e5f975c8f347c47995, type: 3}
+  - type: 3
+    prefab: {fileID: 7471107917273321913, guid: 9d6d8de39cd7949ef98cccfa7d707ded, type: 3}
+  - type: 4
+    prefab: {fileID: 7471107917273321913, guid: 3641f1bbd44ac47c28652835442d33da, type: 3}
+  waveConfigs:
+  - {fileID: 11400000, guid: c332d899e727a429294af185bb7da780, type: 2}
+  - {fileID: 11400000, guid: f5d9c74d35e2a4c9eae285b93c822df4, type: 2}
+  - {fileID: 11400000, guid: 1a48a1b474ae84e598eb5bc58e00a193, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1339,6 +1383,7 @@ SceneRoots:
   - {fileID: 705507995}
   - {fileID: 2106928587}
   - {fileID: 1103569245}
+  - {fileID: 1750162780}
   - {fileID: 1429486884}
   - {fileID: 644728746}
   - {fileID: 456537108}

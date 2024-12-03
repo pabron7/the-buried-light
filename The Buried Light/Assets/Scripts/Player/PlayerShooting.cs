@@ -28,7 +28,7 @@ public class PlayerShooting : MonoBehaviour
     private void Shoot()
     {
         GameObject projectile = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
-        projectile.transform.up = firePoint.up; // Ensure the projectile fires forward
+        projectile.transform.up = firePoint.up; 
     }
 }
 

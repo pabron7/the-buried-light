@@ -26,6 +26,5 @@ public class SpecialMove : MonoBehaviour
     private void ActivateSpecialMove()
     {
         Debug.Log("Special Move Activated!");
-        // Add special move logic here (e.g., clear enemies, heal player, etc.)
     }
 }
