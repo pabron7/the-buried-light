@@ -12,7 +12,6 @@ public class GameInstaller : MonoInstaller
         // Systems
         Container.Bind<GameManager>().AsSingle();
         Container.BindInterfacesAndSelfTo<InputManager>().AsSingle();
-        Container.Bind<InputTestHarness>().FromNewComponentOnNewGameObject().AsSingle();
         Container.Bind<GameFrame>().FromComponentInHierarchy().AsSingle();
         Container.Bind<ProjectilePoolManager>().FromComponentInNewPrefab(projectilePoolManagerPrefab).AsSingle();
         Container.Bind<PlayerShooting>().FromComponentInHierarchy().AsSingle();
@@ -25,5 +24,10 @@ public class GameInstaller : MonoInstaller
         // Enemy Systems
         Container.Bind<EnemyPrefabMapping[]>().FromInstance(enemyPrefabMappings).AsSingle();
         Container.Bind<EnemyFactory>().AsSingle();
+
+        //Player
+        Container.Bind<IHealth>().To<PlayerHealth>().FromInstance(FindObjectOfType<PlayerHealth>()).AsSingle();
+
+
     }
 }

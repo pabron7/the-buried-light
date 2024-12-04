@@ -1,11 +1,14 @@
 using UnityEngine;
 
-public class Projectile : MonoBehaviour
+public class Projectile : MonoBehaviour, IProjectile
 {
     [SerializeField] private float speed = 10f;
     [SerializeField] private float lifeTime = 2f;
+    [SerializeField] private int damage = 1;
 
     private ProjectilePoolManager _poolManager;
+
+    public int Damage => damage;
 
     public void Initialize(ProjectilePoolManager poolManager)
     {
@@ -13,6 +16,11 @@ public class Projectile : MonoBehaviour
     }
 
     private void Update()
+    {
+        Move();
+    }
+
+    private void Move()
     {
         transform.Translate(Vector3.up * speed * Time.deltaTime);
     }
@@ -38,7 +46,13 @@ public class Projectile : MonoBehaviour
         }
         else
         {
-            Destroy(gameObject); 
+            Destroy(gameObject);
         }
+    }
+
+    public void OnHit()
+    {
+        Debug.Log("Projectile hit its target.");
+        ReturnToPool();
     }
 }

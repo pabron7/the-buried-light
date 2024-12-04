@@ -17,14 +17,16 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
     // Dependencies
     protected GameFrame _gameFrame;
     protected EnemySpawner _enemySpawner;
+    private IHealth _playerHealth;
 
     [Inject]
-    public void Construct(GameFrame gameFrame, EnemySpawner enemySpawner)
+    public void Construct(GameFrame gameFrame, EnemySpawner enemySpawner, IHealth playerHealth)
     {
         _gameFrame = gameFrame;
         _enemySpawner = enemySpawner;
+        _playerHealth = playerHealth;
 
-        Debug.Log($"EnemyBase injected with GameFrame: {_gameFrame} and EnemySpawner: {_enemySpawner}");
+        Debug.Log($"EnemyBase injected with PlayerHealth: {_playerHealth}");
     }
 
 
@@ -127,7 +129,6 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
         }
     }
 
-
     /// <summary>
     /// Deactivates the enemy (for pooling).
     /// </summary>
@@ -136,4 +137,36 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
         gameObject.SetActive(false);
         Debug.Log($"Enemy {Type} deactivated.");
     }
+
+    /// <summary>
+    /// Handles collisions with other objects.
+    /// </summary>
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+
+        if (collision.CompareTag("Player"))
+        {
+            Debug.Log($"Enemy {Type} collided with Player.");
+
+            if (_playerHealth == null)
+            {
+                Debug.LogError("PlayerHealth is null in EnemyBase. Check Zenject bindings.");
+                return;
+            }
+
+            _playerHealth.TakeDamage(1); // Inflict damage on the player
+            OnContact(Health); // Self-destruct on player contact
+        }
+        else if (collision.CompareTag("Projectile"))
+        {
+            Debug.Log($"Enemy {Type} hit by a projectile.");
+            var projectile = collision.GetComponent<IProjectile>();
+            if (projectile != null)
+            {
+                TakeDamage(projectile.Damage); 
+                projectile.OnHit(); 
+            }
+        }
+    }
+
 }
