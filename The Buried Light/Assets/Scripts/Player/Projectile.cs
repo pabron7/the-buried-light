@@ -27,6 +27,9 @@ public class Projectile : MonoBehaviour
         CancelInvoke();
     }
 
+    /// <summary>
+    /// Fallback in case the pool manager is missing
+    /// </summary>
     private void ReturnToPool()
     {
         if (_poolManager != null)
@@ -35,7 +38,7 @@ public class Projectile : MonoBehaviour
         }
         else
         {
-            Destroy(gameObject); // Fallback in case the pool manager is missing
+            Destroy(gameObject); 
         }
     }
 }

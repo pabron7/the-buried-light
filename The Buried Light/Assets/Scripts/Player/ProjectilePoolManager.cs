@@ -46,7 +46,7 @@ public class ProjectilePoolManager : MonoBehaviour
         }
 
         Debug.LogWarning("Projectile pool is empty. Consider increasing pool size.");
-        GameObject newProjectile = CreateProjectile(); // Dynamically expand the pool if needed
+        GameObject newProjectile = CreateProjectile(); 
         return newProjectile;
     }
 
