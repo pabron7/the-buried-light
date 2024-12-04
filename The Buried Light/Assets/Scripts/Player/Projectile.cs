@@ -5,6 +5,13 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float speed = 10f;
     [SerializeField] private float lifeTime = 2f;
 
+    private ProjectilePoolManager _poolManager;
+
+    public void Initialize(ProjectilePoolManager poolManager)
+    {
+        _poolManager = poolManager;
+    }
+
     private void Update()
     {
         transform.Translate(Vector3.up * speed * Time.deltaTime);
@@ -12,7 +19,7 @@ public class Projectile : MonoBehaviour
 
     private void OnEnable()
     {
-        Invoke(nameof(DestroyProjectile), lifeTime);
+        Invoke(nameof(ReturnToPool), lifeTime);
     }
 
     private void OnDisable()
@@ -20,8 +27,15 @@ public class Projectile : MonoBehaviour
         CancelInvoke();
     }
 
-    private void DestroyProjectile()
+    private void ReturnToPool()
     {
-        gameObject.SetActive(false);
+        if (_poolManager != null)
+        {
+            _poolManager.ReturnProjectile(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject); // Fallback in case the pool manager is missing
+        }
     }
 }

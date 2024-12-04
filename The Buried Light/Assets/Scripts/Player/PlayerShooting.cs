@@ -3,17 +3,18 @@ using Zenject;
 
 public class PlayerShooting : MonoBehaviour
 {
-    [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private Transform firePoint;
     [SerializeField] private float shootCooldown = 0.2f;
 
     private float _lastShotTime;
     private InputManager _inputManager;
+    private ProjectilePoolManager _projectilePoolManager;
 
     [Inject]
-    public void Construct(InputManager inputManager)
+    public void Construct(InputManager inputManager, ProjectilePoolManager projectilePoolManager)
     {
         _inputManager = inputManager;
+        _projectilePoolManager = projectilePoolManager;
     }
 
     private void Update()
@@ -27,8 +28,8 @@ public class PlayerShooting : MonoBehaviour
 
     private void Shoot()
     {
-        GameObject projectile = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
-        projectile.transform.up = firePoint.up; 
+        GameObject projectile = _projectilePoolManager.GetProjectile();
+        projectile.transform.position = firePoint.position;
+        projectile.transform.rotation = firePoint.rotation;
     }
 }
-
