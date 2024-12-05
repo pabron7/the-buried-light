@@ -1,5 +1,6 @@
 using UnityEngine;
 using Zenject;
+using System;
 
 public abstract class EnemyBase : MonoBehaviour, IKillable
 {
@@ -17,17 +18,18 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
     // Dependencies
     protected GameFrame _gameFrame;
     protected EnemySpawner _enemySpawner;
-    private IHealth _playerHealth;
+    private EventManager _eventManager;
 
     [Inject]
-    public void Construct(GameFrame gameFrame, EnemySpawner enemySpawner, IHealth playerHealth)
+    public void Construct(GameFrame gameFrame, EnemySpawner enemySpawner, EventManager eventManager)
     {
-        _gameFrame = gameFrame;
-        _enemySpawner = enemySpawner;
-        _playerHealth = playerHealth;
+        _gameFrame = gameFrame ?? throw new ArgumentNullException(nameof(gameFrame));
+        _enemySpawner = enemySpawner ?? throw new ArgumentNullException(nameof(enemySpawner));
+        _eventManager = eventManager ?? throw new ArgumentNullException(nameof(eventManager));
 
-        Debug.Log($"EnemyBase injected with PlayerHealth: {_playerHealth}");
+        Debug.Log($"Dependencies injected for {gameObject.name}");
     }
+
 
 
     /// <summary>
@@ -35,12 +37,20 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
     /// </summary>
     public void Initialize(EnemyTypes type, float speed, int health, Vector3 direction)
     {
+        if (_eventManager == null)
+        {
+            Debug.LogError("Initialize called before dependencies were injected!");
+            return;
+        }
+
         Type = type;
         Speed = speed;
         Health = health;
         _direction = direction.normalized;
+
         Debug.Log($"Initialized enemy of type {Type} with speed: {Speed}, health: {Health}");
     }
+
 
     /// <summary>
     /// Configure on-death spawning behavior.
@@ -73,6 +83,12 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
     /// </summary>
     public void TakeDamage(int damage)
     {
+        if (damage <= 0)
+        {
+            Debug.LogWarning($"Enemy {Type} received invalid damage value: {damage}");
+            return;
+        }
+
         Health -= damage;
         Debug.Log($"Enemy {Type} took {damage} damage. Remaining health: {Health}");
 
@@ -83,19 +99,21 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
     }
 
     /// <summary>
-    /// Called when the enemy contacts another object.
-    /// </summary>
-    public virtual void OnContact(int damage)
-    {
-        TakeDamage(damage);
-    }
-
-    /// <summary>
     /// Handles the enemy's death.
     /// </summary>
     public virtual void OnDeath()
     {
         Debug.Log($"Enemy {Type} has died.");
+
+        if (_eventManager != null)
+        {
+            _eventManager.ExecuteCommand(new EnemyKilledCommand(this));
+        }
+        else
+        {
+            Debug.LogWarning("EventManager is null. Skipping EnemyKilledCommand.");
+        }
+
         if (_isSpawner)
         {
             SpawnOnDeath();
@@ -143,28 +161,24 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
     /// </summary>
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (_eventManager == null)
+        {
+            Debug.LogWarning("EventManager is null. Skipping command execution.");
+            return;
+        }
 
         if (collision.CompareTag("Player"))
         {
-            Debug.Log($"Enemy {Type} collided with Player.");
-
-            if (_playerHealth == null)
-            {
-                Debug.LogError("PlayerHealth is null in EnemyBase. Check Zenject bindings.");
-                return;
-            }
-
-            _playerHealth.TakeDamage(1); // Inflict damage on the player
-            OnContact(Health); // Self-destruct on player contact
+            _eventManager.ExecuteCommand(new PlayerContactCommand(this));
+            OnDeath();
         }
         else if (collision.CompareTag("Projectile"))
         {
-            Debug.Log($"Enemy {Type} hit by a projectile.");
-            var projectile = collision.GetComponent<IProjectile>();
-            if (projectile != null)
+            if (collision.TryGetComponent<IProjectile>(out var projectile))
             {
-                TakeDamage(projectile.Damage); 
-                projectile.OnHit(); 
+                TakeDamage(projectile.Damage);
+                _eventManager.ExecuteCommand(new EnemyDamageCommand(this, projectile.Damage));
+                projectile.OnHit();
             }
         }
     }

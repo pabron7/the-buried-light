@@ -15,6 +15,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<GameFrame>().FromComponentInHierarchy().AsSingle();
         Container.Bind<ProjectilePoolManager>().FromComponentInNewPrefab(projectilePoolManagerPrefab).AsSingle();
         Container.Bind<PlayerShooting>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<EventManager>().AsSingle();
 
         // Level Systems
         Container.Bind<WaveConfig[]>().FromInstance(waveConfigs).AsSingle();

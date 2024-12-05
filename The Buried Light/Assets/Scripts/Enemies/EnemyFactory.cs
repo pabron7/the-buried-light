@@ -1,14 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
+using System;
 
 public class EnemyFactory
 {
     private readonly Dictionary<EnemyTypes, GameObject> _enemyPrefabMap;
+    private readonly DiContainer _container;
 
     [Inject]
-    public EnemyFactory(EnemyPrefabMapping[] mappings)
+    public EnemyFactory(EnemyPrefabMapping[] mappings, DiContainer container)
     {
+        _container = container ?? throw new ArgumentNullException(nameof(container));
         _enemyPrefabMap = new Dictionary<EnemyTypes, GameObject>();
         foreach (var mapping in mappings)
         {
@@ -27,7 +30,7 @@ public class EnemyFactory
     {
         if (_enemyPrefabMap.TryGetValue(type, out var prefab))
         {
-            return Object.Instantiate(prefab);
+            return _container.InstantiatePrefab(prefab); 
         }
 
         Debug.LogError($"No prefab mapped for enemy type: {type}");

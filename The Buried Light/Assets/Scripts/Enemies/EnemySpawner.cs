@@ -26,6 +26,8 @@ public class EnemySpawner : MonoBehaviour
             if (enemy != null)
             {
                 enemy.transform.position = spawnPosition;
+
+                // Call Initialize only after dependencies are injected
                 enemy.Initialize(waveConfig.enemyType, waveConfig.speed, waveConfig.health, direction);
             }
             else
@@ -38,4 +40,5 @@ public class EnemySpawner : MonoBehaviour
             Debug.LogError($"Failed to create enemy of type {waveConfig.enemyType}");
         }
     }
+
 }

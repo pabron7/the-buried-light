@@ -1,4 +1,5 @@
 using UnityEngine;
+using Zenject;
 
 public class Projectile : MonoBehaviour, IProjectile
 {
@@ -7,6 +8,13 @@ public class Projectile : MonoBehaviour, IProjectile
     [SerializeField] private int damage = 1;
 
     private ProjectilePoolManager _poolManager;
+    private EventManager _eventManager;
+
+    [Inject]
+    public void Construct(EventManager eventManager)
+    {
+        _eventManager = eventManager;
+    }
 
     public int Damage => damage;
 
@@ -35,9 +43,25 @@ public class Projectile : MonoBehaviour, IProjectile
         CancelInvoke();
     }
 
-    /// <summary>
-    /// Fallback in case the pool manager is missing
-    /// </summary>
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.TryGetComponent<IKillable>(out var killable))
+        {
+            // Directly apply damage
+            killable.TakeDamage(damage);
+
+            // Invoke damage command for additional logic
+            _eventManager.ExecuteCommand(new EnemyDamageCommand(killable, damage));
+
+            // Notify projectile of hit
+            OnHit();
+        }
+        else
+        {
+            Debug.LogWarning($"Projectile collided with {collision.name}, but no IKillable component was found.");
+        }
+    }
+
     private void ReturnToPool()
     {
         if (_poolManager != null)
