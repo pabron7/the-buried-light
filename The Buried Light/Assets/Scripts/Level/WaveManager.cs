@@ -10,6 +10,9 @@ public class WaveManager : MonoBehaviour
     private int _currentWaveIndex;
     private bool _isWaveInProgress;
 
+    public delegate void WaveManagerEvent();
+    public event WaveManagerEvent OnAllWavesCompleted;
+
     [Inject]
     public void Construct(WaveConfig[] waves, EnemySpawner enemySpawner)
     {
@@ -45,6 +48,7 @@ public class WaveManager : MonoBehaviour
         if (_currentWaveIndex >= _waves.Length)
         {
             Debug.Log("All waves completed!");
+            OnAllWavesCompleted?.Invoke();
             return;
         }
 
@@ -62,16 +66,24 @@ public class WaveManager : MonoBehaviour
 
         while (spawnedEnemies < waveConfig.enemyCount)
         {
-            // Determine how many enemies to spawn in this batch
             int remainingEnemies = waveConfig.enemyCount - spawnedEnemies;
             int enemiesToSpawn = waveConfig.groupSpawn
                 ? Mathf.Min(waveConfig.groupSize, remainingEnemies)
                 : 1;
 
-            // Spawn the group of enemies
+            Debug.Log($"Spawning a group of {enemiesToSpawn} enemies.");
+
             for (int i = 0; i < enemiesToSpawn; i++)
             {
-                _enemySpawner.SpawnEnemy(waveConfig);
+                GameObject enemy = _enemySpawner.SpawnEnemy(waveConfig);
+
+                if (enemy == null)
+                {
+                    Debug.LogWarning("Enemy pool empty. Waiting for pool recovery.");
+                    yield return new WaitForSeconds(1f); // Wait for pool to recover
+                    continue;
+                }
+
                 spawnedEnemies++;
 
                 if (spawnedEnemies >= waveConfig.enemyCount)
@@ -82,7 +94,6 @@ public class WaveManager : MonoBehaviour
 
             Debug.Log($"Spawned {spawnedEnemies}/{waveConfig.enemyCount} enemies in wave {_currentWaveIndex + 1}.");
 
-            // Wait only if there are more enemies to spawn
             if (spawnedEnemies < waveConfig.enemyCount)
             {
                 yield return new WaitForSeconds(waveConfig.spawnInterval);
@@ -93,10 +104,8 @@ public class WaveManager : MonoBehaviour
         _isWaveInProgress = false;
         _currentWaveIndex++;
 
-        // Delay before starting the next wave
         yield return new WaitForSeconds(2f);
 
         StartNextWave();
     }
-
 }

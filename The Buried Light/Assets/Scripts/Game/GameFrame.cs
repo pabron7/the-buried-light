@@ -2,17 +2,22 @@ using UnityEngine;
 
 public class GameFrame : MonoBehaviour
 {
-    [SerializeField] private Transform lowerLeftCorner; 
-    [SerializeField] private Transform upperRightCorner; 
+    [SerializeField] private Transform lowerLeftCorner;
+    [SerializeField] private Transform upperRightCorner;
+    [SerializeField] private float deletionBoundaryOffset = 5f; // Offset for deletion boundaries
 
     // Public properties to get frame boundaries
     public Vector2 MinBounds => lowerLeftCorner.position;
     public Vector2 MaxBounds => upperRightCorner.position;
 
+    // Deletion boundaries extend beyond the frame
+    public Vector2 DeletionMinBounds => MinBounds - new Vector2(deletionBoundaryOffset, deletionBoundaryOffset);
+    public Vector2 DeletionMaxBounds => MaxBounds + new Vector2(deletionBoundaryOffset, deletionBoundaryOffset);
+
     /// <summary>
     /// Generate a random position outside the frame
     /// </summary>
-    /// <returns> Vector 2</returns>
+    /// <returns>Vector 2</returns>
     public Vector2 GetRandomPositionOutsideFrame()
     {
         float x = Random.value < 0.5f ? Random.Range(MinBounds.x - 5, MinBounds.x - 1) : Random.Range(MaxBounds.x + 1, MaxBounds.x + 5);

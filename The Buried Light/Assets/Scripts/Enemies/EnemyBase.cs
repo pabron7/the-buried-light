@@ -30,8 +30,6 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
         Debug.Log($"Dependencies injected for {gameObject.name}");
     }
 
-
-
     /// <summary>
     /// Initialize the enemy with base stats and type.
     /// </summary>
@@ -68,6 +66,7 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
     private void Update()
     {
         Move();
+        CheckOutOfBounds();
     }
 
     /// <summary>
@@ -97,6 +96,21 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
             OnDeath();
         }
     }
+
+    /// <summary>
+    /// Turns enemy off when gone out of game frame
+    /// </summary>
+    private void CheckOutOfBounds()
+    {
+        // Check against deletion boundaries
+        if (transform.position.x < _gameFrame.DeletionMinBounds.x || transform.position.x > _gameFrame.DeletionMaxBounds.x ||
+            transform.position.y < _gameFrame.DeletionMinBounds.y || transform.position.y > _gameFrame.DeletionMaxBounds.y)
+        {
+            Debug.Log($"Enemy {Type} went out of deletion boundaries and is being deactivated.");
+            Deactivate();
+        }
+    }
+
 
     /// <summary>
     /// Handles the enemy's death.
@@ -131,10 +145,7 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
         {
             for (int i = 0; i < _spawnCount; i++)
             {
-                Vector2 spawnPosition = transform.position; // Spawn at the death position
-                Vector2 direction = (Vector2)_gameFrame.GetRandomPositionOutsideFrame() - spawnPosition;
-
-                _enemySpawner.SpawnEnemy(new WaveConfig
+                WaveConfig spawnConfig = new WaveConfig
                 {
                     enemyType = _spawnType,
                     enemyCount = 1,
@@ -142,7 +153,9 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
                     health = _spawnHealth,
                     spawnInterval = 0f,
                     groupSpawn = false
-                });
+                };
+
+                _enemySpawner.SpawnEnemy(spawnConfig);
             }
         }
     }
@@ -152,8 +165,8 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
     /// </summary>
     protected virtual void Deactivate()
     {
-        gameObject.SetActive(false);
-        Debug.Log($"Enemy {Type} deactivated.");
+        _enemySpawner.ReturnEnemy(Type, gameObject);
+        Debug.Log($"Enemy {Type} returned to pool.");
     }
 
     /// <summary>

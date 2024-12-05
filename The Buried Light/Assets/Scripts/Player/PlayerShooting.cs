@@ -7,16 +7,19 @@ public class PlayerShooting : MonoBehaviour
     [SerializeField] private float shootCooldown = 0.2f;
 
     private float _lastShotTime;
+
+    // dependencies
     private InputManager _inputManager;
     private ProjectilePoolManager _projectilePoolManager;
+    private EventManager _eventManager;
 
     [Inject]
-    public void Construct(InputManager inputManager, ProjectilePoolManager projectilePoolManager)
+    public void Construct(InputManager inputManager, ProjectilePoolManager projectilePoolManager, EventManager eventManager)
     {
         _inputManager = inputManager;
         _projectilePoolManager = projectilePoolManager;
+        _eventManager = eventManager;
     }
-
     private void Update()
     {
         if (_inputManager.IsShooting && Time.time >= _lastShotTime + shootCooldown)
@@ -29,15 +32,14 @@ public class PlayerShooting : MonoBehaviour
     private void Shoot()
     {
         GameObject projectile = _projectilePoolManager.GetProjectile();
-        projectile.transform.position = firePoint.position;
-        projectile.transform.rotation = firePoint.rotation;
 
-        var projectileComponent = projectile.GetComponent<IProjectile>();
-        if (projectileComponent == null)
+        if (projectile == null)
         {
-            Debug.LogError("Projectile does not implement IProjectile!");
+            Debug.LogWarning("Failed to retrieve projectile from the pool.");
+            return;
         }
 
-        projectile.SetActive(true);
+        var command = new PlayerShootCommand(firePoint, projectile);
+        _eventManager.ExecuteCommand(command);
     }
 }

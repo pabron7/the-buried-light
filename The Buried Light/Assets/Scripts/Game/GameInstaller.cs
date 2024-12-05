@@ -25,6 +25,7 @@ public class GameInstaller : MonoInstaller
         // Enemy Systems
         Container.Bind<EnemyPrefabMapping[]>().FromInstance(enemyPrefabMappings).AsSingle();
         Container.Bind<EnemyFactory>().AsSingle();
+        Container.Bind<EnemyPoolManager>().FromComponentInHierarchy().AsSingle();
 
         //Player
         Container.Bind<IHealth>().To<PlayerHealth>().FromInstance(FindObjectOfType<PlayerHealth>()).AsSingle();
