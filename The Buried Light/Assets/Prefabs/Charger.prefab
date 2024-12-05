@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 2630380784347637788}
   - component: {fileID: 79324615694772818}
   - component: {fileID: 4957177600323657970}
-  - component: {fileID: 5341931876416128331}
+  - component: {fileID: 2320327000039635221}
   m_Layer: 0
   m_Name: Charger
   m_TagString: Untagged
@@ -113,7 +113,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 750645691136287432}
@@ -158,8 +158,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a18b3fbae0a3496a93ccc392e8bd408, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!58 &5341931876416128331
-CircleCollider2D:
+--- !u!70 &2320327000039635221
+CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -190,6 +190,6 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.0012914389}
-  serializedVersion: 2
-  m_Radius: 0.07254736
+  m_Offset: {x: -0.000000007450581, y: -0.0018037334}
+  m_Size: {x: 0.105821595, y: 0.13627537}
+  m_Direction: 0

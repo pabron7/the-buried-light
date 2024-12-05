@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 2630380784347637788}
   - component: {fileID: 79324615694772818}
   - component: {fileID: 5221818193339303148}
-  - component: {fileID: 835711130673920495}
+  - component: {fileID: 1663302364994204588}
   m_Layer: 0
   m_Name: Champion
   m_TagString: Untagged
@@ -113,7 +113,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.2, y: 2.2, z: 1}
+  m_LocalScale: {x: 4.4, y: 4.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 750645691136287432}
@@ -158,8 +158,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbb9060f0c9f346e29375688c0f7ea72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!58 &835711130673920495
-CircleCollider2D:
+--- !u!70 &1663302364994204588
+CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -190,6 +190,6 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.0012914091}
-  serializedVersion: 2
-  m_Radius: 0.080295786
+  m_Offset: {x: -0.00000002709302, y: -0.0015505606}
+  m_Size: {x: 0.1389532, y: 0.18311246}
+  m_Direction: 0

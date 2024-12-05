@@ -201,9 +201,9 @@ RectTransform:
   m_Father: {fileID: 456537108}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -300.14502, y: 0}
-  m_SizeDelta: {x: -600.2899, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 99.85498, y: 0}
+  m_SizeDelta: {x: 199.71008, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &151427920
 MonoBehaviour:
@@ -1385,9 +1385,10 @@ MonoBehaviour:
   - enemyType: 4
     prefab: {fileID: 7471107917273321913, guid: 3641f1bbd44ac47c28652835442d33da, type: 3}
   waveConfigs:
-  - {fileID: 11400000, guid: c332d899e727a429294af185bb7da780, type: 2}
-  - {fileID: 11400000, guid: f5d9c74d35e2a4c9eae285b93c822df4, type: 2}
+  - {fileID: 11400000, guid: cf0f05c25a44a49568bb97155d5f474f, type: 2}
   - {fileID: 11400000, guid: 1a48a1b474ae84e598eb5bc58e00a193, type: 2}
+  - {fileID: 11400000, guid: f5d9c74d35e2a4c9eae285b93c822df4, type: 2}
+  - {fileID: 11400000, guid: c332d899e727a429294af185bb7da780, type: 2}
   projectilePoolManagerPrefab: {fileID: 4244073386056096613, guid: 41e7f4077b5dc45088388353e484313b, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
