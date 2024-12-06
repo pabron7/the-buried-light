@@ -1,24 +1,10 @@
-using Zenject;
 using UniRx;
 using UnityEngine;
 
 public class EventManager
 {
     public Subject<ICommand> OnCommandExecuted { get; } = new Subject<ICommand>();
-
-    private readonly SoundManager _soundManager;
-    private readonly CompositeDisposable _disposables = new CompositeDisposable();
-
-    [Inject]
-    public EventManager(SoundManager soundManager)
-    {
-        _soundManager = soundManager;
-
-        // Subscribe to command execution to trigger sound effects
-        OnCommandExecuted
-            .Subscribe(HandleCommand)
-            .AddTo(_disposables); // Use CompositeDisposable to manage subscription lifecycle
-    }
+    public Subject<string> OnSoundPlayed { get; } = new Subject<string>();
 
     public void ExecuteCommand(ICommand command)
     {
@@ -30,27 +16,25 @@ public class EventManager
 
         command.Execute();
         OnCommandExecuted.OnNext(command);
+        EmitSound(command);
     }
 
-    private void HandleCommand(ICommand command)
+    private void EmitSound(ICommand command)
     {
         switch (command)
         {
             case PlayerShootCommand:
-                _soundManager.PlayShootSound();
+                OnSoundPlayed.OnNext("shoot");
                 break;
             case EnemyDamageCommand:
-                _soundManager.PlayEnemyDamageSound();
+                OnSoundPlayed.OnNext("enemy_damage");
                 break;
             case EnemyKilledCommand:
-                _soundManager.PlayEnemyKilledSound();
+                OnSoundPlayed.OnNext("enemy_killed");
+                break;
+            default:
+                Debug.Log("No sound for this command.");
                 break;
         }
-    }
-
-    ~EventManager()
-    {
-        _disposables.Dispose(); // Clean up subscriptions when EventManager is destroyed
-        Debug.Log("EventManager disposed");
     }
 }

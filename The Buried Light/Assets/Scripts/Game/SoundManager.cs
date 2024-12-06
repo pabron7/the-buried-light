@@ -1,45 +1,36 @@
+using UniRx;
 using UnityEngine;
+using Zenject;
+using System;
 
 public class SoundManager : MonoBehaviour
 {
-    [SerializeField] private AudioClip shootSound;
-    [SerializeField] private AudioClip enemyDamageSound;
-    [SerializeField] private AudioClip enemyKilledSound;
+    private SoundRegistry _registry;
+    [SerializeField] private AudioSource audioSource;
 
-    private AudioSource _audioSource;
-
-    private void Awake()
+    [Inject]
+    public void Construct(SoundRegistry registry)
     {
-        _audioSource = GetComponent<AudioSource>();
-        if (_audioSource == null)
+        _registry = registry;
+    }
+
+    public void Initialize(IObservable<string> soundStream)
+    {
+        soundStream.Subscribe(PlaySound).AddTo(this);
+        Debug.Log("SoundManager Initialized and Subscribed to Sound Stream.");
+    }
+
+
+    private void PlaySound(string soundId)
+    {
+        var soundEffect = _registry.GetSoundEffect(soundId);
+        if (soundEffect == null)
         {
-            Debug.LogError("SoundManager requires an AudioSource component.");
-        }
-    }
-
-    public void PlayShootSound()
-    {
-        PlaySound(shootSound);
-    }
-
-    public void PlayEnemyDamageSound()
-    {
-        PlaySound(enemyDamageSound);
-    }
-
-    public void PlayEnemyKilledSound()
-    {
-        PlaySound(enemyKilledSound);
-    }
-
-    private void PlaySound(AudioClip clip)
-    {
-        if (clip == null)
-        {
-            Debug.LogWarning("SoundManager: Attempted to play a null clip.");
             return;
         }
-
-        _audioSource.PlayOneShot(clip);
+        audioSource.pitch = soundEffect.Pitch;
+        audioSource.PlayOneShot(soundEffect.Clip, soundEffect.Volume);
     }
+
+
 }

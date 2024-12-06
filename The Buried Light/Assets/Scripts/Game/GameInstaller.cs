@@ -8,6 +8,7 @@ public class GameInstaller : MonoInstaller
     [SerializeField] private ProjectilePoolManager projectilePoolManagerPrefab;
 
     [SerializeField] private SoundManager soundManagerPrefab;
+    [SerializeField] private SoundRegistry soundRegistry;
 
     public override void InstallBindings()
     {
@@ -18,7 +19,9 @@ public class GameInstaller : MonoInstaller
         Container.Bind<ProjectilePoolManager>().FromComponentInNewPrefab(projectilePoolManagerPrefab).AsSingle();
         Container.Bind<PlayerShooting>().FromComponentInHierarchy().AsSingle();
         Container.Bind<EventManager>().AsSingle();
-        Container.Bind<SoundManager>().FromComponentInNewPrefab(soundManagerPrefab).AsSingle();
+
+        Container.Bind<SoundRegistry>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<SoundManager>().FromComponentInHierarchy().AsSingle();
 
         // Level Systems
         Container.Bind<WaveConfig[]>().FromInstance(waveConfigs).AsSingle();
@@ -33,6 +36,11 @@ public class GameInstaller : MonoInstaller
         //Player
         Container.Bind<IHealth>().To<PlayerHealth>().FromInstance(FindObjectOfType<PlayerHealth>()).AsSingle();
 
+        var eventManager = Container.Resolve<EventManager>();
+        var soundManager = Container.Resolve<SoundManager>();
+        soundManager.Initialize(eventManager.OnSoundPlayed);
 
     }
+
+
 }

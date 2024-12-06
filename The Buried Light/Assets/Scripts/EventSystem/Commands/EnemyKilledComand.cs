@@ -10,7 +10,6 @@ public class EnemyKilledCommand : ICommand
 
     public void Execute()
     {
-        // Logic for handling enemy death (e.g., add score)
         Debug.Log($"Enemy {_enemy.Type} killed. Award points!");
     }
 }

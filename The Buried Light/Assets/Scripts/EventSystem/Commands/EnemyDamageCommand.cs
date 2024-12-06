@@ -26,6 +26,5 @@ public class EnemyDamageCommand : ICommand
         }
 
         _target.TakeDamage(_damage);
-        Debug.Log($"EnemyDamageCommand: {_damage} damage applied to {_target}");
     }
 }

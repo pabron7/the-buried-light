@@ -26,10 +26,8 @@ public class PlayerShootCommand : ICommand
 
         // Activate the projectile
         _projectile.SetActive(true);
-
-        // Log shooting action (later replaced with sound/visual effects)
-        Debug.Log("Player fired a projectile!");
     }
 }
+
 
 

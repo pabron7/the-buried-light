@@ -10,7 +10,6 @@ public class PlayerContactCommand : ICommand
 
     public void Execute()
     {
-        // Logic for player damage or game updates
         Debug.Log($"Player contacted by enemy {_enemy.Type}. Apply damage!");
     }
 }
