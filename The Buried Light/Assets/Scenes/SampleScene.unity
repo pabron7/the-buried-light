@@ -747,10 +747,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b7b6fac5ddba42018dd732808c44ded, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  acceleration: 5
-  rotationSpeed: 200
-  maxSpeed: 10
-  drag: 0.5
+  controllerConfig: {fileID: 11400000, guid: 16fabc4d638b94a44978ecec8482f0b9, type: 2}
 --- !u!114 &1103569243
 MonoBehaviour:
   m_ObjectHideFlags: 0
