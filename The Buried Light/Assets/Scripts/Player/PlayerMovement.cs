@@ -1,11 +1,12 @@
 using UnityEngine;
 using Zenject;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private float rotationSpeed = 200f;
+    [SerializeField] private PlayerControllerConfig controllerConfig; 
 
+    private Rigidbody2D _rigidbody;
     private InputManager _inputManager;
 
     [Inject]
@@ -14,15 +15,47 @@ public class PlayerMovement : MonoBehaviour
         _inputManager = inputManager;
     }
 
-    private void Update()
+    private void Awake()
     {
-        Vector2 movement = _inputManager.MovementInput;
-        Vector3 moveDirection = new Vector3(movement.x, movement.y, 0) * moveSpeed * Time.deltaTime;
-        transform.position += moveDirection;
+        _rigidbody = GetComponent<Rigidbody2D>();
+    }
 
-        // Rotation (J/L or Mouse for aiming)
-        float rotation = _inputManager.RotationInput;
-        transform.Rotate(0, 0, -rotation * rotationSpeed * Time.deltaTime); 
+    private void FixedUpdate()
+    {
+        HandleRotation();
+        HandleMovement();
+        ApplyDrag();
+        LimitSpeed();
+    }
+
+    private void HandleRotation()
+    {
+        float rotationInput = _inputManager.RotationInput;
+        _rigidbody.rotation -= rotationInput * controllerConfig.rotationSpeed * Time.fixedDeltaTime;
+    }
+
+    private void HandleMovement()
+    {
+        if (_inputManager.IsAccelerating)
+        {
+            Vector2 forwardDirection = transform.up;
+            _rigidbody.AddForce(forwardDirection * controllerConfig.acceleration, ForceMode2D.Force);
+        }
+    }
+
+    private void ApplyDrag()
+    {
+        if (_rigidbody.velocity.sqrMagnitude > 0)
+        {
+            _rigidbody.AddForce(-_rigidbody.velocity * controllerConfig.drag, ForceMode2D.Force);
+        }
+    }
+
+    private void LimitSpeed()
+    {
+        if (_rigidbody.velocity.sqrMagnitude > controllerConfig.maxSpeed * controllerConfig.maxSpeed)
+        {
+            _rigidbody.velocity = _rigidbody.velocity.normalized * controllerConfig.maxSpeed;
+        }
     }
 }
-

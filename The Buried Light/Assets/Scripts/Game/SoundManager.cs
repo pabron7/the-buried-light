@@ -20,7 +20,6 @@ public class SoundManager : MonoBehaviour
         Debug.Log("SoundManager Initialized and Subscribed to Sound Stream.");
     }
 
-
     private void PlaySound(string soundId)
     {
         var soundEffect = _registry.GetSoundEffect(soundId);
@@ -31,6 +30,4 @@ public class SoundManager : MonoBehaviour
         audioSource.pitch = soundEffect.Pitch;
         audioSource.PlayOneShot(soundEffect.Clip, soundEffect.Volume);
     }
-
-
 }

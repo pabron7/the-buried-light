@@ -3,39 +3,32 @@ using UnityEngine;
 
 public class InputManager : ITickable
 {
-    public Vector2 MovementInput { get; private set; }
     public float RotationInput { get; private set; }
+    public bool IsAccelerating { get; private set; }
     public bool IsShooting { get; private set; }
     public bool IsUsingSpecialMove { get; private set; }
 
     public void Tick()
     {
-
-        MovementInput = new Vector2(
-            Input.GetAxis("Horizontal"), 
-            Input.GetAxis("Vertical")   
-        );
-
-   
-        if (Input.GetKey(KeyCode.J))
+        // Rotation input (A/D keys)
+        if (Input.GetKey(KeyCode.A))
         {
-            RotationInput = -1f; 
+            RotationInput = -1f; // Clockwise in 2D
         }
-        else if (Input.GetKey(KeyCode.L))
+        else if (Input.GetKey(KeyCode.D))
         {
-            RotationInput = 1f; 
+            RotationInput = 1f; // Counter-clockwise in 2D
         }
         else
         {
             RotationInput = 0f;
         }
 
-        IsShooting = Input.GetKey(KeyCode.I) || Input.GetMouseButton(0);
-  
-        IsUsingSpecialMove = Input.GetKey(KeyCode.K) || Input.GetMouseButton(1);
+        // Acceleration input (W key)
+        IsAccelerating = Input.GetKey(KeyCode.W);
 
-        // Debug.Log($"Movement: {MovementInput}, Rotation: {RotationInput}, Shooting: {IsShooting}, SpecialMove: {IsUsingSpecialMove}");
+        // Shooting and special moves
+        IsShooting = Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0);
+        IsUsingSpecialMove = Input.GetKey(KeyCode.LeftShift) || Input.GetMouseButton(1);
     }
 }
-
-
