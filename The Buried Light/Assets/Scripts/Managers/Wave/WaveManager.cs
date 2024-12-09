@@ -1,111 +1,111 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 using Zenject;
 
 public class WaveManager : MonoBehaviour
 {
-    private WaveConfig[] _waves;
-    private EnemySpawner _enemySpawner;
-
-    private int _currentWaveIndex;
-    private bool _isWaveInProgress;
-
-    public delegate void WaveManagerEvent();
-    public event WaveManagerEvent OnAllWavesCompleted;
-
-    [Inject]
-    public void Construct(WaveConfig[] waves, EnemySpawner enemySpawner)
+    public enum WaveState
     {
-        _waves = waves;
-        _enemySpawner = enemySpawner;
+        Idle,
+        WaveStart,
+        Spawning,
+        WaveComplete
     }
 
-    private void Start()
+    public class Factory : PlaceholderFactory<WaveConfig, WaveManager>
     {
-        Debug.Log($"WaveManager initialized with {_waves.Length} waves and EnemySpawner: {_enemySpawner}");
     }
 
-    public void StartWaves()
+    [Inject] private EnemySpawner _enemySpawner;
+    private WaveConfig _waveConfig;
+    private WaveState _currentState = WaveState.Idle;
+
+    private int _spawnedEnemies;
+    private int _remainingEnemies;
+
+    public WaveState CurrentState => _currentState;
+
+    public delegate void WaveEvent();
+    public event WaveEvent OnWaveComplete;
+
+    public void Initialize(WaveConfig waveConfig)
     {
-        if (_isWaveInProgress)
+        _waveConfig = waveConfig;
+    }
+
+    private void Update()
+    {
+        // Add state logic in Update if needed for debugging or transitions
+    }
+
+    public void StartWave()
+    {
+        if (_currentState != WaveState.Idle)
         {
-            Debug.LogWarning("Waves already in progress!");
+            Debug.LogWarning("WaveManager: Cannot start wave, not in Idle state.");
             return;
         }
 
-        _currentWaveIndex = 0;
-        StartNextWave();
+        SetState(WaveState.WaveStart);
     }
 
-    public void StartNextWave()
+    private void SetState(WaveState newState)
     {
-        if (_isWaveInProgress)
+        _currentState = newState;
+
+        switch (newState)
         {
-            Debug.LogWarning("Wave is already in progress!");
-            return;
+            case WaveState.Idle:
+                Debug.Log("WaveManager: Entering Idle state.");
+                break;
+
+            case WaveState.WaveStart:
+                Debug.Log("WaveManager: Starting wave.");
+                _spawnedEnemies = 0;
+                _remainingEnemies = _waveConfig.enemyCount;
+                SetState(WaveState.Spawning);
+                break;
+
+            case WaveState.Spawning:
+                StartCoroutine(SpawnWave());
+                break;
+
+            case WaveState.WaveComplete:
+                Debug.Log("WaveManager: Wave complete.");
+                OnWaveComplete?.Invoke();
+                SetState(WaveState.Idle); // Return to Idle or let LevelManager decide
+                break;
         }
-
-        if (_currentWaveIndex >= _waves.Length)
-        {
-            Debug.Log("All waves completed!");
-            OnAllWavesCompleted?.Invoke();
-            return;
-        }
-
-        _isWaveInProgress = true;
-
-        WaveConfig currentWave = _waves[_currentWaveIndex];
-        StartCoroutine(SpawnWave(currentWave));
     }
 
-    private IEnumerator SpawnWave(WaveConfig waveConfig)
+    private IEnumerator SpawnWave()
     {
-        Debug.Log($"Starting wave {_currentWaveIndex + 1} with {waveConfig.enemyCount} enemies of type {waveConfig.enemyType}.");
+        Debug.Log($"WaveManager: Spawning {_waveConfig.enemyCount} enemies of type {_waveConfig.enemyType}.");
 
-        int spawnedEnemies = 0;
-
-        while (spawnedEnemies < waveConfig.enemyCount)
+        while (_spawnedEnemies < _waveConfig.enemyCount)
         {
-            int remainingEnemies = waveConfig.enemyCount - spawnedEnemies;
-            int enemiesToSpawn = waveConfig.groupSpawn
-                ? Mathf.Min(waveConfig.groupSize, remainingEnemies)
-                : 1;
-
-            Debug.Log($"Spawning a group of {enemiesToSpawn} enemies.");
+            int enemiesToSpawn = Mathf.Min(_waveConfig.groupSpawn ? _waveConfig.groupSize : 1, _remainingEnemies);
 
             for (int i = 0; i < enemiesToSpawn; i++)
             {
-                GameObject enemy = _enemySpawner.SpawnEnemy(waveConfig);
+                _enemySpawner.SpawnEnemy(_waveConfig);
+                _spawnedEnemies++;
+                _remainingEnemies--;
 
-                if (enemy == null)
+                if (_spawnedEnemies >= _waveConfig.enemyCount)
                 {
-                    Debug.LogWarning("Enemy pool empty. Waiting for pool recovery.");
-                    yield return new WaitForSeconds(1f); // Wait for pool to recover
-                    continue;
-                }
-
-                spawnedEnemies++;
-
-                if (spawnedEnemies >= waveConfig.enemyCount)
-                {
-                    break; // Stop spawning if we've reached the limit
+                    break;
                 }
             }
 
-            Debug.Log($"Spawned {spawnedEnemies}/{waveConfig.enemyCount} enemies in wave {_currentWaveIndex + 1}.");
+            Debug.Log($"WaveManager: Spawned {_spawnedEnemies}/{_waveConfig.enemyCount} enemies.");
 
-            if (spawnedEnemies < waveConfig.enemyCount)
+            if (_remainingEnemies > 0)
             {
-                yield return new WaitForSeconds(waveConfig.spawnInterval);
+                yield return new WaitForSeconds(_waveConfig.spawnInterval);
             }
         }
 
-        Debug.Log($"Wave {_currentWaveIndex + 1} completed.");
-        _isWaveInProgress = false;
-        _currentWaveIndex++;
-
-        yield return new WaitForSeconds(2f);
-
-        StartNextWave();
+        SetState(WaveState.WaveComplete);
     }
 }

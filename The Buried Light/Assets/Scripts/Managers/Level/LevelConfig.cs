@@ -1,15 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "LevelConfig", menuName = "Game/LevelConfig")]
+[CreateAssetMenu(fileName = "NewLevelConfig", menuName = "Game/Level Config")]
 public class LevelConfig : ScriptableObject
 {
-    [System.Serializable]
-    public class Phase
-    {
-        public string phaseName;
-        public List<WaveConfig> waveConfigs;
-    }
-
-    public List<Phase> phases;
+    [Header("Level Properties")]
+    public string levelName;
+    public List<WaveConfig> waves; 
+    public float levelPreparationDelay = 2f; 
 }

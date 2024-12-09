@@ -1,12 +1,36 @@
-public class GameManager
+using UnityEngine;
+using Zenject;
+
+public class GameManager : MonoBehaviour
 {
-    public enum GameState { Playing, Paused, GameOver }
-    private GameState _currentState;
+    private GameStateBase _currentState;
 
-    public GameState CurrentState => _currentState;
+    public GameStateBase CurrentState => _currentState;
 
-    public void SetState(GameState newState)
+    [Inject] private readonly DiContainer _container;
+
+    public void SetState<T>() where T : GameStateBase
     {
-        _currentState = newState;
+        if (_currentState is T)
+        {
+            Debug.LogWarning($"Game is already in {typeof(T).Name} state.");
+            return;
+        }
+
+        _currentState?.OnStateExit();
+        _currentState = _container.Instantiate<T>();
+        _currentState.OnStateEnter(this);
+
+        Debug.Log($"Game state changed to: {typeof(T).Name}");
+    }
+
+    private void Start()
+    {
+        SetState<MainMenuState>(); 
+    }
+
+    private void Update()
+    {
+        _currentState?.OnUpdate();
     }
 }
