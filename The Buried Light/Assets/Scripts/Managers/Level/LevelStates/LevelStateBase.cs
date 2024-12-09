@@ -15,5 +15,7 @@ public abstract class LevelStateBase : MonoBehaviour
         Debug.Log($"{GetType().Name} Exited.");
     }
 
-    public virtual void OnUpdate() { }
+    public virtual void OnUpdate()
+    {
+    }
 }

@@ -1,27 +1,16 @@
 using UnityEngine;
+using UniRx;
 using Zenject;
 
 public class GameManager : MonoBehaviour
 {
-    private GameStateBase _currentState;
-
-    public GameStateBase CurrentState => _currentState;
+    public ReactiveProperty<GameStateBase> CurrentState { get; private set; }
 
     [Inject] private readonly DiContainer _container;
 
-    public void SetState<T>() where T : GameStateBase, new()
+    private void Awake()
     {
-        if (_currentState is T)
-        {
-            Debug.LogWarning($"Game is already in {typeof(T).Name} state.");
-            return;
-        }
-
-        _currentState?.OnStateExit();
-        _currentState = new T(); 
-        _currentState.OnStateEnter(this);
-
-        Debug.Log($"Game state changed to: {typeof(T).Name}");
+        CurrentState = new ReactiveProperty<GameStateBase>(null);
     }
 
     private void Start()
@@ -29,8 +18,23 @@ public class GameManager : MonoBehaviour
         SetState<TitleScreenState>();
     }
 
+    public void SetState<T>() where T : GameStateBase
+    {
+        if (CurrentState.Value is T)
+        {
+            Debug.LogWarning($"Game is already in {typeof(T).Name} state.");
+            return;
+        }
+
+        CurrentState.Value?.OnStateExit();
+        CurrentState.Value = _container.Instantiate<T>();
+        CurrentState.Value.OnStateEnter(this);
+
+        Debug.Log($"Game state changed to: {typeof(T).Name}");
+    }
+
     private void Update()
     {
-        _currentState?.OnUpdate();
+        CurrentState.Value?.OnUpdate();
     }
 }

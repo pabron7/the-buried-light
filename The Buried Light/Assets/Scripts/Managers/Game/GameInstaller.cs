@@ -55,6 +55,7 @@ public class GameInstaller : MonoInstaller
 
         // UI Systems
         //Container.Bind<TitleScreenController>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<MenuManager>().FromComponentInHierarchy().AsSingle();
 
         // Initialize SoundManager
         var eventManager = Container.Resolve<EventManager>();

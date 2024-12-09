@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6261355bef48d4991afda9cb337890fc, type: 3}
-  m_Name: Level 3
+  m_Name: Wave 5
   m_EditorClassIdentifier: 
-  enemyType: 3
-  enemyCount: 70
+  enemyType: 1
+  enemyCount: 200
   speed: 4
-  health: 5
+  health: 1
   spawnInterval: 2
   groupSpawn: 1
-  groupSize: 4
-  isSpawner: 1
-  spawnType: 2
-  spawnCount: 10
-  spawnHealth: 1
+  groupSize: 20
+  isSpawner: 0
+  spawnType: 0
+  spawnCount: 5
+  spawnHealth: 3
   spawnSpeed: 2
