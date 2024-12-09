@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
 
     [Inject] private readonly DiContainer _container;
 
-    public void SetState<T>() where T : GameStateBase
+    public void SetState<T>() where T : GameStateBase, new()
     {
         if (_currentState is T)
         {
@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
         }
 
         _currentState?.OnStateExit();
-        _currentState = _container.Instantiate<T>();
+        _currentState = new T(); 
         _currentState.OnStateEnter(this);
 
         Debug.Log($"Game state changed to: {typeof(T).Name}");
@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        SetState<MainMenuState>(); 
+        SetState<TitleScreenState>();
     }
 
     private void Update()

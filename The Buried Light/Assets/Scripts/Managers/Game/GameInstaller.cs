@@ -15,7 +15,7 @@ public class GameInstaller : MonoInstaller
     public override void InstallBindings()
     {
         // Game Manager
-        Container.Bind<GameManager>().AsSingle();
+        Container.Bind<GameManager>().FromComponentInHierarchy().AsSingle().NonLazy();
 
         // Input Systems
         Container.BindInterfacesAndSelfTo<InputManager>().AsSingle();
@@ -52,6 +52,9 @@ public class GameInstaller : MonoInstaller
 
         // Player Systems
         Container.Bind<IHealth>().To<PlayerHealth>().FromInstance(FindObjectOfType<PlayerHealth>()).AsSingle();
+
+        // UI Systems
+        //Container.Bind<TitleScreenController>().FromComponentInHierarchy().AsSingle();
 
         // Initialize SoundManager
         var eventManager = Container.Resolve<EventManager>();
