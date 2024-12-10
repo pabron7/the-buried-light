@@ -12,7 +12,11 @@ public class PreparingLevelState : LevelStateBase
     private IEnumerator PrepareLevel()
     {
         Debug.Log("Preparing level...");
+
+        // Simulate preparation work
         yield return new WaitForSeconds(2f);
+
+        // Transition to the in-progress state to start waves
         LevelManager.SetState<InProgressLevelState>();
     }
 }

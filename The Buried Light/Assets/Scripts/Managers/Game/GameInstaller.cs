@@ -5,9 +5,8 @@ public class GameInstaller : MonoInstaller
 {
     [SerializeField] private EnemyPrefabMapping[] enemyPrefabMappings;
     [SerializeField] private WaveConfig[] waveConfigs;
-    [SerializeField] private LevelConfig levelConfig;
     [SerializeField] private ProjectilePoolManager projectilePoolManagerPrefab;
-    [SerializeField] private GameObject waveManagerPrefab; 
+    [SerializeField] private GameObject waveManagerPrefab;
 
     [SerializeField] private SoundManager soundManagerPrefab;
     [SerializeField] private SoundRegistry soundRegistry;
@@ -32,29 +31,25 @@ public class GameInstaller : MonoInstaller
         Container.Bind<SoundRegistry>().FromComponentInHierarchy().AsSingle();
         Container.Bind<SoundManager>().FromComponentInHierarchy().AsSingle();
 
-        // Level and Wave Systems
-        Container.Bind<LevelConfig>().FromInstance(levelConfig).AsSingle(); // Bind LevelConfig
-        Container.Bind<WaveConfig[]>().FromInstance(waveConfigs).AsSingle();
-
         // WaveManager Factory
-        Container.BindFactory<WaveConfig, WaveManager, WaveManager.Factory>()
+        Container.BindFactory<WaveManager, WaveManager.Factory>()
             .FromComponentInNewPrefab(waveManagerPrefab)
+            .WithGameObjectName("WaveManager")
             .UnderTransformGroup("WaveManagers");
 
-        // Bind LevelManager with Class-Based States
+        // Bind LevelManager
         Container.Bind<LevelManager>().FromComponentInHierarchy().AsSingle();
 
         // Enemy Systems
         Container.Bind<EnemyPrefabMapping[]>().FromInstance(enemyPrefabMappings).AsSingle();
         Container.Bind<EnemyFactory>().AsSingle();
         Container.Bind<EnemyPoolManager>().FromComponentInHierarchy().AsSingle();
-        Container.Bind<EnemySpawner>().FromComponentInHierarchy().AsSingle(); 
+        Container.Bind<EnemySpawner>().FromComponentInHierarchy().AsSingle();
 
         // Player Systems
         Container.Bind<IHealth>().To<PlayerHealth>().FromInstance(FindObjectOfType<PlayerHealth>()).AsSingle();
 
         // UI Systems
-        //Container.Bind<TitleScreenController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<MenuManager>().FromComponentInHierarchy().AsSingle();
 
         // Initialize SoundManager

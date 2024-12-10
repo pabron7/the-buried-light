@@ -6,8 +6,7 @@ public class InProgressLevelState : LevelStateBase
     {
         base.OnStateEnter(levelManager);
         Debug.Log("LevelManager: InProgress state.");
-        LevelManager.InitializeWaves();
 
-    
+        LevelManager.StartNextPhase();
     }
 }

@@ -12,11 +12,10 @@ public class WaveManager : MonoBehaviour
         WaveComplete
     }
 
-    public class Factory : PlaceholderFactory<WaveConfig, WaveManager>
-    {
-    }
+    public class Factory : PlaceholderFactory<WaveManager> { }
 
     [Inject] private EnemySpawner _enemySpawner;
+
     private WaveConfig _waveConfig;
     private WaveState _currentState = WaveState.Idle;
 
@@ -31,11 +30,9 @@ public class WaveManager : MonoBehaviour
     public void Initialize(WaveConfig waveConfig)
     {
         _waveConfig = waveConfig;
-    }
-
-    private void Update()
-    {
-        // Add state logic in Update if needed for debugging or transitions
+        _remainingEnemies = waveConfig.enemyCount;
+        _spawnedEnemies = 0;
+        _currentState = WaveState.Idle;
     }
 
     public void StartWave()
@@ -61,44 +58,40 @@ public class WaveManager : MonoBehaviour
 
             case WaveState.WaveStart:
                 Debug.Log("WaveManager: Starting wave.");
-                _spawnedEnemies = 0;
-                _remainingEnemies = _waveConfig.enemyCount;
-                SetState(WaveState.Spawning);
-                break;
-
-            case WaveState.Spawning:
                 StartCoroutine(SpawnWave());
                 break;
 
             case WaveState.WaveComplete:
                 Debug.Log("WaveManager: Wave complete.");
                 OnWaveComplete?.Invoke();
-                SetState(WaveState.Idle); // Return to Idle or let LevelManager decide
+                SetState(WaveState.Idle); // Return to Idle
                 break;
         }
     }
 
     private IEnumerator SpawnWave()
     {
-        Debug.Log($"WaveManager: Spawning {_waveConfig.enemyCount} enemies of type {_waveConfig.enemyType}.");
-
         while (_spawnedEnemies < _waveConfig.enemyCount)
         {
-            int enemiesToSpawn = Mathf.Min(_waveConfig.groupSpawn ? _waveConfig.groupSize : 1, _remainingEnemies);
-
-            for (int i = 0; i < enemiesToSpawn; i++)
+            for (int i = 0; i < Mathf.Min(_waveConfig.groupSpawn ? _waveConfig.groupSize : 1, _remainingEnemies); i++)
             {
-                _enemySpawner.SpawnEnemy(_waveConfig);
+                var enemyObject = _enemySpawner.SpawnEnemy(_waveConfig);
+                if (enemyObject.TryGetComponent<EnemyBase>(out var enemy))
+                {
+                    enemy.ConfigureOnDeathSpawn(
+                        _waveConfig.spawnType,
+                        _waveConfig.spawnCount,
+                        _waveConfig.spawnHealth,
+                        _waveConfig.spawnSpeed
+                    );
+                }
+
                 _spawnedEnemies++;
                 _remainingEnemies--;
 
                 if (_spawnedEnemies >= _waveConfig.enemyCount)
-                {
                     break;
-                }
             }
-
-            Debug.Log($"WaveManager: Spawned {_spawnedEnemies}/{_waveConfig.enemyCount} enemies.");
 
             if (_remainingEnemies > 0)
             {
@@ -107,5 +100,13 @@ public class WaveManager : MonoBehaviour
         }
 
         SetState(WaveState.WaveComplete);
+    }
+
+    public void ResetWave()
+    {
+        _waveConfig = null;
+        _remainingEnemies = 0;
+        _spawnedEnemies = 0;
+        _currentState = WaveState.Idle;
     }
 }

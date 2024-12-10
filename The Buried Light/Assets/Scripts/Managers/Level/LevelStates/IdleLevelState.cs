@@ -6,5 +6,8 @@ public class IdleLevelState : LevelStateBase
     {
         base.OnStateEnter(levelManager);
         Debug.Log("Level is idle. Ready to initialize or start.");
+
+        // Reset WaveManager pool and prepare for the next level or phase
+        LevelManager.ResetWavePool();
     }
 }

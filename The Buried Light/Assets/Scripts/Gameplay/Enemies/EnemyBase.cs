@@ -15,6 +15,9 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
     private int _spawnHealth;
     private float _spawnSpeed;
 
+    // Event for enemy death
+    public event Action<IKillable> EnemyDeath;
+
     // Dependencies
     protected GameFrame _gameFrame;
     protected EnemySpawner _enemySpawner;
@@ -48,7 +51,6 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
 
         Debug.Log($"Initialized enemy of type {Type} with speed: {Speed}, health: {Health}");
     }
-
 
     /// <summary>
     /// Configure on-death spawning behavior.
@@ -98,11 +100,10 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
     }
 
     /// <summary>
-    /// Turns enemy off when gone out of game frame
+    /// Turns enemy off when gone out of game frame.
     /// </summary>
     private void CheckOutOfBounds()
     {
-        // Check against deletion boundaries
         if (transform.position.x < _gameFrame.DeletionMinBounds.x || transform.position.x > _gameFrame.DeletionMaxBounds.x ||
             transform.position.y < _gameFrame.DeletionMinBounds.y || transform.position.y > _gameFrame.DeletionMaxBounds.y)
         {
@@ -111,13 +112,15 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
         }
     }
 
-
     /// <summary>
     /// Handles the enemy's death.
     /// </summary>
     public virtual void OnDeath()
     {
         Debug.Log($"Enemy {Type} has died.");
+
+        // Trigger the EnemyDeath event
+        EnemyDeath?.Invoke(this);
 
         if (_eventManager != null)
         {
@@ -195,5 +198,4 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
             }
         }
     }
-
 }

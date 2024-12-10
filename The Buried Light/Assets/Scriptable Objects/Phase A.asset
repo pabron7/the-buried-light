@@ -9,14 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d762809e164974df7876ecb38e725ce9, type: 3}
-  m_Name: NewLevelConfig
+  m_Script: {fileID: 11500000, guid: 42e4f6cb0d7664dc79d23052346f1324, type: 3}
+  m_Name: Phase A
   m_EditorClassIdentifier: 
-  levelName: Beginning
   waves:
   - {fileID: 11400000, guid: c332d899e727a429294af185bb7da780, type: 2}
   - {fileID: 11400000, guid: f5d9c74d35e2a4c9eae285b93c822df4, type: 2}
-  - {fileID: 11400000, guid: 1a48a1b474ae84e598eb5bc58e00a193, type: 2}
-  - {fileID: 11400000, guid: cf0f05c25a44a49568bb97155d5f474f, type: 2}
-  - {fileID: 11400000, guid: c78177911f9ca4578998f4af7f532dd1, type: 2}
-  levelPreparationDelay: 2
