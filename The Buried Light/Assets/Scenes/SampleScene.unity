@@ -1600,7 +1600,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 226e5a9fc6b0b4d08a56dbc8b72b1630, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioSource: {fileID: 1366667001}
 --- !u!82 &1366667001
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2550,6 +2549,7 @@ MonoBehaviour:
   waveManagerPrefab: {fileID: 1750162779}
   soundManagerPrefab: {fileID: 1366667000}
   soundRegistry: {fileID: 740059437}
+  audioSource: {fileID: 1366667001}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

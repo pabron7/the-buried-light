@@ -1,5 +1,7 @@
 using Zenject;
 using UnityEngine;
+using System;
+using UniRx;
 
 public class GameInstaller : MonoInstaller
 {
@@ -25,10 +27,10 @@ public class GameInstaller : MonoInstaller
         Container.Bind<PlayerShooting>().FromComponentInHierarchy().AsSingle();
 
         // Event System
-        Container.Bind<EventManager>().AsSingle();
+        Container.Bind<EventManager>().AsSingle().NonLazy();
 
         // Sound Systems
-        Container.Bind<SoundRegistry>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<SoundRegistry>().FromInstance(soundRegistry).AsSingle();
         Container.Bind<SoundManager>().FromComponentInHierarchy().AsSingle();
 
         // WaveManager Factory
@@ -52,9 +54,5 @@ public class GameInstaller : MonoInstaller
         // UI Systems
         Container.Bind<MenuManager>().FromComponentInHierarchy().AsSingle();
 
-        // Initialize SoundManager
-        var eventManager = Container.Resolve<EventManager>();
-        var soundManager = Container.Resolve<SoundManager>();
-        soundManager.Initialize(eventManager.OnSoundPlayed);
     }
 }
