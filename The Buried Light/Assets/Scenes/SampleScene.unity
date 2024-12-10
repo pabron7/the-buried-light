@@ -406,7 +406,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 910e5c98bc46b4bd09d5a3135c238591, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentLevelConfig: {fileID: 11400000, guid: 040a64a2a7e48467b87df0cf3bbad2f2, type: 2}
+  currentLevelConfig: {fileID: 11400000, guid: b9da0ccbab94c43ab8d8f7599a8bd121, type: 2}
 --- !u!4 &219471131
 Transform:
   m_ObjectHideFlags: 0
@@ -1225,7 +1225,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.51, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1741538047}
@@ -2549,7 +2549,6 @@ MonoBehaviour:
   waveManagerPrefab: {fileID: 1750162779}
   soundManagerPrefab: {fileID: 1366667000}
   soundRegistry: {fileID: 740059437}
-  audioSource: {fileID: 1366667001}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

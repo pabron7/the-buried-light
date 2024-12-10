@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: Level2
   m_EditorClassIdentifier: Assembly-CSharp::LevelConfig
-  phases: []
+  phases:
+  - {fileID: 11400000, guid: 0a7f7e889359946c68b47526607b050d, type: 2}
+  - {fileID: 11400000, guid: c15b91b4cb04246539312c12f94c1aa9, type: 2}
+  - {fileID: 11400000, guid: 0a7f7e889359946c68b47526607b050d, type: 2}
