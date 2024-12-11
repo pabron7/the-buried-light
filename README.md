@@ -9,7 +9,8 @@ An **asteroids-like**, narrative-driven arcade WebGL game.
 - **Unity**: Version 2022.3.22f1  
 - **Programming Language**: C#  
 - **Dependency Injection**: Zenject  
-- **Reactive Programming**: UniRx  
+- **Reactive Programming**: UniRx
+- **Asynchronous Programming**: UniTask
 
 ---
 
@@ -51,8 +52,13 @@ The project is organized for maintainability and scalability:
   - **Managers**: WaveManager, GameManager, and related managers.  
   - **Systems**: Event System, Sound System, Input System, and other standalone systems.
   - **Utilities**: Reusable generic scripts. 
-- **Prefabs**  
-- **Assets**  
+- **Resources**
+  - **Sounds**: Sound & music files
+  - **Sprites**: 2D visuals
+  - **Prefabs**: Prefabs & modular units
+  - **Scriptable Objects**: Config files
+- **Scenes**
+- **Plugins**
 
 ---
 
@@ -78,7 +84,7 @@ Contributions are welcome! Follow these steps:
 * Submit a pull request.
 
 ### LICENSE
-This project is licensed under the MIT License.
+This project is licensed under the [MIT License](LICENSE).
 
 ### CONTACT
 For questions or suggestions, reach out at: krtalp@gmail.com
