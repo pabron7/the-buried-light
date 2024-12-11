@@ -1,25 +1,39 @@
 using UnityEngine;
 using Zenject;
+using Cysharp.Threading.Tasks;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private PlayerControllerConfig controllerConfig; 
+    [SerializeField] private PlayerControllerConfig controllerConfig;
 
     private Rigidbody2D _rigidbody;
     private InputManager _inputManager;
 
+    /// <summary>
+    /// Injects the InputManager dependency into the PlayerMovement class.
+    /// </summary>
     [Inject]
     public void Construct(InputManager inputManager)
     {
         _inputManager = inputManager;
     }
 
-    private void Awake()
+    /// <summary>
+    /// Initializes the Rigidbody2D component and waits asynchronously until the InputManager is ready.
+    /// </summary>
+    private async void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
+
+        // Wait for InputManager to be ready asynchronously
+        await UniTask.WaitUntil(() => _inputManager != null);
+        Debug.Log("InputManager is ready.");
     }
 
+    /// <summary>
+    /// Performs all physics-based updates for the player, including rotation, movement, drag, and speed limiting.
+    /// </summary>
     private void FixedUpdate()
     {
         HandleRotation();
@@ -28,12 +42,18 @@ public class PlayerMovement : MonoBehaviour
         LimitSpeed();
     }
 
+    /// <summary>
+    /// Applies rotation to the player based on input and configured rotation speed.
+    /// </summary>
     private void HandleRotation()
     {
         float rotationInput = _inputManager.RotationInput;
         _rigidbody.rotation -= rotationInput * controllerConfig.rotationSpeed * Time.fixedDeltaTime;
     }
 
+    /// <summary>
+    /// Applies a forward force to the player’s Rigidbody when acceleration input is detected.
+    /// </summary>
     private void HandleMovement()
     {
         if (_inputManager.IsAccelerating)
@@ -43,6 +63,9 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Applies a drag force to gradually slow down the player’s movement when in motion.
+    /// </summary>
     private void ApplyDrag()
     {
         if (_rigidbody.velocity.sqrMagnitude > 0)
@@ -51,6 +74,9 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Limits the player’s velocity to a maximum speed defined in the configuration.
+    /// </summary>
     private void LimitSpeed()
     {
         if (_rigidbody.velocity.sqrMagnitude > controllerConfig.maxSpeed * controllerConfig.maxSpeed)

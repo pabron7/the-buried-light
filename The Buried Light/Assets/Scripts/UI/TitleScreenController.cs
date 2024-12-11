@@ -1,7 +1,6 @@
 using UnityEngine;
-using UniRx;
+using Cysharp.Threading.Tasks;
 using Zenject;
-using System.Collections;
 
 public class TitleScreenController : MonoBehaviour
 {
@@ -14,22 +13,17 @@ public class TitleScreenController : MonoBehaviour
 
     private bool isWaitingForInput = false;
 
-    private void Awake()
+    private async void Awake()
     {
         titleScreen.SetActive(true);
         pressText.SetActive(false);
 
-        // Wait for GameManager initialization before proceeding
-        Observable.EveryUpdate()
-            .Where(_ => _gameManager != null)
-            .First()
-            .Subscribe(_ =>
-            {
-                Observable.Timer(System.TimeSpan.FromSeconds(1))
-                    .Subscribe(__ => ShowPressText())
-                    .AddTo(this);
-            })
-            .AddTo(this);
+        // Wait for GameManager initialization
+        await UniTask.WaitUntil(() => _gameManager != null);
+
+        // Delay for 1 second and show the press text
+        await UniTask.Delay(1000);
+        ShowPressText();
     }
 
     /// <summary>
@@ -45,21 +39,20 @@ public class TitleScreenController : MonoBehaviour
     {
         if (isWaitingForInput && Input.anyKeyDown)
         {
-            StartCoroutine(HideTitleScreenAndContinue());
+            // Call async method instead of starting a coroutine
+            HideTitleScreenAndContinue().Forget();
         }
     }
 
     /// <summary>
     /// Hide the title screen. Set the GameManager to MainMenu state
     /// </summary>
-    /// <returns></returns>
-    private IEnumerator HideTitleScreenAndContinue()
+    private async UniTaskVoid HideTitleScreenAndContinue()
     {
         isWaitingForInput = false;
 
-
         // A small delay representing an animation or effect
-        yield return new WaitForSeconds(0.5f);
+        await UniTask.Delay(500);
 
         pressText.SetActive(false);
         titleScreen.SetActive(false);

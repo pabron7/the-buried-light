@@ -1,12 +1,13 @@
 using UnityEngine;
 using Zenject;
+using Cysharp.Threading.Tasks;
 
 public class PlayerShooting : MonoBehaviour
 {
     [SerializeField] private Transform firePoint;
     [SerializeField] private float shootCooldown = 0.2f;
 
-    private float _lastShotTime;
+    private bool _canShoot = true;
 
     // Dependencies
     private InputManager _inputManager;
@@ -23,20 +24,25 @@ public class PlayerShooting : MonoBehaviour
 
     private void Update()
     {
-        if (_inputManager.IsShooting && Time.time >= _lastShotTime + shootCooldown)
+        if (_inputManager.IsShooting && _canShoot)
         {
-            Shoot();
-            _lastShotTime = Time.time;
+            Shoot().Forget();
         }
     }
 
-    private void Shoot()
+    /// <summary>
+    /// Handles the shooting logic asynchronously, including cooldown management.
+    /// </summary>
+    private async UniTaskVoid Shoot()
     {
+        _canShoot = false;
+
         GameObject projectile = _projectilePoolManager.GetProjectile();
 
         if (projectile == null)
         {
             Debug.LogWarning("Failed to retrieve projectile from the pool.");
+            _canShoot = true;
             return;
         }
 
@@ -47,5 +53,9 @@ public class PlayerShooting : MonoBehaviour
 
         // Notify other systems about the player shooting
         _playerEvents.NotifyPlayerShot();
+
+        // Wait for the cooldown period before allowing the next shot
+        await UniTask.Delay((int)(shootCooldown * 1000));
+        _canShoot = true;
     }
 }
