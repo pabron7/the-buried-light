@@ -1,21 +1,22 @@
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 public class CompletedLevelState : LevelStateBase
 {
-    public override void OnStateEnter(LevelManager levelManager)
+    public override async UniTask OnStateEnterAsync(LevelManager levelManager)
     {
-        base.OnStateEnter(levelManager);
+        await base.OnStateEnterAsync(levelManager);
         Debug.Log("Level completed. Transitioning to next phase or main menu.");
 
         // Handle completion logic
         if (LevelManager.HasMorePhases())
         {
-            LevelManager.SetState<PreparingLevelState>();
+            await LevelManager.SetStateAsync<PreparingLevelState>();
         }
         else
         {
-            // If all phases are complete, transition to the main menu or game over state
-            LevelManager.SetState<IdleLevelState>();
+            // If all phases are complete, transition to the main menu or idle state
+            await LevelManager.SetStateAsync<IdleLevelState>();
         }
     }
 }
