@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
+using Cysharp.Threading.Tasks;
 
 public class EnemyPoolManager : MonoBehaviour
 {
@@ -20,27 +21,37 @@ public class EnemyPoolManager : MonoBehaviour
                 _enemyPrefabs[mapping.enemyType] = mapping.prefab;
                 _enemyPools[mapping.enemyType] = new Queue<GameObject>();
             }
-            else
-            {
-                Debug.LogWarning($"Duplicate mapping for {mapping.enemyType}. Skipping...");
-            }
         }
 
         Debug.Log("EnemyPoolManager initialized with mappings.");
     }
 
-    public GameObject GetEnemy(EnemyTypes type)
+    public async UniTask PreloadEnemiesAsync(EnemyTypes type, int count)
+    {
+        if (!_enemyPrefabs.ContainsKey(type)) return;
+
+        for (int i = 0; i < count; i++)
+        {
+            var enemy = CreateEnemy(type);
+            if (enemy != null)
+            {
+                ReturnEnemy(type, enemy);
+                await UniTask.Yield(); // Yield to prevent blocking
+            }
+        }
+    }
+
+    public async UniTask<GameObject> GetEnemyAsync(EnemyTypes type)
     {
         if (_enemyPools.TryGetValue(type, out var pool) && pool.Count > 0)
         {
             var enemy = pool.Dequeue();
             enemy.SetActive(true);
-            Debug.Log($"Enemy of type {type} retrieved from pool.");
             return enemy;
         }
 
-        Debug.LogWarning($"Pool for {type} is empty. Creating new enemy.");
-        return CreateEnemy(type);
+        Debug.LogWarning($"Pool for {type} is empty. Creating new enemy on the main thread.");
+        return CreateEnemy(type); 
     }
 
     public void ReturnEnemy(EnemyTypes type, GameObject enemy)
@@ -54,7 +65,6 @@ public class EnemyPoolManager : MonoBehaviour
 
         enemy.SetActive(false);
         _enemyPools[type].Enqueue(enemy);
-        Debug.Log($"Enemy of type {type} returned to pool.");
     }
 
     private GameObject CreateEnemy(EnemyTypes type)
@@ -65,9 +75,11 @@ public class EnemyPoolManager : MonoBehaviour
             return null;
         }
 
+        // makes sure instantiation happens on the main thread
         var enemy = _container.InstantiatePrefab(prefab);
         enemy.GetComponent<EnemyBase>()?.Initialize(type, 0, 0, Vector3.zero); // Default initialization
         Debug.Log($"New enemy of type {type} created.");
         return enemy;
     }
+
 }

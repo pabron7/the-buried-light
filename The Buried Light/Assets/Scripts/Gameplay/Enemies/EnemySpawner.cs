@@ -1,5 +1,6 @@
 using UnityEngine;
 using Zenject;
+using Cysharp.Threading.Tasks;
 
 public class EnemySpawner : MonoBehaviour
 {
@@ -15,13 +16,22 @@ public class EnemySpawner : MonoBehaviour
         _gameFrame = gameFrame ?? throw new System.ArgumentNullException(nameof(gameFrame));
     }
 
-    public GameObject SpawnEnemy(WaveConfig waveConfig)
+    public async UniTask SpawnWave(WaveConfig waveConfig)
+    {
+        for (int i = 0; i < waveConfig.enemyCount; i++)
+        {
+            await SpawnEnemyAsync(waveConfig);
+            await UniTask.Delay((int)(waveConfig.spawnInterval * 1000)); // Delay between spawns
+        }
+    }
+
+    public async UniTask SpawnEnemyAsync(WaveConfig waveConfig)
     {
         Vector2 spawnPosition = _gameFrame.GetRandomPositionOutsideFrame();
         Vector2 directionTarget = _gameFrame.GetRandomPositionInsideFrame();
         Vector3 direction = directionTarget - (Vector2)spawnPosition;
 
-        GameObject enemyObject = _enemyPoolManager.GetEnemy(waveConfig.enemyType);
+        GameObject enemyObject = await _enemyPoolManager.GetEnemyAsync(waveConfig.enemyType);
 
         if (enemyObject != null)
         {
@@ -29,8 +39,6 @@ public class EnemySpawner : MonoBehaviour
             if (enemy != null)
             {
                 enemy.transform.position = spawnPosition;
-
-                // Properly initialize enemy with wave-specific stats
                 enemy.Initialize(waveConfig.enemyType, waveConfig.speed, waveConfig.health, direction);
             }
             else
@@ -42,8 +50,6 @@ public class EnemySpawner : MonoBehaviour
         {
             Debug.LogError($"Failed to create enemy of type {waveConfig.enemyType}");
         }
-
-        return enemyObject;
     }
 
     public void ReturnEnemy(EnemyTypes type, GameObject enemy)

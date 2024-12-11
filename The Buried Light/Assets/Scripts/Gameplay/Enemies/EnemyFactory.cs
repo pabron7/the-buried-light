@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
-using System;
+using Cysharp.Threading.Tasks;
 
 public class EnemyFactory
 {
@@ -11,26 +11,23 @@ public class EnemyFactory
     [Inject]
     public EnemyFactory(EnemyPrefabMapping[] mappings, DiContainer container)
     {
-        _container = container ?? throw new ArgumentNullException(nameof(container));
+        _container = container ?? throw new System.ArgumentNullException(nameof(container));
         _enemyPrefabMap = new Dictionary<EnemyTypes, GameObject>();
+
         foreach (var mapping in mappings)
         {
             if (!_enemyPrefabMap.ContainsKey(mapping.enemyType))
             {
                 _enemyPrefabMap[mapping.enemyType] = mapping.prefab;
             }
-            else
-            {
-                Debug.LogWarning($"Duplicate mapping for {mapping.enemyType}. Skipping...");
-            }
         }
     }
 
-    public GameObject Create(EnemyTypes type)
+    public async UniTask<GameObject> CreateAsync(EnemyTypes type)
     {
         if (_enemyPrefabMap.TryGetValue(type, out var prefab))
         {
-            return _container.InstantiatePrefab(prefab); 
+            return await UniTask.Run(() => _container.InstantiatePrefab(prefab));
         }
 
         Debug.LogError($"No prefab mapped for enemy type: {type}");

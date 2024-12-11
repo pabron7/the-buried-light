@@ -1,6 +1,6 @@
-using System.Collections;
 using UnityEngine;
 using Zenject;
+using Cysharp.Threading.Tasks;
 
 public class WaveManager : MonoBehaviour
 {
@@ -58,7 +58,7 @@ public class WaveManager : MonoBehaviour
 
             case WaveState.WaveStart:
                 Debug.Log("WaveManager: Starting wave.");
-                StartCoroutine(SpawnWave());
+                SpawnWaveAsync().Forget(); // Correct usage of Forget() for fire-and-forget
                 break;
 
             case WaveState.WaveComplete:
@@ -69,23 +69,15 @@ public class WaveManager : MonoBehaviour
         }
     }
 
-    private IEnumerator SpawnWave()
+    private async UniTaskVoid SpawnWaveAsync()
     {
+        SetState(WaveState.Spawning);
+
         while (_spawnedEnemies < _waveConfig.enemyCount)
         {
             for (int i = 0; i < Mathf.Min(_waveConfig.groupSpawn ? _waveConfig.groupSize : 1, _remainingEnemies); i++)
             {
-                var enemyObject = _enemySpawner.SpawnEnemy(_waveConfig);
-                if (enemyObject.TryGetComponent<EnemyBase>(out var enemy))
-                {
-                    enemy.ConfigureOnDeathSpawn(
-                        _waveConfig.spawnType,
-                        _waveConfig.spawnCount,
-                        _waveConfig.spawnHealth,
-                        _waveConfig.spawnSpeed
-                    );
-                }
-
+                await _enemySpawner.SpawnEnemyAsync(_waveConfig); // Async spawning
                 _spawnedEnemies++;
                 _remainingEnemies--;
 
@@ -95,7 +87,7 @@ public class WaveManager : MonoBehaviour
 
             if (_remainingEnemies > 0)
             {
-                yield return new WaitForSeconds(_waveConfig.spawnInterval);
+                await UniTask.Delay((int)(_waveConfig.spawnInterval * 1000)); // Delay between groups
             }
         }
 

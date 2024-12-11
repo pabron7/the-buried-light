@@ -1,5 +1,6 @@
 using UnityEngine;
 using Zenject;
+using Cysharp.Threading.Tasks;
 using System;
 
 public abstract class EnemyBase : MonoBehaviour, IKillable
@@ -106,16 +107,16 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
 
         if (_isSpawner)
         {
-            SpawnOnDeath();
+            SpawnOnDeathAsync().Forget();
         }
 
         Deactivate();
     }
 
     /// <summary>
-    /// Spawns additional enemies on death.
+    /// Spawns additional enemies on death asynchronously.
     /// </summary>
-    protected virtual void SpawnOnDeath()
+    protected virtual async UniTaskVoid SpawnOnDeathAsync()
     {
         if (_isSpawner && _spawnCount > 0)
         {
@@ -131,7 +132,8 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
                     groupSpawn = false
                 };
 
-                _enemySpawner.SpawnEnemy(spawnConfig);
+                await _enemySpawner.SpawnEnemyAsync(spawnConfig);
+                await UniTask.Yield(); // Yield to avoid blocking the main thread
             }
         }
     }
