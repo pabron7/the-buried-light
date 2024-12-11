@@ -12,6 +12,7 @@ public class GameInstaller : MonoInstaller
 
     [SerializeField] private SoundManager soundManagerPrefab;
     [SerializeField] private SoundRegistry soundRegistry;
+    [SerializeField] private VFXRegistry vFXRegistry;
 
     public override void InstallBindings()
     {
@@ -32,6 +33,9 @@ public class GameInstaller : MonoInstaller
         // Sound Systems
         Container.Bind<SoundRegistry>().FromInstance(soundRegistry).AsSingle();
         Container.Bind<SoundManager>().FromComponentInHierarchy().AsSingle();
+
+        Container.Bind<VFXManager>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<VFXRegistry>().FromInstance(vFXRegistry).AsSingle();
 
         // WaveManager Factory
         Container.BindFactory<WaveManager, WaveManager.Factory>()

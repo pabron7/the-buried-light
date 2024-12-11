@@ -5,9 +5,10 @@ using Zenject;
 public class ProjectilePoolManager : MonoBehaviour
 {
     [SerializeField] private GameObject projectilePrefab;
-    [SerializeField] private int poolSize = 20;
+    [SerializeField] private int initialPoolSize = 5;
 
     private Queue<GameObject> projectilePool;
+    private int currentPoolSize;
 
     [Inject]
     private DiContainer _container;
@@ -20,13 +21,20 @@ public class ProjectilePoolManager : MonoBehaviour
     private void InitializePool()
     {
         projectilePool = new Queue<GameObject>();
+        currentPoolSize = initialPoolSize;
 
-        for (int i = 0; i < poolSize; i++)
+        for (int i = 0; i < initialPoolSize; i++)
         {
-            GameObject projectile = CreateProjectile();
-            projectile.SetActive(false);
-            projectilePool.Enqueue(projectile);
+            AddProjectileToPool();
         }
+    }
+
+    private void AddProjectileToPool()
+    {
+        GameObject projectile = CreateProjectile();
+        projectile.SetActive(false);
+        projectilePool.Enqueue(projectile);
+        currentPoolSize++;
     }
 
     private GameObject CreateProjectile()
@@ -45,9 +53,9 @@ public class ProjectilePoolManager : MonoBehaviour
             return projectile;
         }
 
-        Debug.LogWarning("Projectile pool is empty. Consider increasing pool size.");
-        GameObject newProjectile = CreateProjectile(); 
-        return newProjectile;
+        Debug.LogWarning("Projectile pool is empty. Dynamically increasing pool size.");
+        AddProjectileToPool();
+        return GetProjectile();
     }
 
     public void ReturnProjectile(GameObject projectile)

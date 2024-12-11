@@ -10,6 +10,8 @@ public class Projectile : MonoBehaviour, IProjectile
     private ProjectilePoolManager _poolManager;
     private EnemyEvents _enemyEvents;
 
+    private float _spawnTime;
+
     [Inject]
     public void Construct(EnemyEvents enemyEvents)
     {
@@ -26,6 +28,7 @@ public class Projectile : MonoBehaviour, IProjectile
     private void Update()
     {
         Move();
+        CheckLifeTime();
     }
 
     private void Move()
@@ -35,12 +38,7 @@ public class Projectile : MonoBehaviour, IProjectile
 
     private void OnEnable()
     {
-        Invoke(nameof(ReturnToPool), lifeTime);
-    }
-
-    private void OnDisable()
-    {
-        CancelInvoke();
+        _spawnTime = Time.time; 
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -59,6 +57,14 @@ public class Projectile : MonoBehaviour, IProjectile
         else
         {
             Debug.LogWarning($"Projectile collided with {collision.name}, but no IKillable component was found.");
+        }
+    }
+
+    private void CheckLifeTime()
+    {
+        if (Time.time >= _spawnTime + lifeTime)
+        {
+            ReturnToPool();
         }
     }
 

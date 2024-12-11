@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyType: 4
   enemyCount: 12
-  speed: 2
+  speed: 1
   health: 6
   spawnInterval: 2
   groupSpawn: 1
