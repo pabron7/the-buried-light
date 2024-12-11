@@ -48,6 +48,11 @@ public class GameInstaller : MonoInstaller
         Container.Bind<EnemyPoolManager>().FromComponentInHierarchy().AsSingle();
         Container.Bind<EnemySpawner>().FromComponentInHierarchy().AsSingle();
 
+        // Specific event publishers
+        Container.Bind<EnemyEvents>().AsSingle();
+        Container.Bind<PlayerEvents>().AsSingle();
+        Container.Bind<GameEvents>().AsSingle();
+
         // Player Systems
         Container.Bind<IHealth>().To<PlayerHealth>().FromInstance(FindObjectOfType<PlayerHealth>()).AsSingle();
 

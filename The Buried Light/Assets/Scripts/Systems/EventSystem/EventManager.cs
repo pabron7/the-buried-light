@@ -1,19 +1,15 @@
-using UniRx;
-using UnityEngine;
+using Zenject;
 
 public class EventManager
 {
-    public Subject<ICommand> OnCommandExecuted { get; } = new Subject<ICommand>();
+    public EnemyEvents EnemyEvents { get; }
+    public PlayerEvents PlayerEvents { get; }
+    public GameEvents GameEvents { get; }
 
-    public void ExecuteCommand(ICommand command)
+    public EventManager(EnemyEvents enemyEvents, PlayerEvents playerEvents, GameEvents gameEvents)
     {
-        if (command == null)
-        {
-            Debug.LogError("Attempted to execute a null command.");
-            return;
-        }
-
-        command.Execute();
-        OnCommandExecuted.OnNext(command);
+        EnemyEvents = enemyEvents;
+        PlayerEvents = playerEvents;
+        GameEvents = gameEvents;
     }
 }

@@ -6,6 +6,4 @@ public interface IKillable
     void TakeDamage(int damage);
     void OnDeath();
 
-    // New event for enemy death
-    event Action<IKillable> EnemyDeath;
 }

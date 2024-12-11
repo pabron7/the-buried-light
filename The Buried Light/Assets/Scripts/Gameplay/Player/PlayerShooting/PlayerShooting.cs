@@ -8,18 +8,19 @@ public class PlayerShooting : MonoBehaviour
 
     private float _lastShotTime;
 
-    // dependencies
+    // Dependencies
     private InputManager _inputManager;
     private ProjectilePoolManager _projectilePoolManager;
-    private EventManager _eventManager;
+    private PlayerEvents _playerEvents;
 
     [Inject]
-    public void Construct(InputManager inputManager, ProjectilePoolManager projectilePoolManager, EventManager eventManager)
+    public void Construct(InputManager inputManager, ProjectilePoolManager projectilePoolManager, PlayerEvents playerEvents)
     {
         _inputManager = inputManager;
         _projectilePoolManager = projectilePoolManager;
-        _eventManager = eventManager;
+        _playerEvents = playerEvents;
     }
+
     private void Update()
     {
         if (_inputManager.IsShooting && Time.time >= _lastShotTime + shootCooldown)
@@ -39,7 +40,12 @@ public class PlayerShooting : MonoBehaviour
             return;
         }
 
-        var command = new PlayerShootCommand(firePoint, projectile);
-        _eventManager.ExecuteCommand(command);
+        // Set the projectile's position and rotation
+        projectile.transform.position = firePoint.position;
+        projectile.transform.rotation = firePoint.rotation;
+        projectile.SetActive(true);
+
+        // Notify other systems about the player shooting
+        _playerEvents.NotifyPlayerShot();
     }
 }

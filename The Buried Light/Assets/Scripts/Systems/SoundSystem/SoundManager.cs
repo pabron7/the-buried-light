@@ -7,16 +7,23 @@ public class SoundManager : MonoBehaviour
     private SoundRegistry _soundRegistry;
     private AudioSource[] _audioSources;
     private const int AudioSourceCount = 4;
-    private readonly SoundEffectMapper _soundEffectMapper = new();
 
     [Inject]
-    public void Construct(SoundRegistry soundRegistry, EventManager eventManager)
+    public void Construct(SoundRegistry soundRegistry, EnemyEvents enemyEvents, PlayerEvents playerEvents)
     {
         _soundRegistry = soundRegistry;
 
-        // Subscribe to EventManager's OnCommandExecuted
-        eventManager.OnCommandExecuted
-            .Subscribe(HandleCommand)
+  
+        enemyEvents.OnEnemyKilled
+            .Subscribe(position => PlaySound("enemy_killed"))
+            .AddTo(this);
+
+        enemyEvents.OnEnemyDamaged
+            .Subscribe(damage => PlaySound("enemy_damage"))
+            .AddTo(this);
+
+        playerEvents.OnPlayerShot
+            .Subscribe(_ => PlaySound("shoot"))
             .AddTo(this);
     }
 
@@ -39,18 +46,6 @@ public class SoundManager : MonoBehaviour
         }
 
         Debug.Log($"Created {AudioSourceCount} AudioSources.");
-    }
-
-    /// <summary>
-    /// Handles commands by mapping them to sound effects and playing them.
-    /// </summary>
-    private void HandleCommand(ICommand command)
-    {
-        var soundId = _soundEffectMapper.GetSoundIdForCommand(command);
-        if (soundId != null)
-        {
-            PlaySound(soundId);
-        }
     }
 
     /// <summary>

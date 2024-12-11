@@ -15,20 +15,17 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
     private int _spawnHealth;
     private float _spawnSpeed;
 
-    // Event for enemy death
-    public event Action<IKillable> EnemyDeath;
-
     // Dependencies
     protected GameFrame _gameFrame;
     protected EnemySpawner _enemySpawner;
-    private EventManager _eventManager;
+    private EnemyEvents _enemyEvents;
 
     [Inject]
-    public void Construct(GameFrame gameFrame, EnemySpawner enemySpawner, EventManager eventManager)
+    public void Construct(GameFrame gameFrame, EnemySpawner enemySpawner, EnemyEvents enemyEvents)
     {
         _gameFrame = gameFrame ?? throw new ArgumentNullException(nameof(gameFrame));
         _enemySpawner = enemySpawner ?? throw new ArgumentNullException(nameof(enemySpawner));
-        _eventManager = eventManager ?? throw new ArgumentNullException(nameof(eventManager));
+        _enemyEvents = enemyEvents ?? throw new ArgumentNullException(nameof(enemyEvents));
 
         Debug.Log($"Dependencies injected for {gameObject.name}");
     }
@@ -38,12 +35,6 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
     /// </summary>
     public void Initialize(EnemyTypes type, float speed, int health, Vector3 direction)
     {
-        if (_eventManager == null)
-        {
-            Debug.LogError("Initialize called before dependencies were injected!");
-            return;
-        }
-
         Type = type;
         Speed = speed;
         Health = health;
@@ -62,6 +53,7 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
         _spawnCount = spawnCount;
         _spawnHealth = spawnHealth;
         _spawnSpeed = spawnSpeed;
+
         Debug.Log($"Enemy {Type} configured to spawn {_spawnCount} {_spawnType} on death.");
     }
 
@@ -93,22 +85,12 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
         Health -= damage;
         Debug.Log($"Enemy {Type} took {damage} damage. Remaining health: {Health}");
 
+        // Notify damage event
+        _enemyEvents.NotifyEnemyDamaged(damage);
+
         if (Health <= 0)
         {
             OnDeath();
-        }
-    }
-
-    /// <summary>
-    /// Turns enemy off when gone out of game frame.
-    /// </summary>
-    private void CheckOutOfBounds()
-    {
-        if (transform.position.x < _gameFrame.DeletionMinBounds.x || transform.position.x > _gameFrame.DeletionMaxBounds.x ||
-            transform.position.y < _gameFrame.DeletionMinBounds.y || transform.position.y > _gameFrame.DeletionMaxBounds.y)
-        {
-            Debug.Log($"Enemy {Type} went out of deletion boundaries and is being deactivated.");
-            Deactivate();
         }
     }
 
@@ -119,17 +101,8 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
     {
         Debug.Log($"Enemy {Type} has died.");
 
-        // Trigger the EnemyDeath event
-        EnemyDeath?.Invoke(this);
-
-        if (_eventManager != null)
-        {
-            _eventManager.ExecuteCommand(new EnemyKilledCommand(this));
-        }
-        else
-        {
-            Debug.LogWarning("EventManager is null. Skipping EnemyKilledCommand.");
-        }
+        // Notify death event
+        _enemyEvents.NotifyEnemyKilled(transform.position);
 
         if (_isSpawner)
         {
@@ -164,6 +137,19 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
     }
 
     /// <summary>
+    /// Turns enemy off when gone out of game frame.
+    /// </summary>
+    private void CheckOutOfBounds()
+    {
+        if (transform.position.x < _gameFrame.DeletionMinBounds.x || transform.position.x > _gameFrame.DeletionMaxBounds.x ||
+            transform.position.y < _gameFrame.DeletionMinBounds.y || transform.position.y > _gameFrame.DeletionMaxBounds.y)
+        {
+            Debug.Log($"Enemy {Type} went out of deletion boundaries and is being deactivated.");
+            Deactivate();
+        }
+    }
+
+    /// <summary>
     /// Deactivates the enemy (for pooling).
     /// </summary>
     protected virtual void Deactivate()
@@ -177,15 +163,9 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
     /// </summary>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (_eventManager == null)
-        {
-            Debug.LogWarning("EventManager is null. Skipping command execution.");
-            return;
-        }
-
         if (collision.CompareTag("Player"))
         {
-            _eventManager.ExecuteCommand(new PlayerContactCommand(this));
+            _enemyEvents.NotifyEnemyKilled(transform.position);
             OnDeath();
         }
         else if (collision.CompareTag("Projectile"))
@@ -193,7 +173,6 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
             if (collision.TryGetComponent<IProjectile>(out var projectile))
             {
                 TakeDamage(projectile.Damage);
-                _eventManager.ExecuteCommand(new EnemyDamageCommand(this, projectile.Damage));
                 projectile.OnHit();
             }
         }

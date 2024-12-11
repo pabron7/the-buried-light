@@ -8,12 +8,12 @@ public class Projectile : MonoBehaviour, IProjectile
     [SerializeField] private int damage = 1;
 
     private ProjectilePoolManager _poolManager;
-    private EventManager _eventManager;
+    private EnemyEvents _enemyEvents;
 
     [Inject]
-    public void Construct(EventManager eventManager)
+    public void Construct(EnemyEvents enemyEvents)
     {
-        _eventManager = eventManager;
+        _enemyEvents = enemyEvents;
     }
 
     public int Damage => damage;
@@ -50,8 +50,8 @@ public class Projectile : MonoBehaviour, IProjectile
             // Directly apply damage
             killable.TakeDamage(damage);
 
-            // Invoke damage command for additional logic
-            _eventManager.ExecuteCommand(new EnemyDamageCommand(killable, damage));
+            // Notify the event system about the damage
+            _enemyEvents.NotifyEnemyDamaged(damage);
 
             // Notify projectile of hit
             OnHit();
