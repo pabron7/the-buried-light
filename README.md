@@ -1,6 +1,6 @@
 # **The Buried Light**
 
-An **asteroids-like**, narrative-driven arcade WebGL game.
+An **asteroids-like**, narrative-driven cross-platform Mobile and WebGL game.
 
 ---
 
@@ -11,6 +11,14 @@ An **asteroids-like**, narrative-driven arcade WebGL game.
 - **Dependency Injection**: Zenject  
 - **Reactive Programming**: UniRx
 - **Asynchronous Programming**: UniTask
+- **Live Ops Integration**: Firebase
+
+---
+
+## **Project Status**
+
+Current Stage: **Active Development**
+The game is currently focused on developing the core game systems and implementing LiveOps features using Firebase for dynamic content updates, real-time events, and enhanced player engagement.
 
 ---
 
@@ -28,10 +36,26 @@ An **asteroids-like**, narrative-driven arcade WebGL game.
 
 ---
 
-## **Design Goals**
+## **LiveOps System Plan**
 
-- **Scalable Design**: Ensuring mechanics and systems are extensible for future updates or new gameplay features.  
-- **LiveOps Integration**: Architected to support dynamic content updates and live events.
+To support dynamic, real-time gameplay experiences, Firebase will be integrated as follows:
+
+1. **Real-Time Database**: Manage event configurations, live leaderboards, and dynamic game states.
+2. **Cloud Functions**: Automate scheduled events, reward distribution, and remote updates.
+3. **Firebase Remote Config**: Enable on-the-fly adjustments to difficulty, rewards, and content without requiring app updates.
+4. **Cloud Messaging**: Notify players of live events, updates, and limited-time offers.
+5. **Analytics**: Monitor player behavior to optimize engagement and retention.
+
+---
+
+## **Design Guide/Goals**
+
+- **Clean Code Principles**: Ensuring maintainable and readable code with a focus on modularity and scalability.
+- **Zenject for Dependency Injection**: Promoting loose coupling and testable architecture, enabling easy integration of new systems.
+- **Reactive Programming with UniRx**: Efficiently managing asynchronous event flows and complex game state interactions.
+- **Optimized Asynchronous Programming**: Utilizing UniTask to handle background tasks, ensuring smooth performance during asset loading and data fetching.
+- **Performance Optimization**: Utilizing Unity Profiler and best practices to reduce memory overhead and ensure stable FPS across platforms.
+- **Dynamic Content Management**: Architected to support seamless LiveOps updates, including dynamic asset loading via Addressables.
 
 ---
 
@@ -39,7 +63,8 @@ An **asteroids-like**, narrative-driven arcade WebGL game.
 
 - **Modular Architecture**: Built using Zenject for dependency injection, promoting clean code and scalability.  
 - **Reactive Programming**: UniRx is used for handling events and system communications, allowing for robust and maintainable code.  
-- **Physics-based Movement**: Player movement uses Unity’s physics system for realistic momentum and drag.  
+- **Physics-based Movement**: Player movement uses Unity’s physics system for realistic momentum and drag.
+- 
 
 ---
 
