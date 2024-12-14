@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class LevelStateBase : MonoBehaviour
+public abstract class LevelStateBase
 {
     protected LevelManager LevelManager;
 
@@ -19,3 +19,4 @@ public abstract class LevelStateBase : MonoBehaviour
     {
     }
 }
+

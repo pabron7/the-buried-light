@@ -5,17 +5,11 @@ public class CompletedLevelState : LevelStateBase
     public override void OnStateEnter(LevelManager levelManager)
     {
         base.OnStateEnter(levelManager);
-        Debug.Log("Level completed. Transitioning to next phase or main menu.");
+        Debug.Log("Completed state entered. Transitioning to Idle or Preparing.");
 
-        // Handle completion logic
-        if (LevelManager.HasMorePhases())
+        if (levelManager.CurrentState is InProgressLevelState)
         {
-            LevelManager.SetState<PreparingLevelState>();
-        }
-        else
-        {
-            // If all phases are complete, transition to the main menu or game over state
-            LevelManager.SetState<IdleLevelState>();
+            levelManager.SetState(new IdleLevelState());
         }
     }
 }

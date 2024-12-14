@@ -406,7 +406,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 910e5c98bc46b4bd09d5a3135c238591, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentLevelConfig: {fileID: 11400000, guid: b9da0ccbab94c43ab8d8f7599a8bd121, type: 2}
+  _gameManager: {fileID: 0}
 --- !u!4 &219471131
 Transform:
   m_ObjectHideFlags: 0
@@ -2578,7 +2578,7 @@ GameObject:
   - component: {fileID: 2106928586}
   - component: {fileID: 2106928588}
   m_Layer: 0
-  m_Name: Game Installer
+  m_Name: Scene Context
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2659,6 +2659,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c332d899e727a429294af185bb7da780, type: 2}
   projectilePoolManagerPrefab: {fileID: 4244073386056096613, guid: 41e7f4077b5dc45088388353e484313b, type: 3}
   waveManagerPrefab: {fileID: 1750162779}
+  levelConfig: {fileID: 11400000, guid: 3d32b45cde4d84f69b889d3ae5d8c92a, type: 2}
   soundManagerPrefab: {fileID: 1366667000}
   soundRegistry: {fileID: 740059437}
   vFXRegistry: {fileID: 1845943000}
