@@ -1,14 +1,12 @@
 using UnityEngine;
-using Cysharp.Threading.Tasks;
 
 public class InProgressLevelState : LevelStateBase
 {
-    public override async UniTask OnStateEnterAsync(LevelManager levelManager)
+    public override void OnStateEnter(LevelManager levelManager)
     {
-        await base.OnStateEnterAsync(levelManager);
+        base.OnStateEnter(levelManager);
         Debug.Log("LevelManager: InProgress state.");
 
-        // Start the next phase asynchronously
-        await LevelManager.StartNextPhaseAsync();
+        LevelManager.StartNextPhase();
     }
 }
