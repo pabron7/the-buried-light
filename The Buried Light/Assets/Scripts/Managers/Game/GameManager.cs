@@ -1,20 +1,25 @@
 using UnityEngine;
 using UniRx;
 using Zenject;
+using Cysharp.Threading.Tasks;
 
 public class GameManager : MonoBehaviour
 {
     public ReactiveProperty<GameStateBase> CurrentState { get; private set; }
 
     [Inject] private readonly DiContainer _container;
+    [Inject] private GameEvents _gameEvents;
 
     private void Awake()
     {
         CurrentState = new ReactiveProperty<GameStateBase>(null);
     }
 
-    private void Start()
+    private async void Start()
     {
+
+        await UniTask.WaitUntil(() => _gameEvents != null);
+
         SetState<TitleScreenState>();
     }
 
@@ -28,7 +33,7 @@ public class GameManager : MonoBehaviour
 
         CurrentState.Value?.OnStateExit();
         CurrentState.Value = _container.Instantiate<T>();
-        CurrentState.Value.OnStateEnter(this);
+        CurrentState.Value.OnStateEnter(this, _gameEvents);
 
         Debug.Log($"Game state changed to: {typeof(T).Name}");
     }
@@ -38,3 +43,4 @@ public class GameManager : MonoBehaviour
         CurrentState.Value?.OnUpdate();
     }
 }
+

@@ -3,10 +3,12 @@ using UnityEngine;
 public abstract class GameStateBase
 {
     protected GameManager GameManager;
+    protected GameEvents GameEvents;
 
-    public virtual void OnStateEnter(GameManager gameManager)
+    public virtual void OnStateEnter(GameManager gameManager, GameEvents gameEvents)
     {
         GameManager = gameManager;
+        GameEvents = gameEvents;
         Debug.Log($"{GetType().Name} Entered.");
     }
 

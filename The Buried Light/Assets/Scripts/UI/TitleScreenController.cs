@@ -1,6 +1,7 @@
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 using Zenject;
+using UniRx;
 
 public class TitleScreenController : MonoBehaviour
 {
@@ -10,52 +11,57 @@ public class TitleScreenController : MonoBehaviour
     [SerializeField] private GameObject pressText;
 
     [Inject] private GameManager _gameManager;
+    [Inject] private GameEvents _gameEvents;
 
-    private bool isWaitingForInput = false;
+    private bool _isWaitingForInput;
 
-    private async void Awake()
+    private void Awake()
+    {
+        titleScreen.SetActive(false);
+        pressText.SetActive(false);
+
+        // Subscribe to the Title Screen event
+        _gameEvents.OnTitleScreen
+            .Subscribe(_ => ShowTitleScreen())
+            .AddTo(this);
+    }
+
+    private void ShowTitleScreen()
     {
         titleScreen.SetActive(true);
         pressText.SetActive(false);
+        _isWaitingForInput = false;
 
-        // Wait for GameManager initialization
-        await UniTask.WaitUntil(() => _gameManager != null);
-
-        // Delay for 1 second and show the press text
-        await UniTask.Delay(1000);
-        ShowPressText();
+        ShowPressText().Forget();
     }
 
-    /// <summary>
-    /// Display the text. Allow key read.
-    /// </summary>
-    private void ShowPressText()
+    private async UniTaskVoid ShowPressText()
     {
+        // Delay for a short duration before showing "Press Any Key"
+        await UniTask.Delay(1000);
         pressText.SetActive(true);
-        isWaitingForInput = true;
+        _isWaitingForInput = true;
     }
 
     private void Update()
     {
-        if (isWaitingForInput && Input.anyKeyDown)
+        if (_isWaitingForInput && Input.anyKeyDown)
         {
-            // Call async method instead of starting a coroutine
             HideTitleScreenAndContinue().Forget();
         }
     }
 
-    /// <summary>
-    /// Hide the title screen. Set the GameManager to MainMenu state
-    /// </summary>
     private async UniTaskVoid HideTitleScreenAndContinue()
     {
-        isWaitingForInput = false;
+        _isWaitingForInput = false;
 
-        // A small delay representing an animation or effect
+        // Perform some transition/animation delay
         await UniTask.Delay(500);
 
         pressText.SetActive(false);
         titleScreen.SetActive(false);
+
+        // Transition to the Main Menu state
         _gameManager.SetState<MainMenuState>();
     }
 }

@@ -63,7 +63,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<IHealth>().To<PlayerHealth>().FromInstance(FindObjectOfType<PlayerHealth>()).AsSingle();
 
         // UI Systems
-        Container.Bind<MenuManager>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<UIManager>().FromComponentInHierarchy().AsSingle();
 
     }
 }
