@@ -1,11 +1,10 @@
+using System.Collections;
 using UnityEngine;
 using UniRx;
 using Zenject;
 
 public class LevelManager : MonoBehaviour
 {
-    private int _currentPhaseIndex = 0;
-
     private IdleLevelState _idleState;
     private PreparingLevelState _preparingState;
     private InProgressLevelState _inProgressState;
@@ -16,6 +15,7 @@ public class LevelManager : MonoBehaviour
     [Inject] private WavePoolManager _wavePoolManager;
     [Inject] private PhaseManager _phaseManager;
     [Inject] private GameManager _gameManager;
+    [Inject] private GameEvents _gameEvents;
     [Inject] private DiContainer _container;
 
     public LevelStateBase CurrentState => _currentState;
@@ -33,15 +33,25 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
-        // Optionally react to GameManager state changes
+        // React to GameManager state changes
         _gameManager.CurrentState
             .Subscribe(OnGameManagerStateChanged)
             .AddTo(this);
 
-        _wavePoolManager.InitializePool(5); // Initialize WaveManager pool
+        // Initialize WaveManager pool
+        _wavePoolManager.InitializePool(5);
+
+        // Subscribe to game events for pausing, resuming, and canceling
+        _gameEvents.OnPaused.Subscribe(_ => HaltLevel()).AddTo(this);
+        _gameEvents.OnResumed.Subscribe(_ => ContinueLevel()).AddTo(this);
+        _gameEvents.OnGameOver.Subscribe(_ => CancelLevel()).AddTo(this);
+
         SetState(_idleState);
     }
 
+    /// <summary>
+    /// Sets the current level state.
+    /// </summary>
     public void SetState(LevelStateBase newState)
     {
         if (_currentState == newState)
@@ -57,48 +67,86 @@ public class LevelManager : MonoBehaviour
         Debug.Log($"LevelManager: Transitioned to {newState.GetType().Name} state.");
     }
 
+    /// <summary>
+    /// Starts the next phase in the level.
+    /// </summary>
     public void StartNextPhase()
     {
         if (!_phaseManager.HasMorePhases())
         {
-            Debug.Log("All phases completed.");
+            Debug.Log("LevelManager: All phases completed.");
+            _gameEvents.NotifyLevelEnd();
             SetState(_completedState);
             return;
         }
 
+        _gameEvents.NotifyPhaseStart(_phaseManager.CurrentPhaseIndex);
         StartCoroutine(_phaseManager.StartPhase());
     }
 
+    /// <summary>
+    /// Resets the WaveManager pool.
+    /// </summary>
     public void ResetWavePool()
     {
         _wavePoolManager.ResetPool();
     }
 
+    /// <summary>
+    /// Handles state changes from the GameManager.
+    /// </summary>
     private void OnGameManagerStateChanged(GameStateBase newState)
     {
         if (newState is PlayingState)
         {
             if (CurrentState is IdleLevelState || CurrentState is CompletedLevelState)
             {
+                _gameEvents.NotifyLevelStart();
                 SetState(_preparingState);
             }
         }
-        else if (newState is PausedState && CurrentState is InProgressLevelState)
-        {
-            SetState(_idleState);
-        }
-        else if (newState is MainMenuState)
-        {
-            SetState(_idleState);
-        }
         else if (newState is GameOverState)
         {
+            _gameEvents.NotifyLevelEnd();
             SetState(_completedState);
         }
     }
 
+    /// <summary>
+    /// Updates the current level state.
+    /// </summary>
     private void Update()
     {
         _currentState?.OnUpdate();
+    }
+
+    /// <summary>
+    /// Halts the current level progression and waves.
+    /// </summary>
+    private void HaltLevel()
+    {
+        Debug.Log("LevelManager: Halting level.");
+        _phaseManager.HaltPhase();
+    }
+
+    /// <summary>
+    /// Resumes the halted level progression and waves.
+    /// </summary>
+    private void ContinueLevel()
+    {
+        Debug.Log("LevelManager: Continuing level.");
+        _phaseManager.ContinuePhase();
+    }
+
+    /// <summary>
+    /// Cancels the current level and resets to idle state.
+    /// </summary>
+    private void CancelLevel()
+    {
+        Debug.Log("LevelManager: Cancelling level.");
+        _phaseManager.CancelPhase();
+        ResetWavePool();
+        _gameEvents.NotifyLevelEnd();
+        SetState(_idleState);
     }
 }

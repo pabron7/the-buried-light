@@ -56,7 +56,7 @@ public class TitleScreenController : MonoBehaviour
         _isWaitingForInput = false;
 
         // Perform some transition/animation delay
-        await UniTask.Delay(500);
+        // await UniTask.Delay(500);
 
         pressText.SetActive(false);
         titleScreen.SetActive(false);
