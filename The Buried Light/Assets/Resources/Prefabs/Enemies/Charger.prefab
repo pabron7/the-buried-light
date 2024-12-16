@@ -158,6 +158,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a18b3fbae0a3496a93ccc392e8bd408, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spriteRenderer: {fileID: 7920136650751873265}
+  flashColor: {r: 1, g: 0.7464502, b: 0, a: 1}
+  flashDuration: 0.1
 --- !u!70 &2320327000039635221
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

@@ -3,6 +3,9 @@ using Zenject;
 using Cysharp.Threading.Tasks;
 using System;
 
+using UnityEngine;
+using Cysharp.Threading.Tasks; // For async support
+
 public abstract class EnemyBase : MonoBehaviour, IKillable
 {
     public EnemyTypes Type { get; private set; }
@@ -21,6 +24,13 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
     protected EnemySpawner _enemySpawner;
     private EnemyEvents _enemyEvents;
 
+    [Header("Visual Effect Settings")]
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private Color flashColor = Color.white;
+    [SerializeField] private float flashDuration = 0.1f;
+
+    private Color _originalColor;
+
     [Inject]
     public void Construct(GameFrame gameFrame, EnemySpawner enemySpawner, EnemyEvents enemyEvents)
     {
@@ -29,6 +39,19 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
         _enemyEvents = enemyEvents ?? throw new ArgumentNullException(nameof(enemyEvents));
 
         Debug.Log($"Dependencies injected for {gameObject.name}");
+    }
+
+    private void Awake()
+    {
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+            if (spriteRenderer == null)
+            {
+                Debug.LogError("EnemyBase: SpriteRenderer not found. Please assign one.");
+            }
+        }
+        _originalColor = spriteRenderer.color;
     }
 
     /// <summary>
@@ -73,7 +96,7 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
     }
 
     /// <summary>
-    /// Applies damage to the enemy.
+    /// Applies damage to the enemy and triggers the flash effect.
     /// </summary>
     public void TakeDamage(int damage)
     {
@@ -85,6 +108,9 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
 
         Health -= damage;
         Debug.Log($"Enemy {Type} took {damage} damage. Remaining health: {Health}");
+
+        // Trigger flash effect
+        TriggerFlashEffect();
 
         // Notify damage event
         _enemyEvents.NotifyEnemyDamaged(damage);
@@ -111,6 +137,18 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
         }
 
         Deactivate();
+    }
+
+    /// <summary>
+    /// Triggers the visual flash effect when the enemy is damaged.
+    /// </summary>
+    private async void TriggerFlashEffect()
+    {
+        if (spriteRenderer == null) return;
+
+        spriteRenderer.color = flashColor;
+        await UniTask.Delay((int)(flashDuration * 1000));
+        spriteRenderer.color = _originalColor;
     }
 
     /// <summary>

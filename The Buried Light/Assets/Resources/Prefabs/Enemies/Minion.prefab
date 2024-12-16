@@ -159,6 +159,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b471026d247c4a2281f7062938036b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spriteRenderer: {fileID: 336407665254532179}
+  flashColor: {r: 1, g: 0.74509805, b: 0, a: 1}
+  flashDuration: 0.1
 --- !u!58 &7087682368230782532
 CircleCollider2D:
   m_ObjectHideFlags: 0
