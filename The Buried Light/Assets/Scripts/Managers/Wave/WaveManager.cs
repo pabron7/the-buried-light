@@ -31,7 +31,6 @@ public class WaveManager : MonoBehaviour
 
     /// <summary>
     /// Initializes the wave manager with a specific wave configuration.
-    /// Resets internal states and prepares the manager for spawning enemies.
     /// </summary>
     public void Initialize(WaveConfig waveConfig)
     {
@@ -43,48 +42,41 @@ public class WaveManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Starts the wave spawning process if the manager is in the Idle state.
+    /// Starts the wave spawning process if in the Idle state.
     /// </summary>
     public void StartWave()
     {
         if (_currentState != WaveState.Idle)
-        {
-            Debug.LogWarning("WaveManager: Cannot start wave, not in Idle state.");
             return;
-        }
 
         SetState(WaveState.WaveStart);
     }
 
     /// <summary>
-    /// Sets the current state of the wave manager and triggers related actions.
+    /// Handles state changes and triggers corresponding actions.
     /// </summary>
-    private void SetState(WaveState newState)
+    private void SetState(WaveState newState, bool logStateChange = true)
     {
         _currentState = newState;
 
+        if (logStateChange)
+            Debug.Log($"WaveManager: State changed to {newState}");
+
         switch (newState)
         {
-            case WaveState.Idle:
-                Debug.Log("WaveManager: Entering Idle state.");
-                break;
-
             case WaveState.WaveStart:
-                Debug.Log("WaveManager: Starting wave.");
-                SpawnWaveAsync().Forget(); // Fire-and-forget spawning logic
+                SpawnWaveAsync().Forget(); // Fire-and-forget spawning
                 break;
 
             case WaveState.WaveComplete:
-                Debug.Log("WaveManager: Wave complete.");
                 OnWaveComplete?.Invoke();
-                SetState(WaveState.Idle); // Return to Idle state
+                ResetWave();
                 break;
         }
     }
 
     /// <summary>
-    /// Spawns enemies asynchronously based on the wave configuration.
-    /// Supports group spawning and handles delays between spawns.
+    /// Spawns enemies asynchronously based on wave configuration.
     /// </summary>
     private async UniTaskVoid SpawnWaveAsync()
     {
@@ -94,13 +86,15 @@ public class WaveManager : MonoBehaviour
         {
             if (_isHalted)
             {
-                await UniTask.Yield(); // Wait until resumed
+                await UniTask.Yield(); // Pause if halted
                 continue;
             }
 
-            for (int i = 0; i < Mathf.Min(_waveConfig.groupSpawn ? _waveConfig.groupSize : 1, _remainingEnemies); i++)
+            var enemiesToSpawn = Mathf.Min(_waveConfig.groupSpawn ? _waveConfig.groupSize : 1, _remainingEnemies);
+
+            for (int i = 0; i < enemiesToSpawn; i++)
             {
-                await _enemySpawner.SpawnEnemyAsync(_waveConfig); // Async spawning
+                await _enemySpawner.SpawnEnemyAsync(_waveConfig);
                 _spawnedEnemies++;
                 _remainingEnemies--;
 
@@ -109,16 +103,14 @@ public class WaveManager : MonoBehaviour
             }
 
             if (_remainingEnemies > 0)
-            {
                 await UniTask.Delay((int)(_waveConfig.spawnInterval * 1000)); // Delay between groups
-            }
         }
 
         SetState(WaveState.WaveComplete);
     }
 
     /// <summary>
-    /// Resets the wave manager to its initial state, stopping any ongoing actions.
+    /// Resets the wave manager to its initial state.
     /// </summary>
     public void ResetWave()
     {
@@ -130,38 +122,26 @@ public class WaveManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Halts the wave spawning process if it is in progress.
+    /// Halts the wave spawning process if active.
     /// </summary>
     public void HaltWave()
     {
         if (_currentState == WaveState.Spawning)
         {
-            Debug.Log("WaveManager: Halting wave spawning.");
             _isHalted = true;
+            Debug.Log("WaveManager: Wave spawning halted.");
         }
     }
 
     /// <summary>
-    /// Resumes the wave spawning process if it was halted.
+    /// Resumes the wave spawning process if halted.
     /// </summary>
     public void ContinueWave()
     {
         if (_isHalted)
         {
-            Debug.Log("WaveManager: Continuing wave spawning.");
             _isHalted = false;
-        }
-    }
-
-    /// <summary>
-    /// Cancels the current wave, stopping all actions and resetting the manager.
-    /// </summary>
-    public void CancelWave()
-    {
-        if (_currentState == WaveState.Spawning || _currentState == WaveState.WaveStart)
-        {
-            Debug.Log("WaveManager: Cancelling wave.");
-            ResetWave(); // Reset the wave and stop spawning
+            Debug.Log("WaveManager: Wave spawning resumed.");
         }
     }
 }

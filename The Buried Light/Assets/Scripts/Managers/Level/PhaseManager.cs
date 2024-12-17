@@ -1,11 +1,13 @@
 using System.Collections;
 using UnityEngine;
 using Zenject;
+using Cysharp.Threading.Tasks;
 
 public class PhaseManager
 {
     private readonly LevelConfig _levelConfig;
     private readonly WavePoolManager _wavePoolManager;
+
     private int _currentPhaseIndex = 0;
     private bool _isHalted = false;
 
@@ -17,127 +19,106 @@ public class PhaseManager
         _wavePoolManager = wavePoolManager;
     }
 
-    /// <summary>
-    /// The current phase index.
-    /// </summary>
+    /// <summary> The current phase index. </summary>
     public int CurrentPhaseIndex => _currentPhaseIndex;
 
     /// <summary>
     /// Determines if there are more phases to process in the level.
     /// </summary>
-    /// <returns>True if more phases are available; otherwise, false.</returns>
     public bool HasMorePhases()
     {
         return _currentPhaseIndex < _levelConfig.phases.Length;
     }
 
     /// <summary>
-    /// Starts the next phase by handling its waves sequentially.
+    /// Starts the next phase asynchronously and manages wave spawning.
     /// </summary>
-    public IEnumerator StartPhase()
+    public async UniTask StartPhaseAsync()
     {
         if (!HasMorePhases())
         {
-            Debug.LogWarning("PhaseManager: No more phases available.");
-            yield break;
+            LogDebug("No more phases available.");
+            return;
         }
 
+        LogDebug($"Starting Phase {_currentPhaseIndex + 1}");
+
+        // Notify phase start
+        _gameEvents.NotifyPhaseStart(_currentPhaseIndex + 1);
         var currentPhase = _levelConfig.phases[_currentPhaseIndex];
-        _gameEvents.NotifyPhaseStart(_currentPhaseIndex); // Notify phase start
         _currentPhaseIndex++;
 
-        Debug.Log($"PhaseManager: Starting Phase {_currentPhaseIndex}");
-        yield return HandlePhase(currentPhase);
+        await HandlePhaseAsync(currentPhase);
 
-        _gameEvents.NotifyPhaseEnd(_currentPhaseIndex - 1); // Notify phase end
+        // Notify phase end
+        _gameEvents.NotifyPhaseEnd(_currentPhaseIndex);
     }
 
     /// <summary>
-    /// Handles the wave spawning logic for the current phase.
+    /// Handles all waves in a phase asynchronously.
     /// </summary>
-    private IEnumerator HandlePhase(PhaseConfig phaseConfig)
+    private async UniTask HandlePhaseAsync(PhaseConfig phaseConfig)
     {
         var activeWaveManagers = _wavePoolManager.GetActiveWaveManagers();
-        activeWaveManagers.Clear();
+        activeWaveManagers.Clear(); // Clear active managers at the start of the phase
 
+        // Loop through each wave in the phase
         foreach (var waveConfig in phaseConfig.waves)
         {
+            // Get a WaveManager instance from the pool
             var waveManager = _wavePoolManager.GetAvailableWaveManager();
             if (waveManager == null)
             {
-                Debug.LogError("PhaseManager: Failed to retrieve WaveManager.");
-                yield break;
+                LogDebugError("Failed to retrieve WaveManager. Expanding pool dynamically.");
+                waveManager = _wavePoolManager.CreateAndAddWaveManagerToPool(); // Dynamically create new instance
             }
 
+            // Initialize and activate the WaveManager
             waveManager.Initialize(waveConfig);
-            waveManager.OnWaveComplete += CheckWaveCompletion;
             waveManager.gameObject.SetActive(true);
             waveManager.StartWave();
             activeWaveManagers.Add(waveManager);
         }
 
-        // Wait until all waves in the phase are complete
-        while (activeWaveManagers.Exists(wm => wm.CurrentState != WaveManager.WaveState.WaveComplete))
+        // Wait until all active WaveManagers finish their waves
+        await UniTask.WaitUntil(() =>
+            activeWaveManagers.TrueForAll(wm => wm.CurrentState == WaveManager.WaveState.WaveComplete)
+        );
+
+        // Cleanup: Return all active WaveManagers to the pool
+        foreach (var waveManager in activeWaveManagers)
         {
-            yield return null;
+            waveManager.gameObject.SetActive(false); // Deactivate the WaveManager
+            _wavePoolManager.ReturnWaveManagerToPool(waveManager);
         }
 
-        Debug.Log($"PhaseManager: Phase {_currentPhaseIndex} complete.");
+        activeWaveManagers.Clear(); // Clear active managers after phase completion
+        LogDebug("Phase complete. All waves finished.");
     }
 
     /// <summary>
-    /// Checks if all waves in the current phase are complete.
-    /// </summary>
-    private void CheckWaveCompletion()
-    {
-        var activeWaveManagers = _wavePoolManager.GetActiveWaveManagers();
-
-        if (activeWaveManagers.TrueForAll(wm => wm.CurrentState == WaveManager.WaveState.WaveComplete))
-        {
-            foreach (var waveManager in activeWaveManagers)
-            {
-                _wavePoolManager.ReturnWaveManagerToPool(waveManager);
-            }
-
-            activeWaveManagers.Clear();
-            Debug.Log("PhaseManager: All waves in phase are complete.");
-        }
-    }
-
-    /// <summary>
-    /// Resets the phase progression, preparing for a new cycle.
+    /// Resets the phase progression for a new cycle.
     /// </summary>
     public void ResetPhases()
     {
         _currentPhaseIndex = 0;
-        Debug.Log("PhaseManager: Phases reset.");
+        LogDebug("Phases reset.");
     }
 
     /// <summary>
-    /// Halts the current phase and all active waves.
+    /// Halts or resumes the current phase and all active waves.
     /// </summary>
-    public void HaltPhase()
+    public void TogglePhaseHalt()
     {
-        Debug.Log("PhaseManager: Halting phase.");
-        _isHalted = true;
+        _isHalted = !_isHalted;
+        LogDebug(_isHalted ? "Halting phase." : "Continuing phase.");
 
         foreach (var waveManager in _wavePoolManager.GetActiveWaveManagers())
         {
-            waveManager.HaltWave();
-        }
-    }
-
-    /// <summary>
-    /// Resumes the current phase and all active waves if halted.
-    /// </summary>
-    public void ContinuePhase()
-    {
-        Debug.Log("PhaseManager: Continuing phase.");
-        _isHalted = false;
-
-        foreach (var waveManager in _wavePoolManager.GetActiveWaveManagers())
-        {
-            waveManager.ContinueWave();
+            if (_isHalted)
+                waveManager.HaltWave();
+            else
+                waveManager.ContinueWave();
         }
     }
 
@@ -146,12 +127,33 @@ public class PhaseManager
     /// </summary>
     public void CancelPhase()
     {
-        Debug.Log("PhaseManager: Cancelling phase.");
+        LogDebug("Cancelling phase.");
         _isHalted = false;
 
         foreach (var waveManager in _wavePoolManager.GetActiveWaveManagers())
         {
-            waveManager.CancelWave();
+            waveManager.ResetWave();
         }
+        _currentPhaseIndex = 0;
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public void ResetWaves()
+    {
+        LogDebug("Resetting all waves via PhaseManager.");
+        _wavePoolManager.ResetPool();
+    }
+
+
+    /// <summary>
+    /// Logs debug messages consistently.
+    /// </summary>
+    private void LogDebug(string message) => Debug.Log($"PhaseManager: {message}");
+
+    /// <summary>
+    /// Logs error messages consistently.
+    /// </summary>
+    private void LogDebugError(string message) => Debug.LogError($"PhaseManager: {message}");
 }

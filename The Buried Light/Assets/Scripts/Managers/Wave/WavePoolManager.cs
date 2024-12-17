@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class WavePoolManager
 {
@@ -9,21 +10,27 @@ public class WavePoolManager
 
     public WavePoolManager(WaveManager.Factory waveManagerFactory)
     {
-        _waveManagerFactory = waveManagerFactory;
+        _waveManagerFactory = waveManagerFactory ?? throw new ArgumentNullException(nameof(waveManagerFactory));
     }
 
+    /// <summary>
+    /// Initializes the pool of WaveManagers with a specified size.
+    /// </summary>
     public void InitializePool(int poolSize)
     {
         for (int i = 0; i < poolSize; i++)
         {
             var waveManager = _waveManagerFactory.Create();
-            waveManager.gameObject.SetActive(false); // Initially deactivate
+            waveManager.gameObject.SetActive(false); // Start inactive
             _waveManagerPool.Add(waveManager);
         }
 
-        Debug.Log($"Wave manager pool initialized with {poolSize} managers.");
+        Debug.Log($"WavePoolManager: Initialized pool with {poolSize} WaveManagers.");
     }
 
+    /// <summary>
+    /// Retrieves an available WaveManager from the pool.
+    /// </summary>
     public WaveManager GetAvailableWaveManager()
     {
         if (_waveManagerPool.Count > 0)
@@ -33,29 +40,61 @@ public class WavePoolManager
             return waveManager;
         }
 
-        Debug.LogError("No available WaveManager in the pool.");
-        return null;
+        // Dynamically expand the pool
+        Debug.LogWarning("WavePoolManager: No available WaveManager in the pool, creating a new instance.");
+        var newWaveManager = _waveManagerFactory.Create();
+        newWaveManager.gameObject.SetActive(false);
+        return newWaveManager;
     }
 
+
+    /// <summary>
+    /// Returns a WaveManager back to the pool and resets it.
+    /// </summary>
     public void ReturnWaveManagerToPool(WaveManager waveManager)
     {
+        if (waveManager == null)
+        {
+            Debug.LogError("WavePoolManager: Attempted to return a null WaveManager to the pool.");
+            return;
+        }
+
         waveManager.ResetWave();
         waveManager.gameObject.SetActive(false);
+
+        _activeWaveManagers.Remove(waveManager);
         _waveManagerPool.Add(waveManager);
     }
 
+    /// <summary>
+    /// Resets all active WaveManagers and returns them to the pool.
+    /// </summary>
     public void ResetPool()
     {
-        foreach (var waveManager in _activeWaveManagers)
+        for (int i = _activeWaveManagers.Count - 1; i >= 0; i--)
         {
-            waveManager.ResetWave();
-            waveManager.gameObject.SetActive(false);
-            _waveManagerPool.Add(waveManager);
+            ReturnWaveManagerToPool(_activeWaveManagers[i]);
         }
 
         _activeWaveManagers.Clear();
-        Debug.Log("Wave manager pool has been reset.");
+        Debug.Log("WavePoolManager: All WaveManagers have been reset and returned to the pool.");
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public WaveManager CreateAndAddWaveManagerToPool()
+    {
+        var newWaveManager = _waveManagerFactory.Create();
+        newWaveManager.gameObject.SetActive(false);
+        _waveManagerPool.Add(newWaveManager);
+        return newWaveManager;
+    }
+
+    /// <summary>
+    /// Retrieves the list of currently active WaveManagers.
+    /// </summary>
     public List<WaveManager> GetActiveWaveManagers() => _activeWaveManagers;
 }
+
