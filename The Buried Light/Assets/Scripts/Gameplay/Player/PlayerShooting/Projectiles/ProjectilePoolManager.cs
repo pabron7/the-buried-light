@@ -2,13 +2,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
+using System.Collections.Generic;
+using UnityEngine;
+using Zenject;
+
 public class ProjectilePoolManager : MonoBehaviour
 {
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private int initialPoolSize = 5;
 
     private Queue<GameObject> projectilePool;
-    private int currentPoolSize;
 
     [Inject]
     private DiContainer _container;
@@ -18,10 +21,12 @@ public class ProjectilePoolManager : MonoBehaviour
         InitializePool();
     }
 
+    /// <summary>
+    /// Initializes the projectile pool with a predefined size.
+    /// </summary>
     private void InitializePool()
     {
         projectilePool = new Queue<GameObject>();
-        currentPoolSize = initialPoolSize;
 
         for (int i = 0; i < initialPoolSize; i++)
         {
@@ -29,21 +34,28 @@ public class ProjectilePoolManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Adds a new projectile instance to the pool.
+    /// </summary>
     private void AddProjectileToPool()
     {
         GameObject projectile = CreateProjectile();
         projectile.SetActive(false);
         projectilePool.Enqueue(projectile);
-        currentPoolSize++;
     }
 
+    /// <summary>
+    /// Creates a new projectile instance using Zenject.
+    /// </summary>
     private GameObject CreateProjectile()
     {
         GameObject projectile = _container.InstantiatePrefab(projectilePrefab);
-        projectile.GetComponent<Projectile>().Initialize(this);
         return projectile;
     }
 
+    /// <summary>
+    /// Retrieves a projectile from the pool or expands the pool if empty.
+    /// </summary>
     public GameObject GetProjectile()
     {
         if (projectilePool.Count > 0)
@@ -58,8 +70,16 @@ public class ProjectilePoolManager : MonoBehaviour
         return GetProjectile();
     }
 
+    /// <summary>
+    /// Returns a projectile to the pool after resetting its state.
+    /// </summary>
     public void ReturnProjectile(GameObject projectile)
     {
+        if (projectile.TryGetComponent<Projectile>(out var proj))
+        {
+            proj.OnDisable(); // Ensures proper reset of projectile state
+        }
+
         projectile.SetActive(false);
         projectilePool.Enqueue(projectile);
     }

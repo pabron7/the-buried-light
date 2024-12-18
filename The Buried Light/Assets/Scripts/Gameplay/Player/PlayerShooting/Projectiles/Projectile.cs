@@ -13,17 +13,13 @@ public class Projectile : MonoBehaviour, IProjectile
     private float _spawnTime;
 
     [Inject]
-    public void Construct(EnemyEvents enemyEvents)
+    public void Construct(EnemyEvents enemyEvents, ProjectilePoolManager poolManager)
     {
         _enemyEvents = enemyEvents;
+        _poolManager = poolManager; // Injected directly
     }
 
     public int Damage => damage;
-
-    public void Initialize(ProjectilePoolManager poolManager)
-    {
-        _poolManager = poolManager;
-    }
 
     private void Update()
     {
@@ -38,20 +34,20 @@ public class Projectile : MonoBehaviour, IProjectile
 
     private void OnEnable()
     {
-        _spawnTime = Time.time; 
+        _spawnTime = Time.time;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent<IKillable>(out var killable))
         {
-            // Directly apply damage
+            // Apply damage
             killable.TakeDamage(damage);
 
-            // Notify the event system about the damage
+            // Notify event system about damage
             _enemyEvents.NotifyEnemyDamaged(damage);
 
-            // Notify projectile of hit
+            // Handle projectile hit
             OnHit();
         }
         else
@@ -84,5 +80,10 @@ public class Projectile : MonoBehaviour, IProjectile
     {
         Debug.Log("Projectile hit its target.");
         ReturnToPool();
+    }
+
+    public void OnDisable()
+    {
+        _spawnTime = Time.time;
     }
 }
