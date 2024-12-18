@@ -3,10 +3,7 @@ using Zenject;
 using Cysharp.Threading.Tasks;
 using System;
 
-using UnityEngine;
-using Cysharp.Threading.Tasks; // For async support
-
-public abstract class EnemyBase : MonoBehaviour, IKillable
+public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver
 {
     public EnemyTypes Type { get; private set; }
     public int Health { get; private set; }
@@ -19,10 +16,14 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
     private int _spawnHealth;
     private float _spawnSpeed;
 
+    public int ScoreValue => scoreValue;
+
     // Dependencies
     protected GameFrame _gameFrame;
     protected EnemySpawner _enemySpawner;
     private EnemyEvents _enemyEvents;
+
+    [SerializeField] private int scoreValue = 10;
 
     [Header("Visual Effect Settings")]
     [SerializeField] private SpriteRenderer spriteRenderer;
@@ -128,8 +129,8 @@ public abstract class EnemyBase : MonoBehaviour, IKillable
     {
         Debug.Log($"Enemy {Type} has died.");
 
-        // Notify death event
-        _enemyEvents.NotifyEnemyKilled(transform.position);
+        _enemyEvents.NotifyEnemyKilled(transform.position);         // Notify death event
+        _enemyEvents.NotifyEnemyScore(this);    // Notify score event
 
         if (_isSpawner)
         {

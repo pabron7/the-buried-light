@@ -65,5 +65,8 @@ public class GameInstaller : MonoInstaller
         // UI Systems
         Container.Bind<UIManager>().FromComponentInHierarchy().AsSingle();
 
+        // Score
+        Container.Bind<ScoreManager>().AsSingle();
+
     }
 }
