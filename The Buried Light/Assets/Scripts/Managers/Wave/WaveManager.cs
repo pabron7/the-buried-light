@@ -17,6 +17,7 @@ public class WaveManager : MonoBehaviour
     public class Factory : PlaceholderFactory<WaveManager> { }
 
     [Inject] private EnemySpawner _enemySpawner;
+    [Inject] private GameEvents _gameEvents;
 
     private WaveConfig _waveConfig;
     private WaveState _currentState = WaveState.Idle;
@@ -55,12 +56,11 @@ public class WaveManager : MonoBehaviour
     /// <summary>
     /// Handles state changes and triggers corresponding actions.
     /// </summary>
-    private void SetState(WaveState newState, bool logStateChange = true)
+    private void SetState(WaveState newState)
     {
         _currentState = newState;
 
-        if (logStateChange)
-            Debug.Log($"WaveManager: State changed to {newState}");
+        Debug.Log($"WaveManager: State changed to {newState}");
 
         switch (newState)
         {
@@ -69,8 +69,7 @@ public class WaveManager : MonoBehaviour
                 break;
 
             case WaveState.WaveComplete:
-                OnWaveComplete?.Invoke();
-                ResetWave();
+                NotifyWaveCompletion();
                 break;
         }
     }
@@ -143,5 +142,15 @@ public class WaveManager : MonoBehaviour
             _isHalted = false;
             Debug.Log("WaveManager: Wave spawning resumed.");
         }
+    }
+
+    /// <summary>
+    /// Notifies the system that the wave is complete.
+    /// </summary>
+    private void NotifyWaveCompletion()
+    {
+        Debug.Log("WaveManager: Wave completed.");
+        OnWaveComplete?.Invoke(); // Trigger local event
+        _gameEvents.NotifyWaveComplete(); // Notify higher systems via GameEvents
     }
 }

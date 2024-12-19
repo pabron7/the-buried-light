@@ -13,6 +13,7 @@ public class GameEvents : IGameEvents
     private readonly Subject<Unit> _onPaused = new Subject<Unit>();
     private readonly Subject<Unit> _onResumed = new Subject<Unit>();
     private readonly Subject<Unit> _onTitleScreen = new Subject<Unit>();
+    private readonly Subject<Unit> _onWaveComplete = new Subject<Unit>();
 
     public IObservable<Unit> OnGameStarted => _onGameStarted;
     public IObservable<Unit> OnGameOver => _onGameOver;
@@ -24,6 +25,7 @@ public class GameEvents : IGameEvents
     public IObservable<Unit> OnPaused => _onPaused;
     public IObservable<Unit> OnResumed => _onResumed;
     public IObservable<Unit> OnTitleScreen => _onTitleScreen;
+    public IObservable<Unit> OnWaveComplete => _onWaveComplete;
 
     public void NotifyGameStarted() => _onGameStarted.OnNext(Unit.Default);
     public void NotifyGameOver() => _onGameOver.OnNext(Unit.Default);
@@ -35,4 +37,5 @@ public class GameEvents : IGameEvents
     public void NotifyPaused() => _onPaused.OnNext(Unit.Default);
     public void NotifyResumed() => _onResumed.OnNext(Unit.Default);
     public void NotifyTitleScreen() => _onTitleScreen.OnNext(Unit.Default);
+    public void NotifyWaveComplete() => _onWaveComplete.OnNext(Unit.Default);
 }

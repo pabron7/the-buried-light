@@ -12,15 +12,17 @@ public class LevelManager : MonoBehaviour
     private CompletedLevelState _completedState;
 
     private LevelStateBase _currentState;
+    public LevelStateBase CurrentState => _currentState;
 
     [Inject] private PhaseManager _phaseManager;
     [Inject] private GameManager _gameManager;
     [Inject] private GameEvents _gameEvents;
     [Inject] private DiContainer _container;
 
-    public LevelStateBase CurrentState => _currentState;
-
     public PhaseManager PhaseManager => _phaseManager;
+
+    private int _totalPhases;
+    private int _completedPhases;
 
     private void Awake()
     {
@@ -35,12 +37,14 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
-        // Subscribe to GameManager state changes
         _gameManager.CurrentState
             .Subscribe(OnGameManagerStateChanged)
             .AddTo(this);
 
         SetState(_idleState);
+
+        _totalPhases = _phaseManager.CurrentPhaseIndex;
+        _gameEvents.OnPhaseEnd.Subscribe(_ => OnPhaseEnd()).AddTo(this);
     }
 
     /// <summary>
@@ -53,8 +57,6 @@ public class LevelManager : MonoBehaviour
         _currentState?.OnStateExit();
         _currentState = newState;
         _currentState.OnStateEnter(this);
-
-        LogDebug($"Transitioned to {newState.GetType().Name}");
     }
 
     /// <summary>
@@ -64,14 +66,12 @@ public class LevelManager : MonoBehaviour
     {
         if (!_phaseManager.HasMorePhases())
         {
-            LogDebug("All phases completed.");
             _gameEvents.NotifyLevelEnd();
             SetState(_completedState);
             return;
         }
 
         await _phaseManager.StartPhaseAsync();
-        LogDebug("Phase completed, ready for next phase.");
     }
 
     /// <summary>
@@ -103,6 +103,16 @@ public class LevelManager : MonoBehaviour
     {
         _currentState?.OnUpdate();
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="phaseIndex"></param>
+    private void OnPhaseEnd()
+    {
+        StartNextPhase().Forget();
+    }
+
 
     /// <summary>
     /// Logs debug messages consistently.
