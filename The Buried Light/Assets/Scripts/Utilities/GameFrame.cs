@@ -37,4 +37,25 @@ public class GameFrame : MonoBehaviour
 
         return new Vector2(x, y);
     }
+
+    /// <summary>
+    /// Wraps the position around the game frame.
+    /// </summary>
+    public Vector3 WrapPosition(Vector3 position)
+    {
+        float wrappedX = position.x;
+        float wrappedY = position.y;
+
+        if (position.x < MinBounds.x)
+            wrappedX = MaxBounds.x;
+        else if (position.x > MaxBounds.x)
+            wrappedX = MinBounds.x;
+
+        if (position.y < MinBounds.y)
+            wrappedY = MaxBounds.y;
+        else if (position.y > MaxBounds.y)
+            wrappedY = MinBounds.y;
+
+        return new Vector3(wrappedX, wrappedY, position.z);
+    }
 }

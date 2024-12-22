@@ -16,7 +16,7 @@ MonoBehaviour:
   enemyCount: 50
   speed: 1
   health: 3
-  spawnInterval: 2
+  spawnInterval: 6
   groupSpawn: 1
   groupSize: 2
   isSpawner: 0

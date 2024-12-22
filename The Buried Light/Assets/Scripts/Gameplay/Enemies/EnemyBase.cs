@@ -85,7 +85,8 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver
     private void Update()
     {
         Move();
-        CheckOutOfBounds();
+        //CheckOutOfBounds();
+        WrapIfOutOfBounds();
     }
 
     /// <summary>
@@ -187,6 +188,17 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver
         {
             Debug.Log($"Enemy {Type} went out of deletion boundaries and is being deactivated.");
             Deactivate();
+        }
+    }
+
+    /// <summary>
+    /// Wraps the enemy around the screen if it goes out of bounds.
+    /// </summary>
+    private void WrapIfOutOfBounds()
+    {
+        if (_gameFrame != null)
+        {
+            transform.position = _gameFrame.WrapPosition(transform.position);
         }
     }
 
