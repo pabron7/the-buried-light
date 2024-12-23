@@ -9,14 +9,16 @@ public class Projectile : MonoBehaviour, IProjectile
 
     private ProjectilePoolManager _poolManager;
     private EnemyEvents _enemyEvents;
+    private GameFrame _gameFrame;
 
     private float _spawnTime;
 
     [Inject]
-    public void Construct(EnemyEvents enemyEvents, ProjectilePoolManager poolManager)
+    public void Construct(EnemyEvents enemyEvents, ProjectilePoolManager poolManager, GameFrame gameFrame)
     {
         _enemyEvents = enemyEvents;
-        _poolManager = poolManager; // Injected directly
+        _poolManager = poolManager;
+        _gameFrame = gameFrame; 
     }
 
     public int Damage => damage;
@@ -25,6 +27,7 @@ public class Projectile : MonoBehaviour, IProjectile
     {
         Move();
         CheckLifeTime();
+        WrapIfOutOfBounds();
     }
 
     private void Move()
@@ -85,5 +88,13 @@ public class Projectile : MonoBehaviour, IProjectile
     public void OnDisable()
     {
         _spawnTime = Time.time;
+    }
+
+    private void WrapIfOutOfBounds()
+    {
+        if (_gameFrame != null)
+        {
+            transform.position = _gameFrame.WrapPosition(transform.position);
+        }
     }
 }

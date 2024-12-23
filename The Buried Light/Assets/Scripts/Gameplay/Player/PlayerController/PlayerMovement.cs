@@ -9,14 +9,16 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D _rigidbody;
     private InputManager _inputManager;
+    private GameFrame _gameFrame;
 
     /// <summary>
     /// Injects the InputManager dependency into the PlayerMovement class.
     /// </summary>
     [Inject]
-    public void Construct(InputManager inputManager)
+    public void Construct(InputManager inputManager, GameFrame gameFrame)
     {
         _inputManager = inputManager;
+        _gameFrame = gameFrame;
     }
 
     /// <summary>
@@ -40,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
         HandleMovement();
         ApplyDrag();
         LimitSpeed();
+        WrapIfOutOfBounds();
     }
 
     /// <summary>
@@ -82,6 +85,17 @@ public class PlayerMovement : MonoBehaviour
         if (_rigidbody.velocity.sqrMagnitude > controllerConfig.maxSpeed * controllerConfig.maxSpeed)
         {
             _rigidbody.velocity = _rigidbody.velocity.normalized * controllerConfig.maxSpeed;
+        }
+    }
+
+    /// <summary>
+    /// Checks if the player is out of bounds and wraps their position using the GameFrame.
+    /// </summary>
+    private void WrapIfOutOfBounds()
+    {
+        if (_gameFrame != null)
+        {
+            transform.position = _gameFrame.WrapPosition(transform.position);
         }
     }
 }
