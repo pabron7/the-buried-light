@@ -13,5 +13,4 @@ MonoBehaviour:
   m_Name: Phase B
   m_EditorClassIdentifier: 
   waves:
-  - {fileID: 11400000, guid: c78177911f9ca4578998f4af7f532dd1, type: 2}
-  - {fileID: 11400000, guid: cf0f05c25a44a49568bb97155d5f474f, type: 2}
+  - {fileID: 11400000, guid: f5d9c74d35e2a4c9eae285b93c822df4, type: 2}
