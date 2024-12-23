@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6261355bef48d4991afda9cb337890fc, type: 3}
   m_Name: Wave 5
   m_EditorClassIdentifier: 
-  enemyType: 1
-  enemyCount: 200
-  speed: 4
-  health: 4
+  enemyType: 4
+  enemyCount: 20
+  speed: 1
+  health: 9
   spawnInterval: 6
   groupSpawn: 1
-  groupSize: 20
+  groupSize: 2
   isSpawner: 0
   spawnType: 0
   spawnCount: 5

@@ -27,9 +27,9 @@ public class EnemySpawner : MonoBehaviour
 
     public async UniTask SpawnEnemyAsync(WaveConfig waveConfig)
     {
-        Vector2 spawnPosition = _gameFrame.GetRandomPositionOutsideFrame();
-        Vector2 directionTarget = _gameFrame.GetRandomPositionInsideFrame();
-        Vector3 direction = directionTarget - (Vector2)spawnPosition;
+        Vector2 spawnPosition = _gameFrame.GetRandomPositionOutsideSpawnFrame();
+        Vector2 targetPosition = _gameFrame.GetRandomPositionInsideFrame();
+        Vector3 direction = (targetPosition - spawnPosition).normalized;
 
         GameObject enemyObject = await _enemyPoolManager.GetEnemyAsync(waveConfig.enemyType);
 
@@ -51,6 +51,8 @@ public class EnemySpawner : MonoBehaviour
             Debug.LogError($"Failed to create enemy of type {waveConfig.enemyType}");
         }
     }
+
+
 
     public void ReturnEnemy(EnemyTypes type, GameObject enemy)
     {

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6261355bef48d4991afda9cb337890fc, type: 3}
   m_Name: Wave 4
   m_EditorClassIdentifier: 
-  enemyType: 4
-  enemyCount: 12
+  enemyType: 3
+  enemyCount: 24
   speed: 1
   health: 6
   spawnInterval: 6

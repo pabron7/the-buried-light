@@ -97,4 +97,5 @@ public class Projectile : MonoBehaviour, IProjectile
             transform.position = _gameFrame.WrapPosition(transform.position);
         }
     }
+
 }

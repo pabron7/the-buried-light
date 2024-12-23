@@ -1642,7 +1642,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lowerLeftCorner: {fileID: 1750407054}
   upperRightCorner: {fileID: 1114193253}
-  deletionBoundaryOffset: 5
+  spawnBoundaryOffset: 0
+  wrappingBoundaryOffset: 0.3
 --- !u!4 &644728746
 Transform:
   m_ObjectHideFlags: 0
@@ -2782,7 +2783,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1103569241}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3fe920ca914144348afbde58541675a0, type: 3}
   m_Name: 

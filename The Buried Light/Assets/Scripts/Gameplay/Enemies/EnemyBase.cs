@@ -85,7 +85,6 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver
     private void Update()
     {
         Move();
-        //CheckOutOfBounds();
         WrapIfOutOfBounds();
     }
 
@@ -178,18 +177,6 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver
         }
     }
 
-    /// <summary>
-    /// Turns enemy off when gone out of game frame.
-    /// </summary>
-    private void CheckOutOfBounds()
-    {
-        if (transform.position.x < _gameFrame.DeletionMinBounds.x || transform.position.x > _gameFrame.DeletionMaxBounds.x ||
-            transform.position.y < _gameFrame.DeletionMinBounds.y || transform.position.y > _gameFrame.DeletionMaxBounds.y)
-        {
-            Debug.Log($"Enemy {Type} went out of deletion boundaries and is being deactivated.");
-            Deactivate();
-        }
-    }
 
     /// <summary>
     /// Wraps the enemy around the screen if it goes out of bounds.
