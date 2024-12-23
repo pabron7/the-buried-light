@@ -3,22 +3,24 @@ using Zenject;
 using Cysharp.Threading.Tasks;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour, IWrappable
 {
     [SerializeField] private PlayerControllerConfig controllerConfig;
 
     private Rigidbody2D _rigidbody;
     private InputManager _inputManager;
     private GameFrame _gameFrame;
+    private WrappingUtils _wrappingUtils;
 
     /// <summary>
     /// Injects the InputManager dependency into the PlayerMovement class.
     /// </summary>
     [Inject]
-    public void Construct(InputManager inputManager, GameFrame gameFrame)
+    public void Construct(InputManager inputManager, GameFrame gameFrame, WrappingUtils wrappingUtils)
     {
         _inputManager = inputManager;
         _gameFrame = gameFrame;
+        _wrappingUtils = wrappingUtils;
     }
 
     /// <summary>
@@ -91,11 +93,11 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     /// Checks if the player is out of bounds and wraps their position using the GameFrame.
     /// </summary>
-    private void WrapIfOutOfBounds()
+    public void WrapIfOutOfBounds()
     {
         if (_gameFrame != null)
         {
-            transform.position = _gameFrame.WrapPosition(transform.position);
+            transform.position = _wrappingUtils.WrapPosition(transform.position);
         }
     }
 }

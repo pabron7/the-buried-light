@@ -18,6 +18,9 @@ public class GameInstaller : MonoInstaller
         // Game Manager
         Container.Bind<GameManager>().FromComponentInHierarchy().AsSingle().NonLazy();
 
+        // Wrapping Utils
+        Container.Bind<WrappingUtils>().AsSingle();
+
         // Input Systems
         Container.BindInterfacesAndSelfTo<InputManager>().AsSingle();
 

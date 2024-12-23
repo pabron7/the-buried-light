@@ -3,7 +3,7 @@ using Zenject;
 using Cysharp.Threading.Tasks;
 using System;
 
-public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver
+public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver, IWrappable
 {
     public EnemyTypes Type { get; private set; }
     public int Health { get; private set; }
@@ -22,6 +22,7 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver
     protected GameFrame _gameFrame;
     protected EnemySpawner _enemySpawner;
     private EnemyEvents _enemyEvents;
+    private WrappingUtils _wrappingUtils;
 
     [SerializeField] private int scoreValue = 10;
 
@@ -33,11 +34,12 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver
     private Color _originalColor;
 
     [Inject]
-    public void Construct(GameFrame gameFrame, EnemySpawner enemySpawner, EnemyEvents enemyEvents)
+    public void Construct(GameFrame gameFrame, EnemySpawner enemySpawner, EnemyEvents enemyEvents, WrappingUtils wrappingUtils)
     {
         _gameFrame = gameFrame ?? throw new ArgumentNullException(nameof(gameFrame));
         _enemySpawner = enemySpawner ?? throw new ArgumentNullException(nameof(enemySpawner));
         _enemyEvents = enemyEvents ?? throw new ArgumentNullException(nameof(enemyEvents));
+        _wrappingUtils = wrappingUtils ?? throw new ArgumentNullException(nameof(wrappingUtils));
 
         Debug.Log($"Dependencies injected for {gameObject.name}");
     }
@@ -181,11 +183,11 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver
     /// <summary>
     /// Wraps the enemy around the screen if it goes out of bounds.
     /// </summary>
-    private void WrapIfOutOfBounds()
+    public void WrapIfOutOfBounds()
     {
         if (_gameFrame != null)
         {
-            transform.position = _gameFrame.WrapPosition(transform.position);
+            transform.position = _wrappingUtils.WrapPosition(transform.position);
         }
     }
 

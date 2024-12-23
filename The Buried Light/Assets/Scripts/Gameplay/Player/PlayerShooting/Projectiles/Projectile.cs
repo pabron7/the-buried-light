@@ -1,7 +1,7 @@
 using UnityEngine;
 using Zenject;
 
-public class Projectile : MonoBehaviour, IProjectile
+public class Projectile : MonoBehaviour, IProjectile, IWrappable
 {
     [SerializeField] private float speed = 10f;
     [SerializeField] private float lifeTime = 2f;
@@ -10,15 +10,17 @@ public class Projectile : MonoBehaviour, IProjectile
     private ProjectilePoolManager _poolManager;
     private EnemyEvents _enemyEvents;
     private GameFrame _gameFrame;
+    private WrappingUtils _wrappingUtils;
 
     private float _spawnTime;
 
     [Inject]
-    public void Construct(EnemyEvents enemyEvents, ProjectilePoolManager poolManager, GameFrame gameFrame)
+    public void Construct(EnemyEvents enemyEvents, ProjectilePoolManager poolManager, GameFrame gameFrame, WrappingUtils wrappingUtils)
     {
         _enemyEvents = enemyEvents;
         _poolManager = poolManager;
-        _gameFrame = gameFrame; 
+        _gameFrame = gameFrame;
+        _wrappingUtils = wrappingUtils;
     }
 
     public int Damage => damage;
@@ -90,11 +92,11 @@ public class Projectile : MonoBehaviour, IProjectile
         _spawnTime = Time.time;
     }
 
-    private void WrapIfOutOfBounds()
+    public void WrapIfOutOfBounds()
     {
         if (_gameFrame != null)
         {
-            transform.position = _gameFrame.WrapPosition(transform.position);
+                transform.position = _wrappingUtils.WrapPosition(transform.position);  
         }
     }
 
