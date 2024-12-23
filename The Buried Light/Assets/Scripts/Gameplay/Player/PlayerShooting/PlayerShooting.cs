@@ -37,25 +37,19 @@ public class PlayerShooting : MonoBehaviour
     {
         _canShoot = false;
 
-        GameObject projectile = _projectilePoolManager.GetProjectile();
-
+        var projectile = _projectilePoolManager.GetProjectile();
         if (projectile == null)
         {
-            Debug.LogWarning("Failed to retrieve projectile from the pool.");
+            Debug.LogError("No projectile available in pool!");
             _canShoot = true;
             return;
         }
 
-        // Set the projectile's position and rotation
-        projectile.transform.position = firePoint.position;
-        projectile.transform.rotation = firePoint.rotation;
-        projectile.SetActive(true);
-
-        // Notify other systems about the player shooting
+        projectile.Activate(firePoint.position, firePoint.rotation);
         _playerEvents.NotifyPlayerShot();
 
-        // Wait for the cooldown period before allowing the next shot
         await UniTask.Delay((int)(shootCooldown * 1000));
         _canShoot = true;
     }
+
 }
