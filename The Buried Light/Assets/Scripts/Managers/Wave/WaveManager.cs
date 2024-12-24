@@ -1,6 +1,7 @@
 using UnityEngine;
 using Zenject;
 using Cysharp.Threading.Tasks;
+using UniRx;
 
 public class WaveManager : MonoBehaviour
 {
@@ -23,7 +24,7 @@ public class WaveManager : MonoBehaviour
     private WaveState _currentState = WaveState.Idle;
 
     private int _spawnedEnemies;
-    private int _remainingEnemies;
+    private CompositeDisposable _disposables = new CompositeDisposable();
 
     public WaveState CurrentState => _currentState;
 
@@ -36,10 +37,12 @@ public class WaveManager : MonoBehaviour
     public void Initialize(WaveConfig waveConfig)
     {
         _waveConfig = waveConfig;
-        _remainingEnemies = waveConfig.enemyCount;
         _spawnedEnemies = 0;
         _currentState = WaveState.Idle;
         _isHalted = false;
+
+        // Unsubscribe from previous subscriptions
+        _disposables.Clear();
     }
 
     /// <summary>
@@ -89,20 +92,19 @@ public class WaveManager : MonoBehaviour
                 continue;
             }
 
-            var enemiesToSpawn = Mathf.Min(_waveConfig.groupSpawn ? _waveConfig.groupSize : 1, _remainingEnemies);
+            var enemiesToSpawn = Mathf.Min(_waveConfig.groupSpawn ? _waveConfig.groupSize : 1,
+                _waveConfig.enemyCount - _spawnedEnemies);
 
             for (int i = 0; i < enemiesToSpawn; i++)
             {
                 await _enemySpawner.SpawnEnemyAsync(_waveConfig);
                 _spawnedEnemies++;
-                _remainingEnemies--;
-
-                if (_spawnedEnemies >= _waveConfig.enemyCount)
-                    break;
             }
 
-            if (_remainingEnemies > 0)
-                await UniTask.Delay((int)(_waveConfig.spawnInterval * 1000)); // Delay between groups
+            if (_spawnedEnemies < _waveConfig.enemyCount)
+            {
+                await UniTask.Delay((int)(_waveConfig.spawnInterval * 1000)); // Delay between spawns
+            }
         }
 
         SetState(WaveState.WaveComplete);
@@ -114,10 +116,12 @@ public class WaveManager : MonoBehaviour
     public void ResetWave()
     {
         _waveConfig = null;
-        _remainingEnemies = 0;
         _spawnedEnemies = 0;
         _currentState = WaveState.Idle;
         _isHalted = false;
+
+        // Clean up subscriptions
+        _disposables.Clear();
     }
 
     /// <summary>

@@ -1979,9 +1979,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e63816c81c9d749e2a973fb57a390e52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  phaseIndexText: {fileID: 904632393}
-  totalPhasesText: {fileID: 1644660597}
-  activeWavesText: {fileID: 326237599}
 --- !u!1 &764439598
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,35 +1,52 @@
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 using Cysharp.Threading.Tasks;
-using System.Collections.Generic;
+using UniRx;
+using System;
 
 public class PhaseManager
 {
     private readonly LevelConfig _levelConfig;
     private readonly WavePoolManager _wavePoolManager;
+    private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
     private int _currentPhaseIndex = 0;
+    private int _completedWavesCount = 0;
+    private int _totalWavesInPhase = 0;
+    private int _totalEnemiesInPhase = 0;
+    private int _killedEnemiesInPhase = 0;
 
     private bool _isHalted = false;
 
-    [Inject] private GameEvents _gameEvents;
+    [SerializeField] private float waveStartDelay = 2f; // Delay between wave starts
 
-    public PhaseManager(LevelConfig levelConfig, WavePoolManager wavePoolManager)
+    [Inject] private GameEvents _gameEvents;
+    [Inject] private EnemyEvents _enemyEvents;
+
+    public PhaseManager(LevelConfig levelConfig, WavePoolManager wavePoolManager, GameEvents gameEvents, EnemyEvents enemyEvents)
     {
-        _levelConfig = levelConfig;
-        _wavePoolManager = wavePoolManager;
+        _levelConfig = levelConfig ?? throw new ArgumentNullException(nameof(levelConfig));
+        _wavePoolManager = wavePoolManager ?? throw new ArgumentNullException(nameof(wavePoolManager));
+        _gameEvents = gameEvents ?? throw new ArgumentNullException(nameof(gameEvents));
+        _enemyEvents = enemyEvents ?? throw new ArgumentNullException(nameof(enemyEvents));
+
+        // Subscribe to enemy killed events
+        _enemyEvents.OnEnemyKilled
+            .Subscribe(_ => OnEnemyKilled())
+            .AddTo(_disposables);
     }
 
     /// <summary> The current wave index. </summary>
     public int CurrentPhaseIndex => _currentPhaseIndex;
 
-    /// <summary> The current phase index. </summary>
+    /// <summary> The total number of phases. </summary>
     public int TotalPhases => _levelConfig.phases.Length;
 
     /// <summary>
     /// Determines if there are more phases to process in the level.
     /// </summary>
-    public bool HasMorePhases() { return _currentPhaseIndex < TotalPhases; }
+    public bool HasMorePhases() => _currentPhaseIndex < TotalPhases;
 
     /// <summary>
     /// Starts the next phase asynchronously and manages wave spawning.
@@ -48,10 +65,24 @@ public class PhaseManager
         Debug.Log($"PhaseManager: Starting Phase {_currentPhaseIndex}");
         _gameEvents.NotifyPhaseStart(_currentPhaseIndex);
 
-        // Activate all waves in the phase simultaneously
+        // Reset counters for the phase
+        _totalWavesInPhase = currentPhase.waves.Length;
+        _totalEnemiesInPhase = 0;
+        _killedEnemiesInPhase = 0;
+        _completedWavesCount = 0;
+
+        // Calculate total enemies in the phase
+        foreach (var waveConfig in currentPhase.waves)
+        {
+            _totalEnemiesInPhase += waveConfig.enemyCount;
+        }
+
+        // Activate waves in the phase with delays
         var activeWaveManagers = new List<WaveManager>();
         foreach (var waveConfig in currentPhase.waves)
         {
+            await UniTask.Delay((int)(waveStartDelay * 1000)); // Delay before starting each wave
+
             var waveManager = _wavePoolManager.GetAvailableWaveManager();
             if (waveManager == null)
             {
@@ -60,20 +91,23 @@ public class PhaseManager
             }
 
             waveManager.Initialize(waveConfig);
+            waveManager.OnWaveComplete += HandleWaveCompletion; // Subscribe to wave completion
             waveManager.gameObject.SetActive(true);
             waveManager.StartWave();
             activeWaveManagers.Add(waveManager);
         }
 
-        // Wait until all waves are complete
+        // Wait until all waves in the phase are complete and all enemies are killed
         await UniTask.WaitUntil(() =>
-            activeWaveManagers.TrueForAll(wm => wm.CurrentState == WaveManager.WaveState.WaveComplete)
+            _completedWavesCount >= _totalWavesInPhase &&
+            _killedEnemiesInPhase >= _totalEnemiesInPhase
         );
 
         // Cleanup and notify phase completion
         foreach (var waveManager in activeWaveManagers)
         {
             waveManager.ResetWave();
+            waveManager.OnWaveComplete -= HandleWaveCompletion; // Unsubscribe from wave completion
             waveManager.gameObject.SetActive(false);
             _wavePoolManager.ReturnWaveManagerToPool(waveManager);
         }
@@ -88,16 +122,42 @@ public class PhaseManager
     public void ResetPhases()
     {
         _currentPhaseIndex = 0;
-        LogDebug("Phases reset.");
+        Debug.Log("PhaseManager: Phases reset.");
     }
 
     /// <summary>
-    /// 
+    /// Resets all active waves in the phase.
     /// </summary>
     public void ResetWaves()
     {
-        LogDebug("Resetting all waves via PhaseManager.");
+        Debug.Log("PhaseManager: Resetting all waves.");
         _wavePoolManager.ResetPool();
+    }
+
+    /// <summary>
+    /// Handles the completion of a wave.
+    /// </summary>
+    private void HandleWaveCompletion()
+    {
+        _completedWavesCount++;
+        Debug.Log($"PhaseManager: Wave completed. {_completedWavesCount}/{_totalWavesInPhase} waves completed.");
+    }
+
+    /// <summary>
+    /// Handles enemy killed events and updates the phase kill count.
+    /// </summary>
+    private void OnEnemyKilled()
+    {
+        _killedEnemiesInPhase++;
+        Debug.Log($"PhaseManager: Enemy killed. {_killedEnemiesInPhase}/{_totalEnemiesInPhase} enemies killed.");
+    }
+
+    /// <summary>
+    /// Cleans up subscriptions and resets the state.
+    /// </summary>
+    public void Cleanup()
+    {
+        _disposables.Clear();
     }
 
     public void HaltPhase()
@@ -117,14 +177,4 @@ public class PhaseManager
             waveManager.ContinueWave();
         }
     }
-
-    /// <summary>
-    /// Logs debug messages consistently.
-    /// </summary>
-    private void LogDebug(string message) => Debug.Log($"PhaseManager: {message}");
-
-    /// <summary>
-    /// Logs error messages consistently.
-    /// </summary>
-    private void LogDebugError(string message) => Debug.LogError($"PhaseManager: {message}");
 }
