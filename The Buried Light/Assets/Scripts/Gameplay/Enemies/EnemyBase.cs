@@ -207,7 +207,6 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver, IWrappa
     {
         if (collision.CompareTag("Player"))
         {
-            _enemyEvents.NotifyEnemyKilled(transform.position);
             OnDeath();
         }
         else if (collision.CompareTag("Projectile"))

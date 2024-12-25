@@ -9,6 +9,7 @@ public class PhaseManager
 {
     private readonly LevelConfig _levelConfig;
     private readonly WavePoolManager _wavePoolManager;
+
     private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
     private int _currentPhaseIndex = 0;
@@ -19,7 +20,7 @@ public class PhaseManager
 
     private bool _isHalted = false;
 
-    [SerializeField] private float waveStartDelay = 2f; // Delay between wave starts
+    [SerializeField] private float waveStartDelay = 2f;
 
     [Inject] private GameEvents _gameEvents;
     [Inject] private EnemyEvents _enemyEvents;
@@ -33,11 +34,11 @@ public class PhaseManager
 
         // Subscribe to enemy killed events
         _enemyEvents.OnEnemyKilled
-            .Subscribe(_ => OnEnemyKilled())
+            .Subscribe(_ => HandleEnemyKilled())
             .AddTo(_disposables);
     }
 
-    /// <summary> The current wave index. </summary>
+    /// <summary> The current phase index. </summary>
     public int CurrentPhaseIndex => _currentPhaseIndex;
 
     /// <summary> The total number of phases. </summary>
@@ -59,23 +60,23 @@ public class PhaseManager
             return;
         }
 
+        ResetPhaseCounters();
+
         var currentPhase = _levelConfig.phases[_currentPhaseIndex];
         _currentPhaseIndex++;
 
         Debug.Log($"PhaseManager: Starting Phase {_currentPhaseIndex}");
         _gameEvents.NotifyPhaseStart(_currentPhaseIndex);
 
-        // Reset counters for the phase
+        // Calculate total waves and enemies for the phase
         _totalWavesInPhase = currentPhase.waves.Length;
-        _totalEnemiesInPhase = 0;
-        _killedEnemiesInPhase = 0;
-        _completedWavesCount = 0;
-
-        // Calculate total enemies in the phase
         foreach (var waveConfig in currentPhase.waves)
         {
             _totalEnemiesInPhase += waveConfig.enemyCount;
         }
+
+        Debug.Log($"PhaseManager: Total enemies in phase {_currentPhaseIndex}: {_totalEnemiesInPhase}");
+        Debug.Log($"PhaseManager: Total waves in phase {_currentPhaseIndex}: {_totalWavesInPhase}");
 
         // Activate waves in the phase with delays
         var activeWaveManagers = new List<WaveManager>();
@@ -135,6 +136,17 @@ public class PhaseManager
     }
 
     /// <summary>
+    /// Resets counters for a new phase.
+    /// </summary>
+    private void ResetPhaseCounters()
+    {
+        _totalEnemiesInPhase = 0;
+        _killedEnemiesInPhase = 0;
+        _completedWavesCount = 0;
+        _totalWavesInPhase = 0;
+    }
+
+    /// <summary>
     /// Handles the completion of a wave.
     /// </summary>
     private void HandleWaveCompletion()
@@ -146,7 +158,7 @@ public class PhaseManager
     /// <summary>
     /// Handles enemy killed events and updates the phase kill count.
     /// </summary>
-    private void OnEnemyKilled()
+    private void HandleEnemyKilled()
     {
         _killedEnemiesInPhase++;
         Debug.Log($"PhaseManager: Enemy killed. {_killedEnemiesInPhase}/{_totalEnemiesInPhase} enemies killed.");

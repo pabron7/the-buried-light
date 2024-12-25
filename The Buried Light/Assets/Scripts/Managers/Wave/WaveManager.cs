@@ -41,7 +41,7 @@ public class WaveManager : MonoBehaviour
         _currentState = WaveState.Idle;
         _isHalted = false;
 
-        // Unsubscribe from previous subscriptions
+        // Clear subscriptions from the previous wave, if any
         _disposables.Clear();
     }
 
@@ -99,6 +99,11 @@ public class WaveManager : MonoBehaviour
             {
                 await _enemySpawner.SpawnEnemyAsync(_waveConfig);
                 _spawnedEnemies++;
+
+                if (_spawnedEnemies >= _waveConfig.enemyCount)
+                {
+                    break;
+                }
             }
 
             if (_spawnedEnemies < _waveConfig.enemyCount)

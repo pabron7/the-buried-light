@@ -5,8 +5,11 @@ public class WaveConfig : ScriptableObject
 {
     [Header("Base Stats")]
     public EnemyTypes enemyType;
+    [Tooltip("Total number of enemies to be spawned during a wave.")]
     public int enemyCount;
+    [Tooltip("The speed of enemies in a wave.")]
     public float speed;
+    [Tooltip("Health point of enemies in a wave")]
     public int health;
 
     [Header("Time")]

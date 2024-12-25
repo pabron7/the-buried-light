@@ -97,4 +97,3 @@ public class WavePoolManager
     /// </summary>
     public List<WaveManager> GetActiveWaveManagers() => _activeWaveManagers;
 }
-
