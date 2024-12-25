@@ -14,10 +14,10 @@ public class LevelStartNotifyer : MonoBehaviour
     private void Start()
     {
         // Subscribe to level and phase events
-        _gameEvents.OnLevelStart.Subscribe(_ => ShowIndicator("Level Started")).AddTo(this);
-        _gameEvents.OnPhaseStart.Subscribe(phase => ShowIndicator($"Phase {phase + 1} Started")).AddTo(this);
-        _gameEvents.OnPhaseEnd.Subscribe(phase => ShowIndicator($"Phase {phase + 1} Completed")).AddTo(this);
-        _gameEvents.OnLevelEnd.Subscribe(_ => ShowIndicator("Level Completed")).AddTo(this);
+        _gameEvents.OnLevelStart.Subscribe(_ => ShowIndicator("Level Starts")).AddTo(this);
+        _gameEvents.OnPhaseStart.Subscribe(phase => ShowIndicator($"Phase {phase } Started")).AddTo(this);
+        _gameEvents.OnPhaseEnd.Subscribe(phase => ShowIndicator($"Phase {phase } Completed")).AddTo(this);
+        _gameEvents.OnLevelEnd.Subscribe(_ => ShowIndicator("Congratulations!")).AddTo(this);
     }
 
     private void ShowIndicator(string message)
