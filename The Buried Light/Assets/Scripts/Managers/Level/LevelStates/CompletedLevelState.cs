@@ -1,15 +1,19 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class CompletedLevelState : LevelStateBase
 {
-    public override void OnStateEnter(LevelManager levelManager)
+    public override async void OnStateEnter(LevelManager levelManager)
     {
         base.OnStateEnter(levelManager);
-        Debug.Log("Completed state entered. Transitioning to Idle or Preparing.");
+        Debug.Log("CompletedLevelState: Level completed. Waiting for 2 seconds before transitioning to GameOverState.");
 
-        if (levelManager.CurrentState is InProgressLevelState)
-        {
-            levelManager.SetState(new IdleLevelState());
-        }
+        await UniTask.Delay(2000);       // Wait for 2 seconds
+
+        // Transition to GameOverState
+        levelManager.UpdateGameState<GameOverState>();
+        levelManager.SetState(new IdleLevelState());
+
+        Debug.Log("CompletedLevelState: Transitioned to GameOverState.");
     }
 }

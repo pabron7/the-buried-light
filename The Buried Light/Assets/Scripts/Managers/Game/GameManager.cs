@@ -17,12 +17,13 @@ public class GameManager : MonoBehaviour
 
     private async void Start()
     {
-
         await UniTask.WaitUntil(() => _gameEvents != null);
-
         SetState<TitleScreenState>();
     }
 
+    /// <summary>
+    /// Sets the game state using a generic type.
+    /// </summary>
     public void SetState<T>() where T : GameStateBase
     {
         if (CurrentState.Value is T)
@@ -31,11 +32,30 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        ChangeState(_container.Instantiate<T>());
+    }
+
+    /// <summary>
+    /// Sets the game state using a state instance.
+    /// </summary>
+    public void SetState(GameStateBase newState)
+    {
+        if (CurrentState.Value == newState)
+        {
+            Debug.LogWarning($"Game is already in {newState.GetType().Name} state.");
+            return;
+        }
+
+        ChangeState(newState);
+    }
+
+    private void ChangeState(GameStateBase newState)
+    {
         CurrentState.Value?.OnStateExit();
-        CurrentState.Value = _container.Instantiate<T>();
+        CurrentState.Value = newState;
         CurrentState.Value.OnStateEnter(this, _gameEvents);
 
-        Debug.Log($"Game state changed to: {typeof(T).Name}");
+        Debug.Log($"Game state changed to: {newState.GetType().Name}");
     }
 
     private void Update()
@@ -43,4 +63,3 @@ public class GameManager : MonoBehaviour
         CurrentState.Value?.OnUpdate();
     }
 }
-

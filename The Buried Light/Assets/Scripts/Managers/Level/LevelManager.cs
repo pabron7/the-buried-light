@@ -144,6 +144,19 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Allows controlled access to set the GameManager's state.
+    /// </summary>
+    public void UpdateGameState<T>() where T : GameStateBase
+    {
+        _gameManager.SetState<T>();
+    }
+
+    public void UpdateGameState(GameStateBase newState)
+    {
+        _gameManager.SetState(newState);
+    }
+
+    /// <summary>
     /// Logs debug messages consistently.
     /// </summary>
     private void LogDebug(string message) => Debug.Log($"LevelManager: {message}");
