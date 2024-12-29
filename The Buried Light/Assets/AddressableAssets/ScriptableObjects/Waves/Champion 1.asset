@@ -18,7 +18,7 @@ MonoBehaviour:
   health: 3
   spawnInterval: 6
   groupSpawn: 1
-  groupSize: 3
+  groupSize: 4
   isSpawner: 1
   spawnType: 3
   spawnCount: 5

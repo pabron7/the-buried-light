@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Charger 1
   m_EditorClassIdentifier: 
   enemyType: 1
-  enemyCount: 70
+  enemyCount: 30
   speed: 3
   health: 1
   spawnInterval: 6
   groupSpawn: 1
-  groupSize: 4
+  groupSize: 6
   isSpawner: 1
   spawnType: 2
   spawnCount: 10
