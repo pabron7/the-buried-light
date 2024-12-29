@@ -9,9 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: Level_1
-  m_EditorClassIdentifier: Assembly-CSharp::LevelConfig
-  phases:
-  - {fileID: 11400000, guid: 0a7f7e889359946c68b47526607b050d, type: 2}
-  - {fileID: 11400000, guid: c15b91b4cb04246539312c12f94c1aa9, type: 2}
+  m_Script: {fileID: 11500000, guid: 5834b5087d578d24c926ce20cd31e6d6, type: 3}
+  m_Name: LevelConfigs_ContentUpdateGroupSchema
+  m_EditorClassIdentifier: 
+  m_Group: {fileID: 11400000, guid: 236c2a558bc7c401f91f9a8a73f1817d, type: 2}
+  m_StaticContent: 0
