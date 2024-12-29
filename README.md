@@ -1,6 +1,7 @@
 # **The Buried Light**
 
 An **asteroids-like**, narrative-driven cross-platform Mobile and WebGL game.
+![The Buried Light Banner](images/theBuriedLight-banner.png)
 
 ---
 
@@ -19,6 +20,8 @@ An **asteroids-like**, narrative-driven cross-platform Mobile and WebGL game.
 
 Current Stage: **Active Development**
 The game is currently focused on developing the core game systems and implementing LiveOps features using Firebase for dynamic content updates, real-time events, and enhanced player engagement.
+
+![Prototype Screenshots](images/theBuriedLight-prototype.gif)
 
 ---
 
@@ -64,7 +67,6 @@ To support dynamic, real-time gameplay experiences, Firebase will be integrated 
 - **Modular Architecture**: Built using Zenject for dependency injection, promoting clean code and scalability.  
 - **Reactive Programming**: UniRx is used for handling events and system communications, allowing for robust and maintainable code.  
 - **Physics-based Movement**: Player movement uses Unity’s physics system for realistic momentum and drag.
-- 
 
 ---
 
@@ -77,7 +79,7 @@ The project is organized for maintainability and scalability:
   - **Managers**: WaveManager, GameManager, and related managers.  
   - **Systems**: Event System, Sound System, Input System, and other standalone systems.
   - **Utilities**: Reusable generic scripts. 
-- **Resources**
+- **AddressableAssets**
   - **Sounds**: Sound & music files
   - **Sprites**: 2D visuals
   - **Prefabs**: Prefabs & modular units
