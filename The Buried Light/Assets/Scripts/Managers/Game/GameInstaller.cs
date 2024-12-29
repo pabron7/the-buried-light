@@ -7,7 +7,6 @@ public class GameInstaller : MonoInstaller
     [SerializeField] private WaveConfig[] waveConfigs;
     [SerializeField] private ProjectilePoolManager projectilePoolManagerPrefab;
     [SerializeField] private GameObject waveManagerPrefab;
-    [SerializeField] private LevelConfig levelConfig;
 
     [SerializeField] private SoundManager soundManagerPrefab;
     [SerializeField] private SoundRegistry soundRegistry;
@@ -46,9 +45,9 @@ public class GameInstaller : MonoInstaller
             .UnderTransformGroup("WaveManagers");
         Container.Bind<WavePoolManager>().AsSingle().NonLazy();
         Container.Bind<PhaseManager>().AsSingle();
-        Container.Bind<LevelConfig>().FromInstance(levelConfig).AsSingle();
 
         // Bind LevelManager
+        Container.Bind<LevelLoader>().AsSingle();
         Container.Bind<LevelManager>().FromComponentInHierarchy().AsSingle();
 
         // Enemy Systems

@@ -14,6 +14,8 @@ public class GameEvents : IGameEvents
     private readonly Subject<Unit> _onResumed = new Subject<Unit>();
     private readonly Subject<Unit> _onTitleScreen = new Subject<Unit>();
     private readonly Subject<Unit> _onWaveComplete = new Subject<Unit>();
+    private readonly Subject<string> _onLevelLoad = new Subject<string>();
+    private readonly Subject<string> _onLevelRelease = new Subject<string>();
 
     public IObservable<Unit> OnGameStarted => _onGameStarted;
     public IObservable<Unit> OnGameOver => _onGameOver;
@@ -26,6 +28,8 @@ public class GameEvents : IGameEvents
     public IObservable<Unit> OnResumed => _onResumed;
     public IObservable<Unit> OnTitleScreen => _onTitleScreen;
     public IObservable<Unit> OnWaveComplete => _onWaveComplete;
+    public IObservable<string> OnLevelLoad => _onLevelLoad;
+    public IObservable<string> OnLevelRelease => _onLevelRelease;
 
     public void NotifyGameStarted() => _onGameStarted.OnNext(Unit.Default);
     public void NotifyGameOver() => _onGameOver.OnNext(Unit.Default);
@@ -38,4 +42,6 @@ public class GameEvents : IGameEvents
     public void NotifyResumed() => _onResumed.OnNext(Unit.Default);
     public void NotifyTitleScreen() => _onTitleScreen.OnNext(Unit.Default);
     public void NotifyWaveComplete() => _onWaveComplete.OnNext(Unit.Default);
+    public void NotifyLevelLoad(string levelName) => _onLevelLoad.OnNext(levelName);
+    public void NotifyLevelRelease(string levelName) => _onLevelRelease.OnNext(levelName);
 }

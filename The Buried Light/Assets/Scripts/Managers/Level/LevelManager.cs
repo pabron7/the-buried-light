@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using UniRx;
 using Zenject;
@@ -18,11 +17,14 @@ public class LevelManager : MonoBehaviour
     [Inject] private GameManager _gameManager;
     [Inject] private GameEvents _gameEvents;
     [Inject] private DiContainer _container;
+    [Inject] private LevelLoader _levelLoader;
 
     public PhaseManager PhaseManager => _phaseManager;
 
     private int _totalPhases;
     private int _completedPhases;
+
+    private LevelConfig _currentLevelConfig;
 
     private void Awake()
     {
@@ -35,7 +37,7 @@ public class LevelManager : MonoBehaviour
         LogDebug("States preloaded.");
     }
 
-    private void Start()
+    private async UniTaskVoid Start()
     {
         _gameManager.CurrentState
             .Subscribe(OnGameManagerStateChanged)
@@ -43,8 +45,10 @@ public class LevelManager : MonoBehaviour
 
         SetState(_idleState);
 
-        _totalPhases = _phaseManager.CurrentPhaseIndex;
         _gameEvents.OnPhaseEnd.Subscribe(_ => OnPhaseEnd()).AddTo(this);
+
+        // Start loading the first level
+        await LoadLevel("Level_1");
     }
 
     /// <summary>
@@ -57,6 +61,33 @@ public class LevelManager : MonoBehaviour
         _currentState?.OnStateExit();
         _currentState = newState;
         _currentState.OnStateEnter(this);
+    }
+
+    /// <summary>
+    /// Dynamically loads a LevelConfig asset using LevelLoader and sets it in PhaseManager.
+    /// </summary>
+    /// <param name="levelAddress">The Addressable address of the LevelConfig to load.</param>
+    public async UniTask LoadLevel(string levelAddress)
+    {
+        _currentLevelConfig = await _levelLoader.LoadLevelAsync(levelAddress);
+        if (_currentLevelConfig != null)
+        {
+            _phaseManager.SetLevelConfig(_currentLevelConfig); // Pass LevelConfig to PhaseManager
+            LogDebug($"LevelManager: Loaded level {levelAddress}");
+        }
+        else
+        {
+            LogDebug($"LevelManager: Failed to load level {levelAddress}");
+        }
+    }
+
+    /// <summary>
+    /// Releases the currently loaded level using LevelLoader.
+    /// </summary>
+    public void ReleaseCurrentLevel()
+    {
+        _levelLoader.ReleaseLevel();
+        _currentLevelConfig = null;
     }
 
     /// <summary>
@@ -105,14 +136,12 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Handles the end of a phase and transitions to the next phase.
     /// </summary>
-    /// <param name="phaseIndex"></param>
     private void OnPhaseEnd()
     {
         StartNextPhase().Forget();
     }
-
 
     /// <summary>
     /// Logs debug messages consistently.

@@ -7,7 +7,7 @@ using System;
 
 public class PhaseManager
 {
-    private readonly LevelConfig _levelConfig;
+    private LevelConfig _levelConfig;
     private readonly WavePoolManager _wavePoolManager;
 
     private readonly CompositeDisposable _disposables = new CompositeDisposable();
@@ -25,9 +25,8 @@ public class PhaseManager
     [Inject] private GameEvents _gameEvents;
     [Inject] private EnemyEvents _enemyEvents;
 
-    public PhaseManager(LevelConfig levelConfig, WavePoolManager wavePoolManager, GameEvents gameEvents, EnemyEvents enemyEvents)
+    public PhaseManager(WavePoolManager wavePoolManager, GameEvents gameEvents, EnemyEvents enemyEvents)
     {
-        _levelConfig = levelConfig ?? throw new ArgumentNullException(nameof(levelConfig));
         _wavePoolManager = wavePoolManager ?? throw new ArgumentNullException(nameof(wavePoolManager));
         _gameEvents = gameEvents ?? throw new ArgumentNullException(nameof(gameEvents));
         _enemyEvents = enemyEvents ?? throw new ArgumentNullException(nameof(enemyEvents));
@@ -48,6 +47,15 @@ public class PhaseManager
     /// Determines if there are more phases to process in the level.
     /// </summary>
     public bool HasMorePhases() => _currentPhaseIndex < TotalPhases;
+
+    /// <summary>
+    /// Sets the LevelConfig for this PhaseManager instance.
+    /// </summary>
+    public void SetLevelConfig(LevelConfig levelConfig)
+    {
+        _levelConfig = levelConfig ?? throw new ArgumentNullException(nameof(levelConfig));
+        ResetPhases();
+    }
 
     /// <summary>
     /// Starts the next phase asynchronously and manages wave spawning.
