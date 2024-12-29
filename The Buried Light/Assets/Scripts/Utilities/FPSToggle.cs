@@ -17,7 +17,7 @@ public class FPSToggle : MonoBehaviour
         }
 
         // Initialize the toggle state
-        fpsToggle.isOn = Application.targetFrameRate == 30;
+        fpsToggle.isOn = Application.targetFrameRate == 60;
 
         // Add listener for toggle changes
         fpsToggle.onValueChanged.AddListener(OnToggleChanged);
@@ -27,7 +27,7 @@ public class FPSToggle : MonoBehaviour
     {
         if (isToggled)
         {
-            SetFPSLimit(30);
+            SetFPSLimit(60);
             Debug.Log("FPS limited to 30 for testing.");
         }
         else
