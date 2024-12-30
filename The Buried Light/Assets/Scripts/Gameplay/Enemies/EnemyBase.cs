@@ -4,26 +4,14 @@ using Cysharp.Threading.Tasks;
 using System;
 
 /// <summary>
-/// Base class for enemies. Handles core functionality such as health, damage, movement, and death.
+/// Base class for enemies. Handles movement and orchestrates components.
 /// </summary>
 public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver
 {
     public EnemyTypes Type { get; private set; }
-    public int Health { get; private set; }
+    public int Health => _health.CurrentHealth;
     public float Speed { get; private set; }
     public int ScoreValue => scoreValue;
-
-    private bool _isSpawner;
-    private EnemyTypes _spawnType;
-    private int _spawnCount;
-    private int _spawnHealth;
-    private float _spawnSpeed;
-
-    // Dependencies
-    protected GameFrame _gameFrame;
-    protected EnemySpawner _enemySpawner;
-    private EnemyEvents _enemyEvents;
-    private WrappingUtils _wrappingUtils;
 
     [SerializeField] private int scoreValue = 10;
 
@@ -34,21 +22,34 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver
 
     private Color _originalColor;
 
-    // Movement Component
+    // Dependencies
+    protected GameFrame _gameFrame;
+    private EnemyEvents _enemyEvents;
+    private WrappingUtils _wrappingUtils;
+
+    // Components
     private EnemyMovement _movement;
+    private EnemyHealth _health;
 
     [Inject]
     public void Construct(GameFrame gameFrame, EnemySpawner enemySpawner, EnemyEvents enemyEvents, WrappingUtils wrappingUtils)
     {
         _gameFrame = gameFrame ?? throw new ArgumentNullException(nameof(gameFrame));
-        _enemySpawner = enemySpawner ?? throw new ArgumentNullException(nameof(enemySpawner));
         _enemyEvents = enemyEvents ?? throw new ArgumentNullException(nameof(enemyEvents));
         _wrappingUtils = wrappingUtils ?? throw new ArgumentNullException(nameof(wrappingUtils));
+
+        _health = GetComponent<EnemyHealth>();
+        if (_health == null)
+        {
+            Debug.LogWarning("EnemyHealth component is missing. Attaching a new one dynamically.");
+            _health = gameObject.AddComponent<EnemyHealth>();
+        }
+
+        _health.Initialize(0, enemySpawner, _enemyEvents, TriggerFlashEffect, OnDeath);
     }
 
     private void Awake()
     {
-        // Ensure the EnemyMovement component is attached
         _movement = GetComponent<EnemyMovement>();
         if (_movement == null)
         {
@@ -74,18 +75,12 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver
     {
         Type = type;
         Speed = speed;
-        Health = health;
-
-        if (_movement == null)
-        {
-            Debug.LogError("EnemyMovement component is missing or not initialized.");
-            return;
-        }
 
         _movement.Initialize(Speed, direction);
         _movement.SetDependencies(_wrappingUtils, _gameFrame);
-    }
 
+        _health.Initialize(health, null, _enemyEvents, TriggerFlashEffect, OnDeath);
+    }
 
     private void Update()
     {
@@ -98,33 +93,15 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver
     /// </summary>
     public void ConfigureOnDeathSpawn(EnemyTypes spawnType, int spawnCount, int spawnHealth, float spawnSpeed)
     {
-        _isSpawner = true;
-        _spawnType = spawnType;
-        _spawnCount = spawnCount;
-        _spawnHealth = spawnHealth;
-        _spawnSpeed = spawnSpeed;
+        _health.ConfigureOnDeathSpawn(spawnType, spawnCount, spawnHealth, spawnSpeed);
     }
 
     /// <summary>
-    /// Applies damage to the enemy and triggers the flash effect.
+    /// Applies damage to the enemy.
     /// </summary>
     public void TakeDamage(int damage)
     {
-        if (damage <= 0)
-        {
-            return;
-        }
-
-        Health -= damage;
-
-        TriggerFlashEffect();
-
-        _enemyEvents.NotifyEnemyDamaged(damage);
-
-        if (Health <= 0)
-        {
-            OnDeath();
-        }
+        _health.TakeDamage(damage);
     }
 
     /// <summary>
@@ -134,12 +111,6 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver
     {
         _enemyEvents.NotifyEnemyKilled(transform.position);
         _enemyEvents.NotifyEnemyScore(this);
-
-        if (_isSpawner)
-        {
-            SpawnOnDeathAsync().Forget();
-        }
-
         Deactivate();
     }
 
@@ -156,36 +127,11 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver
     }
 
     /// <summary>
-    /// Spawns additional enemies on death asynchronously.
-    /// </summary>
-    protected virtual async UniTaskVoid SpawnOnDeathAsync()
-    {
-        if (_isSpawner && _spawnCount > 0)
-        {
-            for (int i = 0; i < _spawnCount; i++)
-            {
-                WaveConfig spawnConfig = new WaveConfig
-                {
-                    enemyType = _spawnType,
-                    enemyCount = 1,
-                    speed = _spawnSpeed,
-                    health = _spawnHealth,
-                    spawnInterval = 0f,
-                    groupSpawn = false
-                };
-
-                await _enemySpawner.SpawnEnemyAsync(spawnConfig);
-                await UniTask.Yield();
-            }
-        }
-    }
-
-    /// <summary>
     /// Deactivates the enemy (for pooling).
     /// </summary>
     protected virtual void Deactivate()
     {
-        _enemySpawner.ReturnEnemy(Type, gameObject);
+        gameObject.SetActive(false);
     }
 
     /// <summary>
