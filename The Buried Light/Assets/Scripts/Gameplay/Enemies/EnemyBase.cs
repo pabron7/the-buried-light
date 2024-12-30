@@ -3,20 +3,21 @@ using Zenject;
 using Cysharp.Threading.Tasks;
 using System;
 
-public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver, IWrappable
+/// <summary>
+/// Base class for enemies. Handles core functionality such as health, damage, movement, and death.
+/// </summary>
+public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver
 {
     public EnemyTypes Type { get; private set; }
     public int Health { get; private set; }
     public float Speed { get; private set; }
-    private Vector3 _direction;
+    public int ScoreValue => scoreValue;
 
     private bool _isSpawner;
     private EnemyTypes _spawnType;
     private int _spawnCount;
     private int _spawnHealth;
     private float _spawnSpeed;
-
-    public int ScoreValue => scoreValue;
 
     // Dependencies
     protected GameFrame _gameFrame;
@@ -33,6 +34,9 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver, IWrappa
 
     private Color _originalColor;
 
+    // Movement Component
+    private EnemyMovement _movement;
+
     [Inject]
     public void Construct(GameFrame gameFrame, EnemySpawner enemySpawner, EnemyEvents enemyEvents, WrappingUtils wrappingUtils)
     {
@@ -40,12 +44,18 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver, IWrappa
         _enemySpawner = enemySpawner ?? throw new ArgumentNullException(nameof(enemySpawner));
         _enemyEvents = enemyEvents ?? throw new ArgumentNullException(nameof(enemyEvents));
         _wrappingUtils = wrappingUtils ?? throw new ArgumentNullException(nameof(wrappingUtils));
-
-        //Debug.Log($"Dependencies injected for {gameObject.name}");
     }
 
     private void Awake()
     {
+        // Ensure the EnemyMovement component is attached
+        _movement = GetComponent<EnemyMovement>();
+        if (_movement == null)
+        {
+            Debug.LogWarning("EnemyMovement component is missing. Attaching a new one dynamically.");
+            _movement = gameObject.AddComponent<EnemyMovement>();
+        }
+
         if (spriteRenderer == null)
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
@@ -58,20 +68,33 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver, IWrappa
     }
 
     /// <summary>
-    /// Initialize the enemy with base stats and type.
+    /// Initializes the enemy with base stats and type.
     /// </summary>
     public void Initialize(EnemyTypes type, float speed, int health, Vector3 direction)
     {
         Type = type;
         Speed = speed;
         Health = health;
-        _direction = direction.normalized;
 
-        //Debug.Log($"Initialized enemy of type {Type} with speed: {Speed}, health: {Health}");
+        if (_movement == null)
+        {
+            Debug.LogError("EnemyMovement component is missing or not initialized.");
+            return;
+        }
+
+        _movement.Initialize(Speed, direction);
+        _movement.SetDependencies(_wrappingUtils, _gameFrame);
+    }
+
+
+    private void Update()
+    {
+        _movement.Move();
+        _movement.WrapIfOutOfBounds();
     }
 
     /// <summary>
-    /// Configure on-death spawning behavior.
+    /// Configures on-death spawning behavior.
     /// </summary>
     public void ConfigureOnDeathSpawn(EnemyTypes spawnType, int spawnCount, int spawnHealth, float spawnSpeed)
     {
@@ -80,22 +103,6 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver, IWrappa
         _spawnCount = spawnCount;
         _spawnHealth = spawnHealth;
         _spawnSpeed = spawnSpeed;
-
-        //Debug.Log($"Enemy {Type} configured to spawn {_spawnCount} {_spawnType} on death.");
-    }
-
-    private void Update()
-    {
-        Move();
-        WrapIfOutOfBounds();
-    }
-
-    /// <summary>
-    /// Moves the enemy based on its speed and direction.
-    /// </summary>
-    protected virtual void Move()
-    {
-        transform.position += _direction * Speed * Time.deltaTime;
     }
 
     /// <summary>
@@ -105,17 +112,13 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver, IWrappa
     {
         if (damage <= 0)
         {
-            //Debug.LogWarning($"Enemy {Type} received invalid damage value: {damage}");
             return;
         }
 
         Health -= damage;
-        //Debug.Log($"Enemy {Type} took {damage} damage. Remaining health: {Health}");
 
-        // Trigger flash effect
         TriggerFlashEffect();
 
-        // Notify damage event
         _enemyEvents.NotifyEnemyDamaged(damage);
 
         if (Health <= 0)
@@ -129,8 +132,8 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver, IWrappa
     /// </summary>
     public virtual void OnDeath()
     {
-        _enemyEvents.NotifyEnemyKilled(transform.position);         // Notify death event
-        _enemyEvents.NotifyEnemyScore(this);    // Notify score event
+        _enemyEvents.NotifyEnemyKilled(transform.position);
+        _enemyEvents.NotifyEnemyScore(this);
 
         if (_isSpawner)
         {
@@ -172,19 +175,8 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver, IWrappa
                 };
 
                 await _enemySpawner.SpawnEnemyAsync(spawnConfig);
-                await UniTask.Yield(); // Yield to avoid blocking the main thread
+                await UniTask.Yield();
             }
-        }
-    }
-
-    /// <summary>
-    /// Wraps the enemy around the screen if it goes out of bounds.
-    /// </summary>
-    public void WrapIfOutOfBounds()
-    {
-        if (_gameFrame != null)
-        {
-            transform.position = _wrappingUtils.WrapPosition(transform.position);
         }
     }
 
@@ -194,7 +186,6 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver, IWrappa
     protected virtual void Deactivate()
     {
         _enemySpawner.ReturnEnemy(Type, gameObject);
-        //Debug.Log($"Enemy {Type} returned to pool.");
     }
 
     /// <summary>
