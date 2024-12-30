@@ -26,6 +26,5 @@ public class MainMenuButton : MonoBehaviour
         }
 
         _gameManager.SetState<MainMenuState>();
-        Debug.Log("Game state set to Main Menu.");
     }
 }

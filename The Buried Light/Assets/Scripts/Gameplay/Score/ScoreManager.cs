@@ -23,7 +23,6 @@ public class ScoreManager
         if (scoreGiver == null) return;
 
         _currentScore.Value += scoreGiver.ScoreValue;
-        Debug.Log($"Score Updated: {_currentScore.Value}");
     }
 
     public void ResetScore()

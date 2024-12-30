@@ -15,19 +15,16 @@ public class EnemyEvents : IEnemyEvents
 
     public void NotifyEnemyKilled(Vector3 position)
     {
-        Debug.Log($"Enemy killed at position: {position}");
         _onEnemyKilled.OnNext(position);
     }
 
     public void NotifyEnemyDamaged(int damage)
     {
-        Debug.Log($"Enemy damaged: {damage}");
         _onEnemyDamaged.OnNext(damage);
     }
 
     public void NotifyEnemyScore(IScoreGiver scoreGiver)
     {
-        Debug.Log($"Enemy scored: {scoreGiver.ScoreValue}");
         _onEnemyScore.OnNext(scoreGiver);
     }
 }

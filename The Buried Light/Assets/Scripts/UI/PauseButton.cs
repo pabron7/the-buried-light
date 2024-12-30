@@ -27,13 +27,11 @@ public class PauseButton : MonoBehaviour
         {
             buttonText.text = "Resume";
             _gameManager.SetState<PlayingState>();
-            Debug.Log("Resuming game.");
         }
         else if (_gameManager.CurrentState.Value is PlayingState)
         {
             buttonText.text = "Pause";
             _gameManager.SetState<PausedState>();
-            Debug.Log("Pausing game.");
         }
         else
         {

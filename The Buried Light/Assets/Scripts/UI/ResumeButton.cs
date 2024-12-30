@@ -26,6 +26,5 @@ public class ResumeGameButton : MonoBehaviour
         }
 
         _gameManager.SetState<PlayingState>();
-        Debug.Log("Game state set to Playing.");
     }
 }

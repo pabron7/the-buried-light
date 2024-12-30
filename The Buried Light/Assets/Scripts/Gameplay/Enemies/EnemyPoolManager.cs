@@ -50,7 +50,7 @@ public class EnemyPoolManager : MonoBehaviour
             return enemy;
         }
 
-        Debug.LogWarning($"Pool for {type} is empty. Creating new enemy on the main thread.");
+        //Debug.LogWarning($"Pool for {type} is empty. Creating new enemy on the main thread.");
         return CreateEnemy(type); 
     }
 
@@ -78,7 +78,7 @@ public class EnemyPoolManager : MonoBehaviour
         // makes sure instantiation happens on the main thread
         var enemy = _container.InstantiatePrefab(prefab);
         enemy.GetComponent<EnemyBase>()?.Initialize(type, 0, 0, Vector3.zero); // Default initialization
-        Debug.Log($"New enemy of type {type} created.");
+        //Debug.Log($"New enemy of type {type} created.");
         return enemy;
     }
 

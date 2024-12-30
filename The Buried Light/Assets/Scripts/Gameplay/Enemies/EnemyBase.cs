@@ -41,7 +41,7 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver, IWrappa
         _enemyEvents = enemyEvents ?? throw new ArgumentNullException(nameof(enemyEvents));
         _wrappingUtils = wrappingUtils ?? throw new ArgumentNullException(nameof(wrappingUtils));
 
-        Debug.Log($"Dependencies injected for {gameObject.name}");
+        //Debug.Log($"Dependencies injected for {gameObject.name}");
     }
 
     private void Awake()
@@ -67,7 +67,7 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver, IWrappa
         Health = health;
         _direction = direction.normalized;
 
-        Debug.Log($"Initialized enemy of type {Type} with speed: {Speed}, health: {Health}");
+        //Debug.Log($"Initialized enemy of type {Type} with speed: {Speed}, health: {Health}");
     }
 
     /// <summary>
@@ -81,7 +81,7 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver, IWrappa
         _spawnHealth = spawnHealth;
         _spawnSpeed = spawnSpeed;
 
-        Debug.Log($"Enemy {Type} configured to spawn {_spawnCount} {_spawnType} on death.");
+        //Debug.Log($"Enemy {Type} configured to spawn {_spawnCount} {_spawnType} on death.");
     }
 
     private void Update()
@@ -105,12 +105,12 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver, IWrappa
     {
         if (damage <= 0)
         {
-            Debug.LogWarning($"Enemy {Type} received invalid damage value: {damage}");
+            //Debug.LogWarning($"Enemy {Type} received invalid damage value: {damage}");
             return;
         }
 
         Health -= damage;
-        Debug.Log($"Enemy {Type} took {damage} damage. Remaining health: {Health}");
+        //Debug.Log($"Enemy {Type} took {damage} damage. Remaining health: {Health}");
 
         // Trigger flash effect
         TriggerFlashEffect();
@@ -129,8 +129,6 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver, IWrappa
     /// </summary>
     public virtual void OnDeath()
     {
-        Debug.Log($"Enemy {Type} has died.");
-
         _enemyEvents.NotifyEnemyKilled(transform.position);         // Notify death event
         _enemyEvents.NotifyEnemyScore(this);    // Notify score event
 
@@ -179,7 +177,6 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver, IWrappa
         }
     }
 
-
     /// <summary>
     /// Wraps the enemy around the screen if it goes out of bounds.
     /// </summary>
@@ -197,7 +194,7 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver, IWrappa
     protected virtual void Deactivate()
     {
         _enemySpawner.ReturnEnemy(Type, gameObject);
-        Debug.Log($"Enemy {Type} returned to pool.");
+        //Debug.Log($"Enemy {Type} returned to pool.");
     }
 
     /// <summary>

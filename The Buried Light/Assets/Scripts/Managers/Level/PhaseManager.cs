@@ -169,7 +169,7 @@ public class PhaseManager
     private void HandleEnemyKilled()
     {
         _killedEnemiesInPhase++;
-        Debug.Log($"PhaseManager: Enemy killed. {_killedEnemiesInPhase}/{_totalEnemiesInPhase} enemies killed.");
+        //Debug.Log($"PhaseManager: Enemy killed. {_killedEnemiesInPhase}/{_totalEnemiesInPhase} enemies killed.");
     }
 
     /// <summary>

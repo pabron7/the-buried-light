@@ -22,7 +22,6 @@ public class StartLevelButton : MonoBehaviour
 
     private void OnStartButtonClicked()
     {
-        Debug.Log("StartLevelButton: Start button clicked.");
         _gameManager.SetState<PlayingState>();
     }
 }
