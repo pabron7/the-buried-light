@@ -34,6 +34,8 @@ public class GameInstaller : MonoInstaller
         // Sound Systems
         Container.Bind<SoundRegistry>().FromInstance(soundRegistry).AsSingle();
         Container.Bind<SoundManager>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<Playlist>().AsSingle();
+        Container.Bind<MusicPlayer>().FromComponentInHierarchy().AsSingle();
 
         Container.Bind<VFXManager>().FromComponentInHierarchy().AsSingle();
         Container.Bind<VFXRegistry>().FromInstance(vFXRegistry).AsSingle();
