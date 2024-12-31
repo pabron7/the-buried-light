@@ -20,8 +20,18 @@ public class StartLevelButton : MonoBehaviour
         startButton.onClick.AddListener(OnStartButtonClicked);
     }
 
+
+
     private void OnStartButtonClicked()
     {
-        _gameManager.SetState<PlayingState>();
+        var gameManager = FindObjectOfType<GameManager>();
+        if (gameManager == null)
+        {
+            Debug.LogError("GameManager not found in the scene or ProjectContext.");
+            return;
+        }
+
+        gameManager.SetState<PlayingState>();
     }
+
 }

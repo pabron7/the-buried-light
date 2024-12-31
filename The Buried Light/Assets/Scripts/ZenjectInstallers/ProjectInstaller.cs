@@ -13,13 +13,16 @@ public class ProjectInstaller : MonoInstaller
     [SerializeField] private GameObject vfxManagerPrefab;
     [SerializeField] private GameObject musicManagerPrefab;
 
+    private string message = "Project Installer is binding dependencies...";
 
     public override void InstallBindings()
     {
+
+        Debug.Log($"<color=green>[Zenject]</color> {message}");
         // Game Manager and Events
         Container.Bind<GameManager>().FromComponentInNewPrefab(gameManagerPrefab).AsSingle().NonLazy();
         Container.Bind<SceneManager>().FromComponentInNewPrefab(sceneManagerPrefab).AsSingle().NonLazy();
-        Container.Bind<GameEvents>().AsSingle();
+        Container.Bind<GameEvents>().AsSingle().NonLazy();
         Container.Bind<EnemyEvents>().AsSingle();
         Container.Bind<PlayerEvents>().AsSingle();
 
@@ -42,5 +45,7 @@ public class ProjectInstaller : MonoInstaller
 
         // UI Systems
         Container.Bind<UIManager>().FromComponentInNewPrefab(uiManagerPrefab).AsSingle().NonLazy();
+        Container.Bind<UILoader>().AsSingle();
+        Debug.Log("ProjectInstaller: Bindings completed.");
     }
 }

@@ -17,17 +17,22 @@ public class TitleScreenController : MonoBehaviour
 
     private void Awake()
     {
-        titleScreen.SetActive(false);
-        pressText.SetActive(false);
-
         // Subscribe to the Title Screen event
         _gameEvents.OnTitleScreen
             .Subscribe(_ => ShowTitleScreen())
             .AddTo(this);
     }
 
+    private void Start()
+    {
+        // Ensure UI elements are initially hidden
+        titleScreen.SetActive(true);
+        pressText.SetActive(false);
+    }
+
     private void ShowTitleScreen()
     {
+        Debug.Log("Title Screen Activated");
         titleScreen.SetActive(true);
         pressText.SetActive(false);
         _isWaitingForInput = false;
@@ -53,9 +58,10 @@ public class TitleScreenController : MonoBehaviour
 
     private async UniTaskVoid HideTitleScreenAndContinue()
     {
+        Debug.Log("Hiding Title Screen and transitioning to Main Menu");
         _isWaitingForInput = false;
 
-        // Perform some transition/animation delay
+        // Perform some transition/animation delay if needed
         // await UniTask.Delay(500);
 
         pressText.SetActive(false);

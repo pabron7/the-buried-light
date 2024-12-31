@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         CurrentState = new ReactiveProperty<GameStateBase>(null);
+     
     }
 
     private async void Start()

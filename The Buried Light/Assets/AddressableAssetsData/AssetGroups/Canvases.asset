@@ -10,15 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Default Local Group
+  m_Name: Canvases
   m_EditorClassIdentifier: 
-  m_GroupName: Default Local Group
+  m_GroupName: Canvases
   m_Data:
     m_SerializedData: []
-  m_GUID: 114e199c1e3244ab1aad84243af5a69c
+  m_GUID: f4a01b2e19cdc4ef6a98f50c932a155e
   m_SerializeEntries:
-  - m_GUID: 5f0c5340cee794f26ba1bc038ebfcd95
-    m_Address: TitleScreenCanvas
+  - m_GUID: e39a1e57f45914134a8e00b85d87793a
+    m_Address: MainMenuCanvas
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f8575a0c9e534475badd4a4a4ff603ec
+    m_Address: GameplayCanvas
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -26,5 +31,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: 6e1bbb06018f74d77a5a685b59161dce, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: b49977fb9a59f44e28263c35063067aa, type: 2}
-    - {fileID: 11400000, guid: 52c87db90adf1419e979c77761167de1, type: 2}
+    - {fileID: 11400000, guid: e9816e9cd3dd446dea4fe8402e189ce1, type: 2}
+    - {fileID: 11400000, guid: 64a4db16e2a4e4bd9a507460263a4f97, type: 2}

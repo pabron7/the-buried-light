@@ -1,6 +1,7 @@
 using System.Collections.Generic;
-using UnityEngine;
+using Cysharp.Threading.Tasks;
 using UniRx;
+using UnityEngine;
 using Zenject;
 
 public class UIManager : MonoBehaviour
@@ -9,65 +10,73 @@ public class UIManager : MonoBehaviour
     {
         TitleScreen,
         MainMenu,
-        Playing,
-        Pause,
-        GameOver
+        Playing
     }
 
-    [SerializeField] private GameObject titleScreenCanvas;
-    [SerializeField] private GameObject mainMenuCanvas;
-    [SerializeField] private GameObject gameplayCanvas;
-    [SerializeField] private GameObject pauseCanvas;
-    [SerializeField] private GameObject gameOverCanvas;
+    private const string MainMenuKey = "MainMenuCanvas";
+    private const string GameplayKey = "GameplayCanvas";
 
-    private readonly Dictionary<UIState, GameObject> _uiCanvases = new();
-    private UIState _currentState = UIState.TitleScreen; // Default state
-
-    [Inject] private GameEvents _gameEvents;
-
-    private void Awake()
+    private readonly Dictionary<UIState, string> _uiCanvasKeys = new()
     {
-        _uiCanvases[UIState.TitleScreen] = titleScreenCanvas;
-        _uiCanvases[UIState.MainMenu] = mainMenuCanvas;
-        _uiCanvases[UIState.Playing] = gameplayCanvas;
-        _uiCanvases[UIState.Pause] = pauseCanvas;
-        _uiCanvases[UIState.GameOver] = gameOverCanvas;
+        { UIState.MainMenu, MainMenuKey },
+        { UIState.Playing, GameplayKey }
+    };
 
-        foreach (var canvas in _uiCanvases.Values)
-        {
-            if (canvas != null) canvas.SetActive(false);
-        }
+    private UIState _currentState = UIState.TitleScreen; // Default state
+    private GameObject _currentCanvas;
 
-        // Make sure TitleScreen is active at start
-        if (titleScreenCanvas != null)
-        {
-            titleScreenCanvas.SetActive(true);
-        }
-    }
+    [Inject] private UILoader _uiLoader;
+    [Inject] private GameEvents _gameEvents;
 
     private void Start()
     {
-        _gameEvents.OnTitleScreen.Subscribe(_ => SetUIState(UIState.TitleScreen)).AddTo(this);
-        _gameEvents.OnMainMenu.Subscribe(_ => SetUIState(UIState.MainMenu)).AddTo(this);
-        _gameEvents.OnGameStarted.Subscribe(_ => SetUIState(UIState.Playing)).AddTo(this);
-        _gameEvents.OnPaused.Subscribe(_ => SetUIState(UIState.Pause)).AddTo(this);
-        _gameEvents.OnGameOver.Subscribe(_ => SetUIState(UIState.GameOver)).AddTo(this);
+        InitializeSubscriptions();
     }
 
-    private void SetUIState(UIState newState)
+    private void InitializeSubscriptions()
+    {
+        _gameEvents.OnMainMenu
+            .Subscribe(_ => ChangeUIState(UIState.MainMenu))
+            .AddTo(this);
+
+        _gameEvents.OnGameStarted
+            .Subscribe(_ => ChangeUIState(UIState.Playing))
+            .AddTo(this);
+    }
+
+    private async UniTaskVoid ChangeUIState(UIState newState)
     {
         if (_currentState == newState) return;
 
-        if (_uiCanvases.ContainsKey(_currentState) && _uiCanvases[_currentState] != null)
+        // Release the current canvas to free memory
+        if (_currentCanvas != null)
         {
-            _uiCanvases[_currentState].SetActive(false);
+            _uiLoader.ReleaseCanvas(_uiCanvasKeys[_currentState]);
+            _currentCanvas = null;
         }
 
-        if (_uiCanvases.ContainsKey(newState) && _uiCanvases[newState] != null)
-        {
-            _uiCanvases[newState].SetActive(true);
-        }
-
+        // Update the current state and load the new canvas
         _currentState = newState;
+        await LoadCanvasAsync(newState);
+    }
+
+    private async UniTask LoadCanvasAsync(UIState state)
+    {
+        if (_uiCanvasKeys.TryGetValue(state, out var addressableKey))
+        {
+            _currentCanvas = await _uiLoader.LoadAndInstantiateCanvasAsync(addressableKey);
+        }
+        else
+        {
+            Debug.LogError($"No canvas key found for state: {state}");
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (_currentCanvas != null)
+        {
+            _uiLoader.ReleaseCanvas(_uiCanvasKeys[_currentState]);
+        }
     }
 }
