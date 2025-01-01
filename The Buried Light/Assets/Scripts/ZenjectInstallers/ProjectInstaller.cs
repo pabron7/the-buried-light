@@ -30,15 +30,15 @@ public class ProjectInstaller : MonoInstaller
         Container.BindInterfacesAndSelfTo<InputManager>().AsSingle();
 
         // Sound Systems
-        Container.Bind<SoundRegistry>().FromInstance(soundRegistry).AsSingle();
         Container.Bind<SoundManager>().FromComponentInNewPrefab(soundManagerPrefab).AsSingle().NonLazy();
+        Container.Bind<SoundRegistry>().FromComponentInChildren().AsSingle().NonLazy();
         Container.Bind<Playlist>().AsSingle();
         Container.Bind<MusicPlayer>().AsSingle();
         Container.Bind<MusicManager>().FromComponentInNewPrefab(musicManagerPrefab).AsSingle().NonLazy();
 
         // VFX Systems
-        Container.Bind<VFXRegistry>().FromInstance(vFXRegistry).AsSingle();
         Container.Bind<VFXManager>().FromComponentInNewPrefab(vfxManagerPrefab).AsSingle().NonLazy();
+        Container.Bind<VFXRegistry>().FromComponentInChildren().AsSingle().NonLazy();
 
         // Score
         Container.Bind<ScoreManager>().AsSingle();
