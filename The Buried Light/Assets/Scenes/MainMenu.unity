@@ -462,9 +462,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2163007860034172295, guid: e39a1e57f45914134a8e00b85d87793a, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -2
+      objectReference: {fileID: 0}
     - target: {fileID: 3132402026524992928, guid: e39a1e57f45914134a8e00b85d87793a, type: 3}
       propertyPath: m_Name
       value: Main Menu Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 3319448862848857463, guid: e39a1e57f45914134a8e00b85d87793a, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4218950431351411939, guid: e39a1e57f45914134a8e00b85d87793a, type: 3}
       propertyPath: m_Pivot.x
@@ -544,6 +552,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4218950431351411939, guid: e39a1e57f45914134a8e00b85d87793a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5456852030228581737, guid: e39a1e57f45914134a8e00b85d87793a, type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
