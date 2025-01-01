@@ -114,7 +114,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5.4, y: 5.4, z: 1}
+  m_LocalScale: {x: 1.8, y: 1.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3523746545661399668}
@@ -159,6 +159,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b471026d247c4a2281f7062938036b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scoreValue: 10
   spriteRenderer: {fileID: 336407665254532179}
   flashColor: {r: 1, g: 0.74509805, b: 0, a: 1}
   flashDuration: 0.1
