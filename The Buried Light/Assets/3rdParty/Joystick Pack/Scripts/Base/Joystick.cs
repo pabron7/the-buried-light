@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System;
 
 public class Joystick : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
     public float Horizontal { get { return (snapX) ? SnapFloat(input.x, AxisOptions.Horizontal) : input.x; } }
     public float Vertical { get { return (snapY) ? SnapFloat(input.y, AxisOptions.Vertical) : input.y; } }
     public Vector2 Direction { get { return new Vector2(Horizontal, Vertical); } }
+
+    public bool IsTouched { get; private set; } = false; // Tracks if the joystick is touched
+    public event Action OnJoystickPressed; // Event for when joystick is pressed
+    public event Action OnJoystickReleased; // Event for when joystick is released
 
     public float HandleRange
     {
@@ -59,6 +64,8 @@ public class Joystick : MonoBehaviour, IPointerDownHandler, IDragHandler, IPoint
 
     public virtual void OnPointerDown(PointerEventData eventData)
     {
+        IsTouched = true;
+        OnJoystickPressed?.Invoke(); // Notify listeners
         OnDrag(eventData);
     }
 
@@ -131,6 +138,8 @@ public class Joystick : MonoBehaviour, IPointerDownHandler, IDragHandler, IPoint
 
     public virtual void OnPointerUp(PointerEventData eventData)
     {
+        IsTouched = false;
+        OnJoystickReleased?.Invoke(); // Notify listeners
         input = Vector2.zero;
         handle.anchoredPosition = Vector2.zero;
     }
@@ -145,6 +154,7 @@ public class Joystick : MonoBehaviour, IPointerDownHandler, IDragHandler, IPoint
         }
         return Vector2.zero;
     }
+
 }
 
 public enum AxisOptions { Both, Horizontal, Vertical }
