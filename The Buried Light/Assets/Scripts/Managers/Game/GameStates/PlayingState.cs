@@ -15,10 +15,6 @@ public class PlayingState : GameStateBase
 
         // Notify that the game has started
         gameEvents.NotifyGameStarted();
-        await UniTask.Delay(1000);
-
-        Debug.Log("PlayingState: Scene loaded. Preparing to start the level...");
-        await UniTask.Delay(3000);
   
         Time.timeScale = 1;
 

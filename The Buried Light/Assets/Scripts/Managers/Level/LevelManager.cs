@@ -24,7 +24,7 @@ public class LevelManager : MonoBehaviour
     private int _totalPhases;
     private int _completedPhases;
 
-    private LevelConfig _currentLevelConfig;
+    private LevelData _currentLevelConfig;
 
     private void Awake()
     {

@@ -6,14 +6,14 @@ using Zenject;
 
 public class LevelLoader
 {
-    private LevelConfig _currentLevelConfig;
+    private LevelData _currentLevelConfig;
 
     [Inject] private GameEvents _gameEvents;
 
     /// <summary>
     /// Loads a LevelConfig by its addressable address.
     /// </summary>
-    public async UniTask<LevelConfig> LoadLevelAsync(string levelAddress)
+    public async UniTask<LevelData> LoadLevelAsync(string levelAddress)
     {
         if (_currentLevelConfig != null)
         {
@@ -21,7 +21,7 @@ public class LevelLoader
             return null;
         }
 
-        var handle = Addressables.LoadAssetAsync<LevelConfig>(levelAddress);
+        var handle = Addressables.LoadAssetAsync<LevelData>(levelAddress);
         await handle.Task;
 
         if (handle.Status == AsyncOperationStatus.Succeeded)

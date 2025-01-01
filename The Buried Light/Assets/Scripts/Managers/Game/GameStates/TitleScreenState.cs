@@ -18,7 +18,7 @@ public class TitleScreenState : GameStateBase
         // Notify that the Title Screen is active
         gameEvents.NotifyTitleScreen();
 
-        Time.timeScale = 1; 
+        Time.timeScale = 0; 
     }
 
     public override void OnStateExit()

@@ -7,7 +7,7 @@ using System;
 
 public class PhaseManager
 {
-    private LevelConfig _levelConfig;
+    private LevelData _levelConfig;
     private readonly WavePoolManager _wavePoolManager;
 
     private readonly CompositeDisposable _disposables = new CompositeDisposable();
@@ -51,7 +51,7 @@ public class PhaseManager
     /// <summary>
     /// Sets the LevelConfig for this PhaseManager instance.
     /// </summary>
-    public void SetLevelConfig(LevelConfig levelConfig)
+    public void SetLevelConfig(LevelData levelConfig)
     {
         _levelConfig = levelConfig ?? throw new ArgumentNullException(nameof(levelConfig));
         ResetPhases();
