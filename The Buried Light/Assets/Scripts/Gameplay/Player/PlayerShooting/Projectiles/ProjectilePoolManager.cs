@@ -8,12 +8,13 @@ public class ProjectilePoolManager : MonoBehaviour
     [SerializeField] private int initialPoolSize = 10;
 
     private Queue<Projectile> _projectilePool;
-    private DiContainer _container;
+
+    private LazyInject<DiContainer> _lazyContainer;
 
     [Inject]
-    public void Construct(DiContainer container)
+    public void Construct(LazyInject<DiContainer> lazyContainer)
     {
-        _container = container;
+        _lazyContainer = lazyContainer;
         InitializePool();
     }
 
@@ -29,7 +30,13 @@ public class ProjectilePoolManager : MonoBehaviour
 
     private void AddProjectileToPool()
     {
-        GameObject projectileObject = _container.InstantiatePrefab(projectilePrefab);
+        if (_lazyContainer.Value == null)
+        {
+            Debug.LogError("DiContainer is not yet resolved. Cannot instantiate projectile.");
+            return;
+        }
+
+        GameObject projectileObject = _lazyContainer.Value.InstantiatePrefab(projectilePrefab);
         Projectile projectile = projectileObject.GetComponent<Projectile>();
 
         if (projectile == null)

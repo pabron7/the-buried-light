@@ -7,14 +7,17 @@ public class Projectile : MonoBehaviour, IProjectile, IWrappable
     [SerializeField] private float lifeTime = 2f;
     [SerializeField] private int damage = 1;
 
-    private ProjectilePoolManager _poolManager;
-    private EnemyEvents _enemyEvents;
-    private WrappingUtils _wrappingUtils;
-
     private float _spawnTime;
 
+    private LazyInject<ProjectilePoolManager> _poolManager;
+    private LazyInject<EnemyEvents> _enemyEvents;
+    private LazyInject<WrappingUtils> _wrappingUtils;
+
     [Inject]
-    public void Construct(EnemyEvents enemyEvents, ProjectilePoolManager poolManager, WrappingUtils wrappingUtils)
+    public void Construct(
+        LazyInject<EnemyEvents> enemyEvents,
+        LazyInject<ProjectilePoolManager> poolManager,
+        LazyInject<WrappingUtils> wrappingUtils)
     {
         _enemyEvents = enemyEvents;
         _poolManager = poolManager;
@@ -45,7 +48,7 @@ public class Projectile : MonoBehaviour, IProjectile, IWrappable
 
     private void ReturnToPool()
     {
-        _poolManager.ReturnProjectile(this);
+        _poolManager.Value.ReturnProjectile(this);
     }
 
     public void Reset()
@@ -64,20 +67,19 @@ public class Projectile : MonoBehaviour, IProjectile, IWrappable
 
     public void WrapIfOutOfBounds()
     {
-        transform.position = _wrappingUtils.WrapPosition(transform.position);
+        transform.position = _wrappingUtils.Value.WrapPosition(transform.position);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent<IKillable>(out var killable))
         {
-            _enemyEvents.NotifyEnemyDamaged(damage);
+            _enemyEvents.Value.NotifyEnemyDamaged(damage);
             ReturnToPool();
         }
     }
 
     public void OnHit()
     {
-        
     }
 }

@@ -24,6 +24,8 @@ public class SoundRegistry : MonoBehaviour
         }
     }
 
+
+
     public SoundEffect GetSoundEffect(string id)
     {
         if (_soundEffectMap.TryGetValue(id, out var soundEffect))

@@ -17,8 +17,8 @@ public class WaveManager : MonoBehaviour
 
     public class Factory : PlaceholderFactory<WaveManager> { }
 
-    [Inject] private EnemySpawner _enemySpawner;
-    [Inject] private GameEvents _gameEvents;
+    [Inject] private readonly LazyInject<EnemySpawner> _lazyEnemySpawner;
+    [Inject] private readonly LazyInject<GameEvents> _lazyGameEvents;
 
     private WaveConfig _waveConfig;
     private WaveState _currentState = WaveState.Idle;
@@ -84,6 +84,8 @@ public class WaveManager : MonoBehaviour
     {
         SetState(WaveState.Spawning);
 
+        var enemySpawner = _lazyEnemySpawner.Value;
+
         while (_spawnedEnemies < _waveConfig.enemyCount)
         {
             if (_isHalted)
@@ -97,7 +99,7 @@ public class WaveManager : MonoBehaviour
 
             for (int i = 0; i < enemiesToSpawn; i++)
             {
-                await _enemySpawner.SpawnEnemyAsync(_waveConfig);
+                await enemySpawner.SpawnEnemyAsync(_waveConfig);
                 _spawnedEnemies++;
 
                 if (_spawnedEnemies >= _waveConfig.enemyCount)
@@ -160,6 +162,8 @@ public class WaveManager : MonoBehaviour
     {
         Debug.Log("WaveManager: Wave completed.");
         OnWaveComplete?.Invoke(); // Trigger local event
-        _gameEvents.NotifyWaveComplete(); // Notify higher systems via GameEvents
+
+        var gameEvents = _lazyGameEvents.Value;
+        gameEvents.NotifyWaveComplete(); // Notify higher systems via GameEvents
     }
 }

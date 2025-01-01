@@ -17,10 +17,7 @@ public class TitleScreenController : MonoBehaviour
 
     private void Awake()
     {
-        // Subscribe to the Title Screen event
-        _gameEvents.OnTitleScreen
-            .Subscribe(_ => ShowTitleScreen())
-            .AddTo(this);
+        ShowTitleScreen();
     }
 
     private void Start()

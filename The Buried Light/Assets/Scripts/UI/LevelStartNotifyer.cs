@@ -1,23 +1,54 @@
 using UnityEngine;
-using UniRx;
 using Zenject;
-using System.Collections;
 using TMPro;
+using System.Collections;
+using UniRx;
+using Cysharp.Threading.Tasks;
 
 public class LevelStartNotifyer : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI indicatorText; 
-    [SerializeField] private float displayDuration = 2f; 
+    [SerializeField] private TextMeshProUGUI indicatorText;
+    [SerializeField] private float displayDuration = 2f;
 
-    [Inject] private GameEvents _gameEvents;
+    private LazyInject<GameEvents> _gameEvents;
 
-    private void Start()
+    [Inject]
+    public void Construct(LazyInject<GameEvents> gameEvents)
     {
+        _gameEvents = gameEvents;
+    }
+
+    private async void Start()
+    {
+        await WaitForLazyInjection(_gameEvents);
+
+        if (_gameEvents.Value == null)
+        {
+            Debug.LogError("GameEvents dependency is not resolved.");
+            return;
+        }
+
         // Subscribe to level and phase events
-        _gameEvents.OnLevelStart.Subscribe(_ => ShowIndicator("Level Starts")).AddTo(this);
-        _gameEvents.OnPhaseStart.Subscribe(phase => ShowIndicator($"Phase {phase } Started")).AddTo(this);
-        _gameEvents.OnPhaseEnd.Subscribe(phase => ShowIndicator($"Phase {phase } Completed")).AddTo(this);
-        _gameEvents.OnLevelEnd.Subscribe(_ => ShowIndicator("Congratulations!")).AddTo(this);
+        _gameEvents.Value.OnLevelStart
+            .Subscribe(_ => ShowIndicator("Level Starts"))
+            .AddTo(this);
+
+        _gameEvents.Value.OnPhaseStart
+            .Subscribe(phase => ShowIndicator($"Phase {phase} Started"))
+            .AddTo(this);
+
+        _gameEvents.Value.OnPhaseEnd
+            .Subscribe(phase => ShowIndicator($"Phase {phase} Completed"))
+            .AddTo(this);
+
+        _gameEvents.Value.OnLevelEnd
+            .Subscribe(_ => ShowIndicator("Congratulations!"))
+            .AddTo(this);
+    }
+
+    private async UniTask WaitForLazyInjection<T>(LazyInject<T> lazyInject) where T : class
+    {
+        await UniTask.WaitUntil(() => lazyInject.Value != null);
     }
 
     private void ShowIndicator(string message)

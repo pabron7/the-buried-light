@@ -35,41 +35,17 @@ public class UIManager : MonoBehaviour
 
     private void InitializeSubscriptions()
     {
-        _gameEvents.OnMainMenu
-            .Subscribe(_ => ChangeUIState(UIState.MainMenu))
-            .AddTo(this);
 
-        _gameEvents.OnGameStarted
-            .Subscribe(_ => ChangeUIState(UIState.Playing))
-            .AddTo(this);
     }
 
     private async UniTaskVoid ChangeUIState(UIState newState)
     {
-        if (_currentState == newState) return;
 
-        // Release the current canvas to free memory
-        if (_currentCanvas != null)
-        {
-            _uiLoader.ReleaseCanvas(_uiCanvasKeys[_currentState]);
-            _currentCanvas = null;
-        }
-
-        // Update the current state and load the new canvas
-        _currentState = newState;
-        await LoadCanvasAsync(newState);
     }
 
     private async UniTask LoadCanvasAsync(UIState state)
     {
-        if (_uiCanvasKeys.TryGetValue(state, out var addressableKey))
-        {
-            _currentCanvas = await _uiLoader.LoadAndInstantiateCanvasAsync(addressableKey);
-        }
-        else
-        {
-            Debug.LogError($"No canvas key found for state: {state}");
-        }
+
     }
 
     private void OnDestroy()

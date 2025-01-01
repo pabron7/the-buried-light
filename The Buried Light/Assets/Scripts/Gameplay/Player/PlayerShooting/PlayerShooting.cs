@@ -9,13 +9,16 @@ public class PlayerShooting : MonoBehaviour
 
     private bool _canShoot = true;
 
-    // Dependencies
-    private InputManager _inputManager;
-    private ProjectilePoolManager _projectilePoolManager;
-    private PlayerEvents _playerEvents;
+    // Dependencies with LazyInject
+    private LazyInject<InputManager> _inputManager;
+    private LazyInject<ProjectilePoolManager> _projectilePoolManager;
+    private LazyInject<PlayerEvents> _playerEvents;
 
     [Inject]
-    public void Construct(InputManager inputManager, ProjectilePoolManager projectilePoolManager, PlayerEvents playerEvents)
+    public void Construct(
+        LazyInject<InputManager> inputManager,
+        LazyInject<ProjectilePoolManager> projectilePoolManager,
+        LazyInject<PlayerEvents> playerEvents)
     {
         _inputManager = inputManager;
         _projectilePoolManager = projectilePoolManager;
@@ -24,7 +27,8 @@ public class PlayerShooting : MonoBehaviour
 
     private void Update()
     {
-        if (_inputManager.IsShooting && _canShoot)
+        // Ensure the InputManager is resolved before using it
+        if (_inputManager.Value != null && _inputManager.Value.IsShooting && _canShoot)
         {
             Shoot().Forget();
         }
@@ -37,7 +41,15 @@ public class PlayerShooting : MonoBehaviour
     {
         _canShoot = false;
 
-        var projectile = _projectilePoolManager.GetProjectile();
+        var projectilePool = _projectilePoolManager.Value;
+        if (projectilePool == null)
+        {
+            Debug.LogError("ProjectilePoolManager is not resolved!");
+            _canShoot = true;
+            return;
+        }
+
+        var projectile = projectilePool.GetProjectile();
         if (projectile == null)
         {
             Debug.LogError("No projectile available in pool!");
@@ -46,10 +58,18 @@ public class PlayerShooting : MonoBehaviour
         }
 
         projectile.Activate(firePoint.position, firePoint.rotation);
-        _playerEvents.NotifyPlayerShot();
+
+        var playerEvents = _playerEvents.Value;
+        if (playerEvents != null)
+        {
+            playerEvents.NotifyPlayerShot();
+        }
+        else
+        {
+            Debug.LogWarning("PlayerEvents is not resolved!");
+        }
 
         await UniTask.Delay((int)(shootCooldown * 1000));
         _canShoot = true;
     }
-
 }

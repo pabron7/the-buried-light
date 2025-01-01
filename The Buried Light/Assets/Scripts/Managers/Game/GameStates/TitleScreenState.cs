@@ -8,12 +8,12 @@ public class TitleScreenState : GameStateBase
 
     public override async void OnStateEnter(GameManager gameManager, GameEvents gameEvents)
     {
+        // Load the TitleScreen scene and wait for it to complete
+        await _sceneManager.LoadSceneAsync("TitleScreen");
+
         base.OnStateEnter(gameManager, gameEvents);
 
         Debug.Log("Entering TitleScreenState...");
-
-        // Load the TitleScreen scene and wait for it to complete
-        await _sceneManager.LoadSceneAsync("TitleScreen");
 
         // Notify that the Title Screen is active
         gameEvents.NotifyTitleScreen();

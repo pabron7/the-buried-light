@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
     private async void Start()
     {
         await UniTask.WaitUntil(() => _gameEvents != null);
-        SetState<TitleScreenState>();
+        // SetState<TitleScreenState>();
     }
 
     /// <summary>

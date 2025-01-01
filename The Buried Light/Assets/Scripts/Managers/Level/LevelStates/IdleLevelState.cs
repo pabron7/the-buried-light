@@ -10,10 +10,6 @@ public class IdleLevelState : LevelStateBase
         levelManager.PhaseManager.ResetWaves();
     }
 
-    public override void OnUpdate()
-    {
-        // Logic for Idle State updates, if any
-    }
 
     public override void OnStateExit()
     {

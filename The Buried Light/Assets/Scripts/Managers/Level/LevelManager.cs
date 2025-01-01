@@ -79,6 +79,9 @@ public class LevelManager : MonoBehaviour
         {
             LogDebug($"LevelManager: Failed to load level {levelAddress}");
         }
+
+        await UniTask.Delay(1000);
+        SetState(_preparingState);
     }
 
     /// <summary>
