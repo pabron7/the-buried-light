@@ -53,6 +53,18 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1504727445850022352, guid: d4a641e7b84b143e5b9b8b2ed0215cbc, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.07667947
+      objectReference: {fileID: 0}
+    - target: {fileID: 1504727445850022352, guid: d4a641e7b84b143e5b9b8b2ed0215cbc, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1504727445850022352, guid: d4a641e7b84b143e5b9b8b2ed0215cbc, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1504727445850022352, guid: d4a641e7b84b143e5b9b8b2ed0215cbc, type: 3}
       propertyPath: TrailModule.colorOverTrail.maxColor.b
       value: 0.5529412
       objectReference: {fileID: 0}
@@ -86,7 +98,7 @@ PrefabInstance:
       objectReference: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
     - target: {fileID: 8654417405546220850, guid: d4a641e7b84b143e5b9b8b2ed0215cbc, type: 3}
       propertyPath: m_Name
-      value: Particle System (1) Variant
+      value: Player_Shoot
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
