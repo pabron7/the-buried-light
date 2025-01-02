@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour
     {
         await UniTask.WaitUntil(() => _gameEvents != null);
         // SetState<TitleScreenState>();
+
+        SetFrameRate(60);
     }
 
     /// <summary>
@@ -62,5 +64,16 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         CurrentState.Value?.OnUpdate();
+    }
+
+    /// <summary>
+    /// Sets the target frame rate for the application.
+    /// </summary>
+    /// <param name="targetFps">Desired frames per second.</param>
+    public void SetFrameRate(int targetFps)
+    {
+        Application.targetFrameRate = targetFps;
+        QualitySettings.vSyncCount = 0; // Disables VSync to rely solely on the target frame rate
+        Debug.Log($"Frame rate set to {targetFps} FPS.");
     }
 }

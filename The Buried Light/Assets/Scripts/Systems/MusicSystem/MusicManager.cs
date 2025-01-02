@@ -20,7 +20,7 @@ public class MusicManager : MonoBehaviour
         // Subscribe to game events to switch playlists
         gameEvents.OnMainMenu.Subscribe(_ => SwitchPlaylist("MainMenu")).AddTo(this);
         gameEvents.OnGameStarted.Subscribe(_ => SwitchPlaylist("GameplayNormal")).AddTo(this);
-        gameEvents.OnPaused.Subscribe(_ => SwitchPlaylist("Paused")).AddTo(this); 
+        gameEvents.OnPaused.Subscribe(_ => SwitchPlaylist("Paused")).AddTo(this);
         gameEvents.OnGameOver.Subscribe(_ => SwitchPlaylist("GameOver")).AddTo(this);
         gameEvents.OnTitleScreen.Subscribe(_ => SwitchPlaylist("TitleScreen")).AddTo(this);
     }
@@ -46,13 +46,19 @@ public class MusicManager : MonoBehaviour
     {
         if (_playlistMap.TryGetValue(playlistName, out var newPlaylist))
         {
+            if (newPlaylist.tracks == null || newPlaylist.tracks.Count == 0)
+            {
+                Debug.LogError($"Playlist '{playlistName}' has no tracks.");
+                return;
+            }
+
             _currentPlaylist = newPlaylist;
             _currentTrackIndex = 0;
             PlayNextTrack();
         }
         else
         {
-            Debug.LogError($"Playlist {playlistName} not found.");
+            Debug.LogError($"Playlist '{playlistName}' not found.");
         }
     }
 
@@ -66,16 +72,29 @@ public class MusicManager : MonoBehaviour
 
         var currentTrack = _currentPlaylist.tracks[_currentTrackIndex];
 
-        _musicLoader.ReleaseCurrentTrack();
-        _musicLoader.LoadNextTrack(currentTrack, clip =>
+        try
         {
-            _musicPlayer.Play(clip, currentTrack.volume);
+            _musicLoader.ReleaseCurrentTrack();
+            _musicLoader.LoadNextTrack(currentTrack, clip =>
+            {
+                if (clip == null)
+                {
+                    Debug.LogError($"Failed to load track: {currentTrack.audioClipReference}");
+                    return;
+                }
 
-            // Prepare the next track
-            _currentTrackIndex = (_currentTrackIndex + 1) % _currentPlaylist.tracks.Count;
-            var nextTrack = _currentPlaylist.tracks[_currentTrackIndex];
-            _musicLoader.LoadNextTrack(nextTrack, null);
-        });
+                _musicPlayer.Play(clip, currentTrack.volume);
+
+                // Prepare the next track
+                _currentTrackIndex = (_currentTrackIndex + 1) % _currentPlaylist.tracks.Count;
+                var nextTrack = _currentPlaylist.tracks[_currentTrackIndex];
+                _musicLoader.LoadNextTrack(nextTrack, null);
+            });
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"Error playing next track: {ex.Message}");
+        }
     }
 
     private void Update()

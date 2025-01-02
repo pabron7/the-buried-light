@@ -14,17 +14,38 @@ public class MusicLoader
             Addressables.Release(_nextHandle.Value);
         }
 
-        _nextHandle = Addressables.LoadAssetAsync<AudioClip>(track.audioClipReference);
-        var clip = await _nextHandle.Value.Task;
-        onLoaded?.Invoke(clip);
+        try
+        {
+            _nextHandle = Addressables.LoadAssetAsync<AudioClip>(track.audioClipReference);
+            var clip = await _nextHandle.Value.Task;
+
+            if (clip == null)
+            {
+                Debug.LogError($"Failed to load AudioClip from Addressable: {track.audioClipReference}");
+            }
+
+            onLoaded?.Invoke(clip);
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"Error loading AudioClip from Addressable: {track.audioClipReference}. Exception: {ex.Message}");
+            onLoaded?.Invoke(null);
+        }
     }
 
     public void ReleaseCurrentTrack()
     {
         if (_currentHandle.HasValue)
         {
-            Addressables.Release(_currentHandle.Value);
-            _currentHandle = null;
+            try
+            {
+                Addressables.Release(_currentHandle.Value);
+                _currentHandle = null;
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"Error releasing current track: {ex.Message}");
+            }
         }
     }
 
@@ -33,3 +54,4 @@ public class MusicLoader
         _currentHandle = handle;
     }
 }
+
