@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02ea54d3d010545e188001e0617b25df, type: 3}
   m_Name: SilentTrack
   m_EditorClassIdentifier: 
-  trackName: 
+  trackName: Silence
   audioClipReference:
-    m_AssetGUID: 
+    m_AssetGUID: 9a872f289be89434bb02a66059207eab
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  artist: 
-  album: 
+  artist: Pap
+  album: Void
   volume: 1

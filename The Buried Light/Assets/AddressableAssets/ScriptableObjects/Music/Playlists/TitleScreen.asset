@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playlistName: TitleScreen
   tracks:
-  - {fileID: 11400000, guid: f00f153a4937c4d709f0c6dbbb442120, type: 2}
+  - {fileID: 11400000, guid: 95eb332d737b44cbf868ed329cc698f5, type: 2}
