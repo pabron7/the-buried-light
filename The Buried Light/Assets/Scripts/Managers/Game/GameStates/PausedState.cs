@@ -7,7 +7,6 @@ public class PausedState : GameStateBase
         base.OnStateEnter(gameManager, gameEvents);
         Time.timeScale = 0;
         gameEvents.NotifyPaused();
-        Debug.Log("Game is Paused.");
     }
 
     public override void OnStateExit()

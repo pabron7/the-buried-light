@@ -726,9 +726,57 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4316813403604493714, guid: f8575a0c9e534475badd4a4a4ff603ec, type: 3}
+      propertyPath: m_Color.a
+      value: 0.36862746
+      objectReference: {fileID: 0}
+    - target: {fileID: 4316813403604493714, guid: f8575a0c9e534475badd4a4a4ff603ec, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4316813403604493714, guid: f8575a0c9e534475badd4a4a4ff603ec, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4316813403604493714, guid: f8575a0c9e534475badd4a4a4ff603ec, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4977913654770603578, guid: f8575a0c9e534475badd4a4a4ff603ec, type: 3}
       propertyPath: m_Name
       value: Gameplay Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 7435142358861780357, guid: f8575a0c9e534475badd4a4a4ff603ec, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 87.69
+      objectReference: {fileID: 0}
+    - target: {fileID: 7435142358861780357, guid: f8575a0c9e534475badd4a4a4ff603ec, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 53.3944
+      objectReference: {fileID: 0}
+    - target: {fileID: 7435142358861780357, guid: f8575a0c9e534475badd4a4a4ff603ec, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 331.15503
+      objectReference: {fileID: 0}
+    - target: {fileID: 7435142358861780357, guid: f8575a0c9e534475badd4a4a4ff603ec, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 253.3028
+      objectReference: {fileID: 0}
+    - target: {fileID: 8543183808005651051, guid: f8575a0c9e534475badd4a4a4ff603ec, type: 3}
+      propertyPath: m_fontColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8543183808005651051, guid: f8575a0c9e534475badd4a4a4ff603ec, type: 3}
+      propertyPath: m_fontColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8543183808005651051, guid: f8575a0c9e534475badd4a4a4ff603ec, type: 3}
+      propertyPath: m_fontColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8543183808005651051, guid: f8575a0c9e534475badd4a4a4ff603ec, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1632,5 +1680,5 @@ SceneRoots:
   - {fileID: 3854003277603179948}
   - {fileID: 456537108}
   - {fileID: 1196713634}
-  - {fileID: 6143585197172883158}
   - {fileID: 1672842362}
+  - {fileID: 6143585197172883158}

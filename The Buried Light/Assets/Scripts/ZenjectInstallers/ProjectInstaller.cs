@@ -46,6 +46,7 @@ public class ProjectInstaller : MonoInstaller
         // UI Systems
         Container.Bind<UIManager>().FromComponentInNewPrefab(uiManagerPrefab).AsSingle().NonLazy();
         Container.Bind<UILoader>().AsSingle();
+
         Debug.Log("ProjectInstaller: Bindings completed.");
     }
 }

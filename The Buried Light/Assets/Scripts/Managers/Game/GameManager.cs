@@ -6,6 +6,7 @@ using Cysharp.Threading.Tasks;
 public class GameManager : MonoBehaviour
 {
     public ReactiveProperty<GameStateBase> CurrentState { get; private set; }
+    public GameStateBase PreviousState { get; private set; }
 
     [Inject] private readonly DiContainer _container;
     [Inject] private GameEvents _gameEvents;
@@ -19,7 +20,6 @@ public class GameManager : MonoBehaviour
     private async void Start()
     {
         await UniTask.WaitUntil(() => _gameEvents != null);
-        // SetState<TitleScreenState>();
     }
 
     /// <summary>
@@ -52,7 +52,12 @@ public class GameManager : MonoBehaviour
 
     private void ChangeState(GameStateBase newState)
     {
-        CurrentState.Value?.OnStateExit();
+        // Set PreviousState before exiting the current state
+        if (CurrentState.Value != null) 
+        {    
+            PreviousState = CurrentState.Value;
+            CurrentState.Value.OnStateExit();
+        }
         CurrentState.Value = newState;
         CurrentState.Value.OnStateEnter(this, _gameEvents);
 
