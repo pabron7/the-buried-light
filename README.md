@@ -5,6 +5,12 @@ An **asteroids-like**, narrative-driven cross-platform Mobile and WebGL game.
 
 ---
 
+## **Try the Game Now!**
+**Play the WebGL Build**: [Play The Buried Light](https://pabron7.github.io/the-buried-light/) 
+Experience the latest test build directly in your browser and give me feedback!
+***
+---
+
 ## **Tech Stack**
 
 - **Unity**: Version 2022.3.22f1  
