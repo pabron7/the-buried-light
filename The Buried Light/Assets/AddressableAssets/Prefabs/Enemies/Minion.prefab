@@ -97,6 +97,8 @@ GameObject:
   - component: {fileID: 3722302248138772023}
   - component: {fileID: 7087682368230782532}
   - component: {fileID: 960068072273638014}
+  - component: {fileID: 8923172167855570094}
+  - component: {fileID: 7503950909222845224}
   m_Layer: 0
   m_Name: Minion
   m_TagString: Untagged
@@ -159,6 +161,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b471026d247c4a2281f7062938036b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scoreValue: 10
   spriteRenderer: {fileID: 336407665254532179}
   flashColor: {r: 1, g: 0.74509805, b: 0, a: 1}
   flashDuration: 0.1
@@ -232,3 +235,27 @@ CapsuleCollider2D:
   m_Offset: {x: 0.000000019868216, y: 0.00072278583}
   m_Size: {x: 0.12046325, y: 0.15959263}
   m_Direction: 0
+--- !u!114 &8923172167855570094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6434810599629161644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9da7a162dbe0499481b1728b65cf665, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7503950909222845224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6434810599629161644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec9d4b420ebae4b9cb0c939e9879d35c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

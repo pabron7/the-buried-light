@@ -96,6 +96,8 @@ GameObject:
   - component: {fileID: 79324615694772818}
   - component: {fileID: 4957177600323657970}
   - component: {fileID: 2320327000039635221}
+  - component: {fileID: 5132037574284073902}
+  - component: {fileID: 1515541685106316792}
   m_Layer: 0
   m_Name: Charger
   m_TagString: Untagged
@@ -158,6 +160,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a18b3fbae0a3496a93ccc392e8bd408, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scoreValue: 10
   spriteRenderer: {fileID: 7920136650751873265}
   flashColor: {r: 1, g: 0.7464502, b: 0, a: 1}
   flashDuration: 0.1
@@ -196,3 +199,27 @@ CapsuleCollider2D:
   m_Offset: {x: -0.000000007450581, y: -0.0018037334}
   m_Size: {x: 0.105821595, y: 0.13627537}
   m_Direction: 0
+--- !u!114 &5132037574284073902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7471107917273321913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec9d4b420ebae4b9cb0c939e9879d35c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1515541685106316792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7471107917273321913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9da7a162dbe0499481b1728b65cf665, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

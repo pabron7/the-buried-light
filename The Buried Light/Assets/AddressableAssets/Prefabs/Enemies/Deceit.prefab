@@ -96,6 +96,8 @@ GameObject:
   - component: {fileID: 79324615694772818}
   - component: {fileID: 1647833774683228394}
   - component: {fileID: 3364521595960093499}
+  - component: {fileID: 4370110819354350459}
+  - component: {fileID: 1698419181143938058}
   m_Layer: 0
   m_Name: Deceit
   m_TagString: Untagged
@@ -158,6 +160,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c37f7fa64ca3e4eb6b3b8fc2cf700b02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scoreValue: 10
   spriteRenderer: {fileID: 7920136650751873265}
   flashColor: {r: 1, g: 0.74509805, b: 0, a: 1}
   flashDuration: 0.1
@@ -196,3 +199,27 @@ CapsuleCollider2D:
   m_Offset: {x: 0.00000002483527, y: -0.0003198286}
   m_Size: {x: 0.11177187, y: 0.14617172}
   m_Direction: 0
+--- !u!114 &4370110819354350459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7471107917273321913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9da7a162dbe0499481b1728b65cf665, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1698419181143938058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7471107917273321913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec9d4b420ebae4b9cb0c939e9879d35c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
