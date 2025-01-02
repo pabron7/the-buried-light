@@ -39,7 +39,7 @@ public class MusicManager : MonoBehaviour
 
     private void Start()
     {
-        SwitchPlaylist("MainMenu");
+        SwitchPlaylist("TitleScreen");
     }
 
     public void SwitchPlaylist(string playlistName)
