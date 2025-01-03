@@ -41,6 +41,8 @@ public class ProjectInstaller : MonoInstaller
         Container.Bind<VFXRegistry>().FromComponentInChildren().AsSingle().NonLazy();
 
         // Score
+        Container.Bind<IResetScore>().To<ResetScore>().AsTransient();
+        Container.Bind<IAddScore>().To<AddScore>().AsTransient();
         Container.Bind<ScoreManager>().AsSingle();
 
         // UI Systems

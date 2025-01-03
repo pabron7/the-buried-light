@@ -9,12 +9,23 @@ public class ScoreManager
 
     private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
+    private readonly ResetScore _resetScore;
+    private readonly AddScore _addScore;
+
     [Inject]
-    public ScoreManager(EnemyEvents enemyEvents)
+    public ScoreManager(EnemyEvents enemyEvents, GameEvents gameEvents)
     {
+        _resetScore = new ResetScore();
+        _addScore = new AddScore();
+
         // Subscribe to OnEnemyScore events
         enemyEvents.OnEnemyScore
             .Subscribe(AddScore)
+            .AddTo(_disposables);
+
+        // Subscribe to OnGameStarted event to reset score
+        gameEvents.OnGameStarted
+            .Subscribe(_ => ResetScore())
             .AddTo(_disposables);
     }
 
@@ -22,13 +33,12 @@ public class ScoreManager
     {
         if (scoreGiver == null) return;
 
-        _currentScore.Value += scoreGiver.ScoreValue;
+        _addScore.Execute(_currentScore, scoreGiver.ScoreValue);
     }
 
-    public void ResetScore()
+    private void ResetScore()
     {
-        _currentScore.Value = 0;
-        Debug.Log("Score Reset.");
+        _resetScore.Execute(_currentScore);
     }
 
     // Ensure proper cleanup of subscriptions
@@ -38,3 +48,4 @@ public class ScoreManager
         Debug.Log("ScoreManager disposed.");
     }
 }
+
