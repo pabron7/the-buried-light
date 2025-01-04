@@ -26,6 +26,19 @@ public class ProjectInstaller : MonoInstaller
         Container.Bind<EnemyEvents>().AsSingle();
         Container.Bind<PlayerEvents>().AsSingle();
 
+        // Save System
+        Container.BindInterfacesAndSelfTo<SaveManager>().AsSingle().NonLazy();
+        Container.Bind<ISaveHandler>().To<SaveHandler>().AsSingle();
+        Container.Bind<ILoadHandler>().To<LoadHandler>().AsSingle();
+        Container.Bind<IFileWriter>().To<FileWriter>().AsSingle();
+        Container.Bind<IFileReader>().To<FileReader>().AsSingle();
+
+        // Data Stores
+        Container.Bind<PlayerPreferencesStore>().AsSingle().NonLazy();
+        Container.Bind<PlayerStatsStore>().AsSingle().NonLazy();
+        Container.Bind<PlayerDataStore>().AsSingle().NonLazy();
+        Container.Bind<GameProgressStore>().AsSingle().NonLazy();
+
         // Input Systems
         Container.BindInterfacesAndSelfTo<InputManager>().AsSingle();
 
