@@ -12,12 +12,14 @@ public class LevelManager : MonoBehaviour
 
     private LevelStateBase _currentState;
     public LevelStateBase CurrentState => _currentState;
+    private int currentLevelIndex;
 
     [Inject] private PhaseManager _phaseManager;
     [Inject] private GameManager _gameManager;
     [Inject] private GameEvents _gameEvents;
     [Inject] private DiContainer _container;
     [Inject] private LevelLoader _levelLoader;
+    [Inject] private GameProgressStore _gameProgressStore;
 
     public PhaseManager PhaseManager => _phaseManager;
 
@@ -48,7 +50,7 @@ public class LevelManager : MonoBehaviour
         _gameEvents.OnPhaseEnd.Subscribe(_ => OnPhaseEnd()).AddTo(this);
 
         // Start loading the first level
-        await LoadLevel("Level_1");
+        await LoadLevel(CurrentLevelAddress());
     }
 
     /// <summary>
@@ -62,6 +64,16 @@ public class LevelManager : MonoBehaviour
         _currentState = newState;
         _currentState.OnStateEnter(this);
     }
+
+    /// <summary>
+    /// Returns the current level address based on the current level in GameProgressStore.
+    /// </summary>
+    private string CurrentLevelAddress()
+    {
+        int currentLevel = _gameProgressStore.CurrentLevel.Value; // Get the current level
+        return $"Level_{currentLevel}"; // Construct the address
+    }
+
 
     /// <summary>
     /// Dynamically loads a LevelConfig asset using LevelLoader and sets it in PhaseManager.

@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e78632fbbb03a42e9b99d8bd3bee1fb2, type: 3}
-  m_Name: LevelData_1
+  m_Name: LevelData_2
   m_EditorClassIdentifier: 
   phases:
-  - {fileID: 11400000, guid: 0a7f7e889359946c68b47526607b050d, type: 2}
-  - {fileID: 11400000, guid: c15b91b4cb04246539312c12f94c1aa9, type: 2}
+  - {fileID: 11400000, guid: 9ac69d5263fdc44e9b83c7dd9da41ffa, type: 2}
+  - {fileID: 11400000, guid: 6013964735f7b495ba6c53f65046befb, type: 2}
