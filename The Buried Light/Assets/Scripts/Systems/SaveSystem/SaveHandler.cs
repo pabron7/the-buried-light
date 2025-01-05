@@ -18,6 +18,7 @@ public class SaveHandler : ISaveHandler
         try
         {
             string json = JsonUtility.ToJson(data);
+            Debug.Log($"Serialized JSON for {fileName}: {json}");
             string encryptedJson = EncryptionUtility.Encrypt(json);
             await _fileWriter.WriteToFileAsync(fileName, encryptedJson);
             Debug.Log($"Data saved: {fileName}");

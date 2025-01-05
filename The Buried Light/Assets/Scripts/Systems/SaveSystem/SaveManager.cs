@@ -13,6 +13,11 @@ public class SaveManager : IInitializable
     [Inject] private PlayerDataStore _playerDataStore;
     [Inject] private GameProgressStore _gameProgressStore;
 
+    public PlayerPreferencesStore PlayerPreferencesStore => _playerPreferencesStore;
+    public PlayerStatsStore PlayerStatsStore => _playerStatsStore;
+    public PlayerDataStore PlayerDataStore => _playerDataStore;
+    public GameProgressStore GameProgressStore => _gameProgressStore;
+
     public ReactiveProperty<bool> IsSaving { get; private set; }
     public ReactiveProperty<bool> IsLoading { get; private set; }
 
@@ -37,10 +42,10 @@ public class SaveManager : IInitializable
     {
         IsSaving.Value = true;
 
-        await _saveHandler.SaveAsync("PlayerPreferences.json", _playerPreferencesStore.ToPlayerPreferences());
-        await _saveHandler.SaveAsync("PlayerStats.json", _playerStatsStore.ToPlayerStats());
-        await _saveHandler.SaveAsync("PlayerData.json", _playerDataStore.ToPlayerData());
-        await _saveHandler.SaveAsync("GameProgress.json", _gameProgressStore.ToGameProgress());
+        await _saveHandler.SaveAsync("PlayerPreferences", _playerPreferencesStore.ToPlayerPreferences());
+        await _saveHandler.SaveAsync("PlayerStats", _playerStatsStore.ToPlayerStats());
+        await _saveHandler.SaveAsync("PlayerData", _playerDataStore.ToPlayerData());
+        await _saveHandler.SaveAsync("GameProgress", _gameProgressStore.ToGameProgress());
 
         IsSaving.Value = false;
         Debug.Log("All data saved successfully.");
@@ -53,10 +58,10 @@ public class SaveManager : IInitializable
     {
         IsLoading.Value = true;
 
-        var preferences = await _loadHandler.LoadAsync<PlayerPreferences>("PlayerPreferences.json");
-        var stats = await _loadHandler.LoadAsync<PlayerStats>("PlayerStats.json");
-        var data = await _loadHandler.LoadAsync<PlayerData>("PlayerData.json");
-        var progress = await _loadHandler.LoadAsync<GameProgress>("GameProgress.json");
+        var preferences = await _loadHandler.LoadAsync<PlayerPreferences>("PlayerPreferences");
+        var stats = await _loadHandler.LoadAsync<PlayerStats>("PlayerStats");
+        var data = await _loadHandler.LoadAsync<PlayerData>("PlayerData");
+        var progress = await _loadHandler.LoadAsync<GameProgress>("GameProgress");
 
         _playerPreferencesStore.UpdatePreferences(preferences);
         _playerStatsStore.UpdateStats(stats);
@@ -72,10 +77,10 @@ public class SaveManager : IInitializable
     /// </summary>
     public async UniTask EnsureFilesExistAsync()
     {
-        await EnsureFileExistsAsync("PlayerPreferences.json", new PlayerPreferences());
-        await EnsureFileExistsAsync("PlayerStats.json", new PlayerStats());
-        await EnsureFileExistsAsync("PlayerData.json", new PlayerData());
-        await EnsureFileExistsAsync("GameProgress.json", new GameProgress());
+        await EnsureFileExistsAsync("PlayerPreferences", new PlayerPreferences());
+        await EnsureFileExistsAsync("PlayerStats", new PlayerStats());
+        await EnsureFileExistsAsync("PlayerData", new PlayerData());
+        await EnsureFileExistsAsync("GameProgress", new GameProgress());
     }
 
     /// <summary>
@@ -95,6 +100,7 @@ public class SaveManager : IInitializable
     /// </summary>
     public async UniTask SaveChunkAsync<T>(string fileName, T data) where T : class
     {
+        Debug.Log($"Saving data for {fileName}: {JsonUtility.ToJson(data)}");
         IsSaving.Value = true;
         await _saveHandler.SaveAsync(fileName, data);
         IsSaving.Value = false;

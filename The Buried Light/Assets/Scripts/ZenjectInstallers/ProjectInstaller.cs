@@ -32,6 +32,8 @@ public class ProjectInstaller : MonoInstaller
         Container.Bind<ILoadHandler>().To<LoadHandler>().AsSingle();
         Container.Bind<IFileWriter>().To<FileWriter>().AsSingle();
         Container.Bind<IFileReader>().To<FileReader>().AsSingle();
+        Container.BindInterfacesAndSelfTo<SaveEventHandler>().AsSingle().NonLazy();
+
 
         // Data Stores
         Container.Bind<PlayerPreferencesStore>().AsSingle().NonLazy();
