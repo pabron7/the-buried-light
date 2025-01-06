@@ -112,7 +112,6 @@ public class LevelManager : MonoBehaviour
     {
         if (!_phaseManager.HasMorePhases())
         {
-            _gameEvents.NotifyLevelEnd();
             SetState(_completedState);
             return;
         }
@@ -130,13 +129,11 @@ public class LevelManager : MonoBehaviour
             case PlayingState:
                 if (_currentState is IdleLevelState or CompletedLevelState)
                 {
-                    _gameEvents.NotifyLevelStart();
                     SetState(_preparingState);
                 }
                 break;
 
             case GameOverState:
-                _gameEvents.NotifyLevelEnd();
                 SetState(_completedState);
                 break;
         }
