@@ -1,6 +1,8 @@
 # **The Buried Light**
 
 An **asteroids-like**, narrative-driven cross-platform Mobile and WebGL game.
+
+
 ![The Buried Light Banner](images/theBuriedLight-banner.png)
 
 ---
@@ -116,8 +118,10 @@ Contributions are welcome! Follow these steps:
 * Create a new branch: feature/YourFeatureName.
 * Submit a pull request.
 
-### LICENSE
-This project is licensed under the [MIT License](LICENSE).
+## License
+This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License.  
+
+See the [LICENSE](LICENSE) file for details.
 
 ### CONTACT
 For questions or suggestions, reach out at: krtalp@gmail.com
