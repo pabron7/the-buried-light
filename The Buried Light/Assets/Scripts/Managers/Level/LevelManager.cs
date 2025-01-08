@@ -5,10 +5,13 @@ using Cysharp.Threading.Tasks;
 
 public class LevelManager : MonoBehaviour
 {
-    private IdleLevelState _idleState;
-    private PreparingLevelState _preparingState;
-    private InProgressLevelState _inProgressState;
-    private CompletedLevelState _completedState;
+    [Inject] private IdleLevelState _idleState;
+    [Inject] private PreparingLevelState _preparingState;
+    [Inject] private InProgressLevelState _inProgressState;
+    [Inject] private CompletedLevelState _completedState;
+    [Inject] private FailedLevelState _failedLevelState;
+
+    public FailedLevelState FailedLevelState => _failedLevelState;
 
     private LevelStateBase _currentState;
     public LevelStateBase CurrentState => _currentState;
@@ -17,7 +20,6 @@ public class LevelManager : MonoBehaviour
     [Inject] private PhaseManager _phaseManager;
     [Inject] private GameManager _gameManager;
     [Inject] private GameEvents _gameEvents;
-    [Inject] private DiContainer _container;
     [Inject] private LevelLoader _levelLoader;
     [Inject] private GameProgressStore _gameProgressStore;
 
@@ -26,18 +28,15 @@ public class LevelManager : MonoBehaviour
     private int _totalPhases;
     private int _completedPhases;
 
-    private LevelData _currentLevelConfig;
-
-    private void Awake()
+    private bool _isLevelFailed = false;
+    public bool IsLevelFailed
     {
-        // Preload states using Zenject
-        _idleState = _container.Instantiate<IdleLevelState>();
-        _preparingState = _container.Instantiate<PreparingLevelState>();
-        _inProgressState = _container.Instantiate<InProgressLevelState>();
-        _completedState = _container.Instantiate<CompletedLevelState>();
-
-        LogDebug("States preloaded.");
+        get => _isLevelFailed;
+        set => _isLevelFailed = value;
     }
+
+
+    private LevelData _currentLevelConfig;
 
     private async UniTaskVoid Start()
     {
@@ -110,12 +109,20 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public async UniTaskVoid StartNextPhase()
     {
+        // Check if the level has failed first
+        if (IsLevelFailed)
+        {
+            return;
+        }
+
+        // Check if there are no more phases
         if (!_phaseManager.HasMorePhases())
         {
             SetState(_completedState);
             return;
         }
 
+        // Start the next phase if conditions are met
         await _phaseManager.StartPhaseAsync();
     }
 
@@ -133,9 +140,7 @@ public class LevelManager : MonoBehaviour
                 }
                 break;
 
-            case GameOverState:
-                SetState(_completedState);
-                break;
+
         }
     }
 

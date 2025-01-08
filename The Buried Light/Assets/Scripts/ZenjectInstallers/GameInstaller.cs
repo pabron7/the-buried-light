@@ -29,6 +29,11 @@ public class GameInstaller : MonoInstaller
         // Bind LevelManager
         Container.Bind<LevelLoader>().AsSingle();
         Container.Bind<LevelManager>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<IdleLevelState>().AsTransient();
+        Container.Bind<PreparingLevelState>().AsTransient();
+        Container.Bind<InProgressLevelState>().AsTransient();
+        Container.Bind<CompletedLevelState>().AsTransient();
+        Container.Bind<FailedLevelState>().AsTransient();
 
         // Enemy Systems
         Container.Bind<EnemyPrefabMapping[]>().FromInstance(enemyPrefabMappings).AsSingle();
@@ -37,6 +42,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<EnemySpawner>().FromComponentInHierarchy().AsSingle();
 
         // Player Systems
-        Container.Bind<IHealth>().To<PlayerHealth>().FromInstance(FindObjectOfType<PlayerHealth>()).AsSingle();
+        Container.Bind<PlayerHealth>().FromComponentInHierarchy().AsSingle().NonLazy();
+        Container.BindInterfacesAndSelfTo<PlayerEventsHandler>().AsSingle().NonLazy();
     }
 }
