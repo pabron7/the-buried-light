@@ -4,7 +4,6 @@ public class PausedState : GameStateBase
 {
     public override void OnStateEnter(GameManager gameManager, GameEvents gameEvents)
     {
-        base.OnStateEnter(gameManager, gameEvents);
         Time.timeScale = 0;
         gameEvents.NotifyPaused();
     }

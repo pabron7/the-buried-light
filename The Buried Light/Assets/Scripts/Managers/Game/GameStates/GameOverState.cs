@@ -7,6 +7,5 @@ public class GameOverState : GameStateBase
         base.OnStateEnter(gameManager, gameEvents);
         Time.timeScale = 0;
         gameEvents.NotifyGameOver();
-        Debug.Log("Game Over.");
     }
 }

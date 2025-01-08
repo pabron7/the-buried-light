@@ -13,17 +13,9 @@ public class TitleScreenState : GameStateBase
 
         base.OnStateEnter(gameManager, gameEvents);
 
-        Debug.Log("Entering TitleScreenState...");
-
         // Notify that the Title Screen is active
         gameEvents.NotifyTitleScreen();
 
         Time.timeScale = 0; 
-    }
-
-    public override void OnStateExit()
-    {
-        Debug.Log("Exiting TitleScreenState...");
-        base.OnStateExit();
     }
 }
