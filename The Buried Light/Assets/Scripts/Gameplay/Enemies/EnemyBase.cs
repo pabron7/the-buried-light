@@ -12,8 +12,10 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver
     public int Health => _health.CurrentHealth;
     public float Speed { get; private set; }
     public int ScoreValue => scoreValue;
+   
 
     [SerializeField] private int scoreValue = 10;
+    [SerializeField] private int damage = 1;
 
     [Header("Visual Effect Settings")]
     [SerializeField] private SpriteRenderer spriteRenderer;
@@ -26,6 +28,7 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver
     protected GameFrame _gameFrame;
     private EnemyEvents _enemyEvents;
     private WrappingUtils _wrappingUtils;
+    [Inject] private PlayerHealth _playerHealth;
 
     // Components
     private EnemyMovement _movement;
@@ -142,6 +145,7 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver
         if (collision.CompareTag("Player"))
         {
             OnDeath();
+            _playerHealth.TakeDamage(damage);
         }
         else if (collision.CompareTag("Projectile"))
         {
