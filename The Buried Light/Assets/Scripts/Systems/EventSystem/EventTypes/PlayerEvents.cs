@@ -1,15 +1,15 @@
 using UniRx;
-using UnityEngine;
 using System;
 
 public class PlayerEvents : IPlayerEvents
 {
     private readonly Subject<Unit> _onPlayerShot = new Subject<Unit>();
-    public IObservable<Unit> OnPlayerShot => _onPlayerShot;
+    private readonly Subject<Unit> _onPlayerDeath = new Subject<Unit>();
 
-    public void NotifyPlayerShot()
-    {
-        Debug.Log("Player shot.");
-        _onPlayerShot.OnNext(Unit.Default);
-    }
+    public IObservable<Unit> OnPlayerShot => _onPlayerShot;
+    public IObservable<Unit> OnPlayerDeath => _onPlayerDeath;
+
+    public void NotifyPlayerShot() => _onPlayerShot.OnNext(Unit.Default);
+    public void NotifyPlayerDeath() => _onPlayerDeath.OnNext(Unit.Default);
 }
+
