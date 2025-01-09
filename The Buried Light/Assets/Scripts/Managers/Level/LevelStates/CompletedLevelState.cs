@@ -10,7 +10,6 @@ public class CompletedLevelState : LevelStateBase
 
     public override async void OnStateEnter(LevelManager levelManager)
     {
-        base.OnStateEnter(levelManager);
 
         // Global Level Value is Increased
         _gameProgressStore.CurrentLevel.Value++;

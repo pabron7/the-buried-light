@@ -19,8 +19,6 @@ public class SaveEventHandler : IInitializable, IDisposable
 
     public void Initialize()
     {
-        Debug.Log("SaveEventHandler initialized.");
-
         _gameEvents.OnLevelEnd.Subscribe(_ => SavePlayerStatsAndProgressAsync().Forget()).AddTo(_disposables); 
     }
 

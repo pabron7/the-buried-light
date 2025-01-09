@@ -29,7 +29,6 @@ public class TitleScreenController : MonoBehaviour
 
     private void ShowTitleScreen()
     {
-        Debug.Log("Title Screen Activated");
         titleScreen.SetActive(true);
         pressText.SetActive(false);
         _isWaitingForInput = false;

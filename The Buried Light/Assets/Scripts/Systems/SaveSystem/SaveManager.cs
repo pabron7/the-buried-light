@@ -3,7 +3,7 @@ using Cysharp.Threading.Tasks;
 using Zenject;
 using UniRx;
 
-public class SaveManager : IInitializable
+public class SaveManager 
 {
     private readonly ISaveHandler _saveHandler;
     private readonly ILoadHandler _loadHandler;
@@ -28,11 +28,6 @@ public class SaveManager : IInitializable
 
         IsSaving = new ReactiveProperty<bool>(false);
         IsLoading = new ReactiveProperty<bool>(false);
-    }
-
-    public void Initialize()
-    {
-        Debug.Log("SaveManager initialized.");
     }
 
     /// <summary>

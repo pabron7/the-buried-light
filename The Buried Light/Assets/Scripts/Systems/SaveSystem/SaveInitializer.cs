@@ -14,8 +14,6 @@ public class SaveInitializer : MonoBehaviour
         await _saveManager.EnsureFileExistsAsync("PlayerData", new PlayerData());
         await _saveManager.EnsureFileExistsAsync("GameProgress", new GameProgress());
 
-        Debug.Log("All save files initialized.");
-
         // Load all saved data and update the stores
         await _saveManager.LoadAllAsync();
     }

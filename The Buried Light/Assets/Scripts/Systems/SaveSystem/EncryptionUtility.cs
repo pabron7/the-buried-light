@@ -12,7 +12,6 @@ public static class EncryptionUtility
     {
         if (BypassEncryption)
         {
-            Debug.Log("Encryption bypassed.");
             return plainText; // Return plain text directly
         }
 
@@ -44,13 +43,11 @@ public static class EncryptionUtility
     {
         if (BypassEncryption)
         {
-            Debug.Log("Decryption bypassed.");
             return encryptedText; // Return plain text directly
         }
 
         try
         {
-            Debug.Log($"Decrypting: {encryptedText}");
             byte[] keyBytes = Encoding.UTF8.GetBytes(Key);
             byte[] encryptedBytes = Convert.FromBase64String(encryptedText);
 
