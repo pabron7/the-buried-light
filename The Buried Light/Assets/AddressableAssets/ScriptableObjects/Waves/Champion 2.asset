@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Champion 2
   m_EditorClassIdentifier: 
   enemyType: 3
-  enemyCount: 12
-  speed: 0.85
-  health: 3
+  enemyCount: 18
+  speed: 1
+  health: 4
   spawnInterval: 6
   groupSpawn: 1
   groupSize: 4

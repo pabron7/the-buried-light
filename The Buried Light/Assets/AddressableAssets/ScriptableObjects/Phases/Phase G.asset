@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42e4f6cb0d7664dc79d23052346f1324, type: 3}
   m_Name: Phase G
   m_EditorClassIdentifier: 
-  waves: []
+  waves:
+  - {fileID: 11400000, guid: 85e49a18837e8425bbed8f81e3612dfa, type: 2}
+  - {fileID: 11400000, guid: bae42d9fac71c4b0d87f99905d455700, type: 2}
