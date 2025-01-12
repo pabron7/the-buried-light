@@ -109,11 +109,6 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public async UniTaskVoid StartNextPhase()
     {
-        // Check if the level has failed first
-        if (IsLevelFailed)
-        {
-            return;
-        }
 
         // Check if there are no more phases
         if (!_phaseManager.HasMorePhases())
@@ -139,8 +134,6 @@ public class LevelManager : MonoBehaviour
                     SetState(_preparingState);
                 }
                 break;
-
-
         }
     }
 
