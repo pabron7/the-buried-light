@@ -4,18 +4,18 @@ using Zenject;
 
 public class FailedLevelState : LevelStateBase
 {
-    [Inject] GameProgressStore _gameProgressStore;
-    [Inject] SaveManager _saveManager;
-    [Inject] GameEvents _gameEvents;
+    [Inject] private GameProgressStore _gameProgressStore;
+    [Inject] private SaveManager _saveManager;
+    [Inject] private LevelResult _levelResult;
 
     public override async void OnStateEnter(LevelManager levelManager)
     {
         base.OnStateEnter(levelManager);
-        levelManager.IsLevelFailed = true;
 
-        // Notify that the level has ended due to failure
-        _gameEvents.NotifyLevelEnd();
+        // Mark the level as failed
+        _levelResult.SetFailed();
 
+        // Save game progress
         await _saveManager.SaveChunkAsync("GameProgress", _gameProgressStore.ToGameProgress());
 
         await UniTask.Delay(2000);

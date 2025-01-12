@@ -34,6 +34,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<InProgressLevelState>().AsTransient();
         Container.Bind<CompletedLevelState>().AsTransient();
         Container.Bind<FailedLevelState>().AsTransient();
+        Container.Bind<LevelResult>().AsSingle();
 
         // Enemy Systems
         Container.Bind<EnemyPrefabMapping[]>().FromInstance(enemyPrefabMappings).AsSingle();

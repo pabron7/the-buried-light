@@ -34,7 +34,6 @@ public class ProjectInstaller : MonoInstaller
         Container.Bind<IFileReader>().To<FileReader>().AsSingle();
         Container.BindInterfacesAndSelfTo<SaveEventHandler>().AsSingle().NonLazy();
 
-
         // Data Stores
         Container.Bind<PlayerPreferencesStore>().AsSingle().NonLazy();
         Container.Bind<PlayerStatsStore>().AsSingle().NonLazy();

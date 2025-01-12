@@ -10,6 +10,7 @@ public class LevelManager : MonoBehaviour
     [Inject] private InProgressLevelState _inProgressState;
     [Inject] private CompletedLevelState _completedState;
     [Inject] private FailedLevelState _failedLevelState;
+    [Inject] private LevelResult _levelResult; // Inject LevelResult
 
     public FailedLevelState FailedLevelState => _failedLevelState;
 
@@ -25,17 +26,6 @@ public class LevelManager : MonoBehaviour
 
     public PhaseManager PhaseManager => _phaseManager;
 
-    private int _totalPhases;
-    private int _completedPhases;
-
-    private bool _isLevelFailed = false;
-    public bool IsLevelFailed
-    {
-        get => _isLevelFailed;
-        set => _isLevelFailed = value;
-    }
-
-
     private LevelData _currentLevelConfig;
 
     private async UniTaskVoid Start()
@@ -44,9 +34,9 @@ public class LevelManager : MonoBehaviour
             .Subscribe(OnGameManagerStateChanged)
             .AddTo(this);
 
-        SetState(_idleState);
-
         _gameEvents.OnPhaseEnd.Subscribe(_ => OnPhaseEnd()).AddTo(this);
+
+        SetState(_idleState);
 
         // Start loading the first level
         await LoadLevel(CurrentLevelAddress());
@@ -72,7 +62,6 @@ public class LevelManager : MonoBehaviour
         int currentLevel = _gameProgressStore.CurrentLevel.Value; // Get the current level
         return $"Level_{currentLevel}"; // Construct the address
     }
-
 
     /// <summary>
     /// Dynamically loads a LevelConfig asset using LevelLoader and sets it in PhaseManager.
@@ -109,16 +98,31 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public async UniTaskVoid StartNextPhase()
     {
-
-        // Check if there are no more phases
         if (!_phaseManager.HasMorePhases())
         {
-            SetState(_completedState);
+            CompleteLevel();
             return;
         }
 
-        // Start the next phase if conditions are met
         await _phaseManager.StartPhaseAsync();
+    }
+
+    /// <summary>
+    /// Marks the level as failed and transitions to the failed state.
+    /// </summary>
+    public void FailLevel()
+    {
+        _levelResult.SetFailed();
+        SetState(_failedLevelState);
+    }
+
+    /// <summary>
+    /// Marks the level as completed and transitions to the completed state.
+    /// </summary>
+    public void CompleteLevel()
+    {
+        _levelResult.SetCompleted();
+        SetState(_completedState);
     }
 
     /// <summary>
@@ -134,6 +138,10 @@ public class LevelManager : MonoBehaviour
                     SetState(_preparingState);
                 }
                 break;
+
+            case GameOverState:
+                SetState(_completedState);
+                break;
         }
     }
 
@@ -146,7 +154,7 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Handles the end of a phase and transitions to the next phase.
+    /// Handles the end of a phase and transitions to the next phase or completes the level.
     /// </summary>
     private void OnPhaseEnd()
     {
