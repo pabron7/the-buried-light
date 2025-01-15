@@ -18,14 +18,14 @@ public class LevelResult
     public void SetFailed()
     {
         IsLevelFailed.Value = true;
-        _gameEvents.NotifyLevelEnd(); // Trigger level failure event
+        
         Debug.Log("Level failed.");
     }
 
     public void SetCompleted()
     {
         IsLevelCompleted.Value = true;
-        _gameEvents.NotifyLevelEnd(); // Trigger level completion event
+  
         Debug.Log("Level completed.");
     }
 

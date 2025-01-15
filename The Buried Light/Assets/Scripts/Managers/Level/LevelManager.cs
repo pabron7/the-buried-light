@@ -138,10 +138,6 @@ public class LevelManager : MonoBehaviour
                     SetState(_preparingState);
                 }
                 break;
-
-            case GameOverState:
-                SetState(_completedState);
-                break;
         }
     }
 
