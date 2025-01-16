@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6261355bef48d4991afda9cb337890fc, type: 3}
   m_Name: Champion 3
   m_EditorClassIdentifier: 
-  enemyType: 0
-  enemyCount: 0
-  speed: 0
-  health: 0
-  spawnInterval: 0
-  groupSpawn: 0
-  groupSize: 0
+  enemyType: 3
+  enemyCount: 15
+  speed: 1.5
+  health: 3
+  spawnInterval: 4
+  groupSpawn: 1
+  groupSize: 3
   isSpawner: 0
   spawnType: 0
   spawnCount: 0

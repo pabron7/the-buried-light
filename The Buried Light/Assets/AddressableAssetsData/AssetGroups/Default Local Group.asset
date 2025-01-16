@@ -27,11 +27,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c7cec62c4c3044d0e9f351fe23a089b4
-    m_Address: Assets/AddressableAssets/ScriptableObjects/Levels/LevelData_4.asset
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 6e1bbb06018f74d77a5a685b59161dce, type: 2}
   m_SchemaSet:

@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: LevelData_4
   m_EditorClassIdentifier: 
   phases:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: ae48edcc99e83416082b099c4bdebfa2, type: 2}
+  - {fileID: 11400000, guid: 8ef7e79c92f3c410797fc67e2a947343, type: 2}
+  - {fileID: 11400000, guid: 9fbbaf9fe10024c8fb05d3a3c7ae0f94, type: 2}
