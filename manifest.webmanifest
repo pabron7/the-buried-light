@@ -1,6 +1,6 @@
 {
-    "name": "The Buried Light",
-    "short_name": "The Buried Light",
+    "name": "TheBuriedLight",
+    "short_name": "TheBuriedLight",
     "start_url": "index.html",
     "display": "fullscreen",
     "background_color": "#231F20",

@@ -1,9 +1,9 @@
-const cacheName = "DefaultCompany-The Buried Light-0.1";
+const cacheName = "lupi-TheBuriedLight-0.1";
 const contentToCache = [
     "Build/TheBuriedLight-WebGL.loader.js",
-    "Build/TheBuriedLight-WebGL.framework.js",
-    "Build/TheBuriedLight-WebGL.data",
-    "Build/TheBuriedLight-WebGL.wasm",
+    "Build/TheBuriedLight-WebGL.framework.js.gz",
+    "Build/TheBuriedLight-WebGL.data.gz",
+    "Build/TheBuriedLight-WebGL.wasm.gz",
     "TemplateData/style.css"
 
 ];
