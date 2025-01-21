@@ -9,7 +9,6 @@ public class ProjectInstaller : MonoInstaller
     [SerializeField] private GameObject gameManagerPrefab;
     [SerializeField] private GameObject sceneManagerPrefab;
     [SerializeField] private GameObject soundManagerPrefab;
-    [SerializeField] private GameObject uiManagerPrefab;
     [SerializeField] private GameObject vfxManagerPrefab;
     [SerializeField] private GameObject musicManagerPrefab;
 
@@ -60,7 +59,6 @@ public class ProjectInstaller : MonoInstaller
         Container.Bind<ScoreManager>().AsSingle();
 
         // UI Systems
-        Container.Bind<UIManager>().FromComponentInNewPrefab(uiManagerPrefab).AsSingle().NonLazy();
         Container.Bind<UILoader>().AsSingle();
 
         Debug.Log("ProjectInstaller: Bindings completed.");
