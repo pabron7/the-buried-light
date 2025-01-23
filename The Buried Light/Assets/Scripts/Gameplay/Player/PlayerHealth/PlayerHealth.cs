@@ -13,10 +13,15 @@ public class PlayerHealth : MonoBehaviour, IHealth
 
     [Inject] private PlayerEvents _playerEvents;
 
+    private void Awake()
+    {
+        CurrentHealth = new ReactiveProperty<int>(maxHealth);
+    }
+
     private void Start()
     {
-        // Initialize health with a reactive property
-        CurrentHealth = new ReactiveProperty<int>(maxHealth);
+        // Make sure Health is equal to Max Health at the start
+        CurrentHealth.Value = maxHealth;
     }
 
     /// <summary>
@@ -54,3 +59,4 @@ public class PlayerHealth : MonoBehaviour, IHealth
         CurrentHealth.Value = maxHealth;
     }
 }
+
