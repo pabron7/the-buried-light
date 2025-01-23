@@ -1,35 +1,56 @@
 using UnityEngine;
+using UniRx;
 using Zenject;
 
 public class PlayerHealth : MonoBehaviour, IHealth
 {
     [SerializeField] private int maxHealth = 2;
-    private int _currentHealth;
 
-    public int CurrentHealth => _currentHealth;
-    [Inject] PlayerEvents _playerEvents;
+    /// <summary>
+    /// Reactive property to monitor current health changes.
+    /// </summary>
+    public ReactiveProperty<int> CurrentHealth { get; private set; }
+
+    [Inject] private PlayerEvents _playerEvents;
 
     private void Start()
     {
-        _currentHealth = maxHealth;
+        // Initialize health with a reactive property
+        CurrentHealth = new ReactiveProperty<int>(maxHealth);
     }
 
+    /// <summary>
+    /// Reduces the player's health by the specified damage amount.
+    /// </summary>
+    /// <param name="damage">The amount of damage to take.</param>
     public void TakeDamage(int damage)
     {
-        _currentHealth = Mathf.Max(_currentHealth - damage, 0);
-        Debug.Log($"Player took {damage} damage. Remaining health: {_currentHealth}");
+        CurrentHealth.Value = Mathf.Max(CurrentHealth.Value - damage, 0);
+        Debug.Log($"Player took {damage} damage. Remaining health: {CurrentHealth.Value}");
 
-        if (_currentHealth <= 0)
+        if (CurrentHealth.Value <= 0)
         {
             Debug.Log("Player has died!");
             _playerEvents.NotifyPlayerDeath();
-            _currentHealth = maxHealth; // Reset player health
+            ResetHealth();
         }
     }
 
+    /// <summary>
+    /// Increases the player's health by the specified amount.
+    /// </summary>
+    /// <param name="amount">The amount of health to restore.</param>
     public void Heal(int amount)
     {
-        _currentHealth = Mathf.Min(_currentHealth + amount, maxHealth);
-        Debug.Log($"Player healed by {amount}. Current health: {_currentHealth}");
+        CurrentHealth.Value = Mathf.Min(CurrentHealth.Value + amount, maxHealth);
+        Debug.Log($"Player healed by {amount}. Current health: {CurrentHealth.Value}");
+    }
+
+    /// <summary>
+    /// Resets the player's health to the maximum value.
+    /// </summary>
+    private void ResetHealth()
+    {
+        CurrentHealth.Value = maxHealth;
     }
 }
