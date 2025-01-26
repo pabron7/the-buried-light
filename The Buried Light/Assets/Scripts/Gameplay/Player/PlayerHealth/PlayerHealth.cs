@@ -13,50 +13,41 @@ public class PlayerHealth : MonoBehaviour, IHealth
 
     [Inject] private PlayerEvents _playerEvents;
 
+    private HealPlayer _healPlayer;
+    private DamagePlayer _damagePlayer;
+
     private void Awake()
     {
+        // Initialize ReactiveProperty
         CurrentHealth = new ReactiveProperty<int>(maxHealth);
+
+        // Initialize the helper classes
+        _healPlayer = new HealPlayer(CurrentHealth, maxHealth);
+        _damagePlayer = new DamagePlayer(CurrentHealth, maxHealth, _playerEvents);
     }
 
     private void Start()
     {
-        // Make sure Health is equal to Max Health at the start
+        // Ensure Health starts at Max Health
         CurrentHealth.Value = maxHealth;
     }
 
     /// <summary>
-    /// Reduces the player's health by the specified damage amount.
-    /// </summary>
-    /// <param name="damage">The amount of damage to take.</param>
-    public void TakeDamage(int damage)
-    {
-        CurrentHealth.Value = Mathf.Max(CurrentHealth.Value - damage, 0);
-        Debug.Log($"Player took {damage} damage. Remaining health: {CurrentHealth.Value}");
-
-        if (CurrentHealth.Value <= 0)
-        {
-            Debug.Log("Player has died!");
-            _playerEvents.NotifyPlayerDeath();
-            ResetHealth();
-        }
-    }
-
-    /// <summary>
-    /// Increases the player's health by the specified amount.
+    /// Delegates healing to HealPlayer.
     /// </summary>
     /// <param name="amount">The amount of health to restore.</param>
     public void Heal(int amount)
     {
-        CurrentHealth.Value = Mathf.Min(CurrentHealth.Value + amount, maxHealth);
-        Debug.Log($"Player healed by {amount}. Current health: {CurrentHealth.Value}");
+        _healPlayer.Heal(amount);
     }
 
     /// <summary>
-    /// Resets the player's health to the maximum value.
+    /// Delegates damage handling to DamagePlayer.
     /// </summary>
-    private void ResetHealth()
+    /// <param name="damage">The amount of damage to take.</param>
+    public void TakeDamage(int damage)
     {
-        CurrentHealth.Value = maxHealth;
+        _damagePlayer.Damage(damage);
     }
-}
 
+}
