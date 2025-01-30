@@ -1,13 +1,16 @@
 using UnityEngine;
 using Zenject;
+using Cysharp.Threading.Tasks;
+using System.Threading;
 
 public class Projectile : MonoBehaviour, IProjectile, IWrappable
 {
-    [SerializeField] private ProjectileStats stats = new ProjectileStats(8f, 0.8f, 1, 3); 
+    [SerializeField] private ProjectileStats stats = new ProjectileStats(8f, 0.8f, 1, 3);
 
     private float _spawnTime;
     private int _currentHealth;
     private bool _isActive;
+    private CancellationTokenSource _cancellationTokenSource;
 
     private LazyInject<ProjectilePoolManager> _poolManager;
     private LazyInject<EnemyEvents> _enemyEvents;
@@ -30,8 +33,6 @@ public class Projectile : MonoBehaviour, IProjectile, IWrappable
     {
         if (!_isActive) return;
 
-        CheckLifeTime();
-
         if (_currentHealth > 0)
         {
             Move();
@@ -44,7 +45,7 @@ public class Projectile : MonoBehaviour, IProjectile, IWrappable
         transform.Translate(Vector3.up * stats.Speed * Time.deltaTime);
     }
 
-    private void CheckLifeTime()
+    private async UniTaskVoid HandleLifeTime(CancellationToken token)
     {
         if (stats.LifeTime <= 0)
         {
@@ -53,16 +54,19 @@ public class Projectile : MonoBehaviour, IProjectile, IWrappable
             return;
         }
 
-        if (Time.time >= _spawnTime + stats.LifeTime)
-        {
-            ReturnToPool();
-        }
+        // Wait for the projectile's lifetime while allowing cancellation
+        await UniTask.Delay((int)(stats.LifeTime * 1000), cancellationToken: token);
+
+        // If the projectile is still active after the delay, return it to the pool
+        if (!_isActive) return;
+        ReturnToPool();
     }
 
     private void ReturnToPool()
     {
         if (!_isActive) return;
         _isActive = false;
+        _cancellationTokenSource?.Cancel();
         _poolManager.Value.ReturnProjectile(this);
     }
 
@@ -72,6 +76,7 @@ public class Projectile : MonoBehaviour, IProjectile, IWrappable
         _currentHealth = stats.Health;
         _isActive = false;
         gameObject.SetActive(false);
+        _cancellationTokenSource?.Cancel();
     }
 
     public void Activate(Vector3 position, Quaternion rotation)
@@ -82,6 +87,10 @@ public class Projectile : MonoBehaviour, IProjectile, IWrappable
         _currentHealth = stats.Health;
         _isActive = true;
         gameObject.SetActive(true);
+
+        // Start async life tracking
+        _cancellationTokenSource = new CancellationTokenSource();
+        HandleLifeTime(_cancellationTokenSource.Token).Forget();
     }
 
     public void WrapIfOutOfBounds()
