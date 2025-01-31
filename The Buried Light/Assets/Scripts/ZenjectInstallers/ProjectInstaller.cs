@@ -58,6 +58,9 @@ public class ProjectInstaller : MonoInstaller
         Container.Bind<IAddScore>().To<AddScore>().AsTransient();
         Container.Bind<ScoreManager>().AsSingle();
 
+        // Player System
+        Container.Bind<PlayerStatsController>().AsSingle();
+
         Debug.Log("ProjectInstaller: Bindings completed.");
     }
 }
