@@ -2,6 +2,9 @@ using UnityEngine;
 using UniRx;
 using Zenject;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using System.Threading;
+using System;
 
 public class VFXManager : MonoBehaviour
 {
@@ -49,8 +52,9 @@ public class VFXManager : MonoBehaviour
         vfxObject.transform.position = position;
         vfxObject.SetActive(true);
 
-        // Automatically return to pool after a delay
-        StartCoroutine(ReturnToPoolAfterDelay(vfxObject, vfxId, 0.4f)); // Example delay
+        // Use a cancellation token in case the VFX object is destroyed before delay ends
+        var token = this.GetCancellationTokenOnDestroy();
+        ReturnToPoolAfterDelay(vfxObject, vfxId, 0.4f, token).Forget();
     }
 
     /// <summary>
@@ -78,20 +82,27 @@ public class VFXManager : MonoBehaviour
     /// <summary>
     /// Returns a VFX object to the pool after a delay.
     /// </summary>
-    private System.Collections.IEnumerator ReturnToPoolAfterDelay(GameObject vfxObject, string vfxId, float delay)
+    private async UniTaskVoid ReturnToPoolAfterDelay(GameObject vfxObject, string vfxId, float delay, CancellationToken token)
     {
-        yield return new WaitForSeconds(delay);
-
-        if (vfxObject == null) yield break;
-
-        vfxObject.SetActive(false);
-
-        if (!_vfxPools.TryGetValue(vfxId, out var pool))
+        try
         {
-            pool = new Queue<GameObject>();
-            _vfxPools[vfxId] = pool;
-        }
+            await UniTask.Delay((int)(delay * 1000), cancellationToken: token);
 
-        pool.Enqueue(vfxObject);
+            if (vfxObject == null || !vfxObject.activeInHierarchy) return;
+
+            vfxObject.SetActive(false);
+
+            if (!_vfxPools.TryGetValue(vfxId, out var pool))
+            {
+                pool = new Queue<GameObject>();
+                _vfxPools[vfxId] = pool;
+            }
+
+            pool.Enqueue(vfxObject);
+        }
+        catch (OperationCanceledException)
+        {
+            return; // Exit safely if canceled
+        }
     }
 }
