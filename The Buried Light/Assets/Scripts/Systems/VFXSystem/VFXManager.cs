@@ -81,6 +81,9 @@ public class VFXManager : MonoBehaviour
     private System.Collections.IEnumerator ReturnToPoolAfterDelay(GameObject vfxObject, string vfxId, float delay)
     {
         yield return new WaitForSeconds(delay);
+
+        if (vfxObject == null) yield break;
+
         vfxObject.SetActive(false);
 
         if (!_vfxPools.TryGetValue(vfxId, out var pool))
