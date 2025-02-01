@@ -122,11 +122,15 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver
     /// </summary>
     private async void TriggerFlashEffect()
     {
-        if (spriteRenderer == null) return;
+        if (spriteRenderer == null || !gameObject.activeInHierarchy) return;
 
         spriteRenderer.color = flashColor;
         await UniTask.Delay((int)(flashDuration * 1000));
-        spriteRenderer.color = _originalColor;
+
+        if (spriteRenderer != null && gameObject.activeInHierarchy)
+        {
+            spriteRenderer.color = _originalColor;
+        }
     }
 
     /// <summary>
