@@ -2,6 +2,7 @@ using UnityEngine;
 using Zenject;
 using Cysharp.Threading.Tasks;
 using System.Threading;
+using System;
 
 public class Projectile : MonoBehaviour, IProjectile, IWrappable
 {
@@ -54,11 +55,17 @@ public class Projectile : MonoBehaviour, IProjectile, IWrappable
             return;
         }
 
-        // Wait for the projectile's lifetime while allowing cancellation
-        await UniTask.Delay((int)(stats.LifeTime * 1000), cancellationToken: token);
+        try
+        {
+            await UniTask.Delay((int)(stats.LifeTime * 1000), cancellationToken: token);
+        }
+        catch (OperationCanceledException)
+        {
+            return; // Exit safely if canceled
+        }
 
-        // If the projectile is still active after the delay, return it to the pool
-        if (!_isActive) return;
+        // Before returning to pool, check if this object is still valid
+        if (!_isActive || this == null || gameObject == null || !gameObject.activeInHierarchy) return;
         ReturnToPool();
     }
 
@@ -120,4 +127,6 @@ public class Projectile : MonoBehaviour, IProjectile, IWrappable
             Debug.Log($"Projectile hit an enemy. Remaining health: {_currentHealth}");
         }
     }
+
+
 }
