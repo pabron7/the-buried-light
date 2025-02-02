@@ -27,6 +27,12 @@ public class EnemySpawner : MonoBehaviour
 
     public async UniTask SpawnEnemyAsync(WaveConfig waveConfig)
     {
+        if (_gameFrame == null)
+        {
+            Debug.LogWarning("EnemySpawner: GameFrame is null, skipping enemy spawn.");
+            return;
+        }
+
         Vector2 spawnPosition = _gameFrame.GetRandomPositionOutsideSpawnFrame();
         Vector2 targetPosition = _gameFrame.GetRandomPositionInsideFrame();
         Vector3 direction = (targetPosition - spawnPosition).normalized;
@@ -35,6 +41,7 @@ public class EnemySpawner : MonoBehaviour
 
         if (enemyObject != null)
         {
+            if (_gameFrame == null) return; // Prevent using destroyed GameFrame
             var enemy = enemyObject.GetComponent<EnemyBase>();
             if (enemy != null)
             {
@@ -51,6 +58,7 @@ public class EnemySpawner : MonoBehaviour
             Debug.LogError($"Failed to create enemy of type {waveConfig.enemyType}");
         }
     }
+
 
 
 
