@@ -53,9 +53,9 @@ public class WavePoolManager
     /// </summary>
     public void ReturnWaveManagerToPool(WaveManager waveManager)
     {
-        if (waveManager == null)
+        if (waveManager == null || waveManager.gameObject == null)
         {
-            Debug.LogError("WavePoolManager: Attempted to return a null WaveManager to the pool.");
+            Debug.LogError("WavePoolManager: Attempted to return a destroyed WaveManager to the pool.");
             return;
         }
 
@@ -65,6 +65,7 @@ public class WavePoolManager
         _activeWaveManagers.Remove(waveManager);
         _waveManagerPool.Add(waveManager);
     }
+
 
     /// <summary>
     /// Resets all active WaveManagers and returns them to the pool.

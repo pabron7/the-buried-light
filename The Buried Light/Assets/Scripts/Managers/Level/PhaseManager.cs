@@ -88,14 +88,17 @@ public class PhaseManager
 
         // Activate waves in the phase with delays
         var activeWaveManagers = new List<WaveManager>();
+
         foreach (var waveConfig in currentPhase.waves)
         {
             await UniTask.Delay((int)(waveStartDelay * 1000)); // Delay before starting each wave
 
             var waveManager = _wavePoolManager.GetAvailableWaveManager();
-            if (waveManager == null)
+
+            // ?? Check if waveManager is still valid before using it
+            if (waveManager == null || waveManager.gameObject == null)
             {
-                Debug.LogError("PhaseManager: Failed to retrieve WaveManager.");
+                Debug.LogError("PhaseManager: Attempted to use a destroyed WaveManager!");
                 continue;
             }
 
@@ -106,19 +109,23 @@ public class PhaseManager
             activeWaveManagers.Add(waveManager);
         }
 
-        // Wait until all waves in the phase are complete and all enemies are killed
+        // ?? Wait until all waves are complete, but ensure WaveManagers exist
         await UniTask.WaitUntil(() =>
             _completedWavesCount >= _totalWavesInPhase &&
-            _killedEnemiesInPhase >= _totalEnemiesInPhase
+            _killedEnemiesInPhase >= _totalEnemiesInPhase &&
+            activeWaveManagers.TrueForAll(wave => wave != null && wave.gameObject != null)
         );
 
-        // Cleanup and notify phase completion
+        // ?? Cleanup only existing WaveManagers
         foreach (var waveManager in activeWaveManagers)
         {
-            waveManager.ResetWave();
-            waveManager.OnWaveComplete -= HandleWaveCompletion; // Unsubscribe from wave completion
-            waveManager.gameObject.SetActive(false);
-            _wavePoolManager.ReturnWaveManagerToPool(waveManager);
+            if (waveManager != null && waveManager.gameObject != null)
+            {
+                waveManager.ResetWave();
+                waveManager.OnWaveComplete -= HandleWaveCompletion;
+                waveManager.gameObject.SetActive(false);
+                _wavePoolManager.ReturnWaveManagerToPool(waveManager);
+            }
         }
 
         Debug.Log("PhaseManager: Phase complete.");
