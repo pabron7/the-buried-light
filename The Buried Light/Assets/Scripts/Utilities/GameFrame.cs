@@ -2,27 +2,51 @@ using UnityEngine;
 
 public class GameFrame : MonoBehaviour
 {
-    [Header("Boundary References")]
-    [SerializeField] private Transform lowerLeftCorner;
-    [SerializeField] private Transform upperRightCorner;
-
     [Header("Offsets")]
     [Tooltip("Offset for spawn boundaries")]
     [SerializeField] private float spawnBoundaryOffset = 0f;
     [Tooltip("Offset for wrapping boundaries")]
     [SerializeField] private float wrappingBoundaryOffset = 0.3f;
 
+    private Camera _mainCamera;
+    private Vector2 _minBounds;
+    private Vector2 _maxBounds;
+
     // Properties for wrapping boundaries
-    public Vector2 WrapMinBounds => MinBounds - new Vector2(wrappingBoundaryOffset, wrappingBoundaryOffset);
-    public Vector2 WrapMaxBounds => MaxBounds + new Vector2(wrappingBoundaryOffset, wrappingBoundaryOffset);
+    public Vector2 WrapMinBounds => _minBounds - new Vector2(wrappingBoundaryOffset, wrappingBoundaryOffset);
+    public Vector2 WrapMaxBounds => _maxBounds + new Vector2(wrappingBoundaryOffset, wrappingBoundaryOffset);
 
     // Properties for spawn boundaries
-    public Vector2 SpawnMinBounds => MinBounds + new Vector2(spawnBoundaryOffset, spawnBoundaryOffset);
-    public Vector2 SpawnMaxBounds => MaxBounds - new Vector2(spawnBoundaryOffset, spawnBoundaryOffset);
+    public Vector2 SpawnMinBounds => _minBounds + new Vector2(spawnBoundaryOffset, spawnBoundaryOffset);
+    public Vector2 SpawnMaxBounds => _maxBounds - new Vector2(spawnBoundaryOffset, spawnBoundaryOffset);
 
     // Base frame boundaries
-    public Vector2 MinBounds => lowerLeftCorner.position;
-    public Vector2 MaxBounds => upperRightCorner.position;
+    public Vector2 MinBounds => _minBounds;
+    public Vector2 MaxBounds => _maxBounds;
+
+    private void Awake()
+    {
+        _mainCamera = Camera.main;
+        if (_mainCamera == null)
+        {
+            Debug.LogError("GameFrame: No Main Camera found!");
+            return;
+        }
+
+        AdjustToCamera();
+    }
+
+    /// <summary>
+    /// Adjusts the frame to match the camera's viewport dynamically.
+    /// </summary>
+    private void AdjustToCamera()
+    {
+        Vector3 lowerLeft = _mainCamera.ViewportToWorldPoint(new Vector3(0, 0, 0));
+        Vector3 upperRight = _mainCamera.ViewportToWorldPoint(new Vector3(1, 1, 0));
+
+        _minBounds = new Vector2(lowerLeft.x, lowerLeft.y);
+        _maxBounds = new Vector2(upperRight.x, upperRight.y);
+    }
 
     /// <summary>
     /// Generates a random position inside the spawn boundaries.
