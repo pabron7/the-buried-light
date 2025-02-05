@@ -1,5 +1,6 @@
 <linker>
   <assembly fullname="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="HealthIndicator" preserve="all" />
     <type fullname="LevelData" preserve="all" />
     <type fullname="LevelStartNotifyer" preserve="all" />
     <type fullname="PauseButton" preserve="all" />
