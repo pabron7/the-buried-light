@@ -3610,6 +3610,7 @@ GameObject:
   - component: {fileID: 1499656962743936941}
   - component: {fileID: 4085473398392613745}
   - component: {fileID: 894650220890121792}
+  - component: {fileID: 8555727758852650330}
   - component: {fileID: 8555727758852650329}
   m_Layer: 5
   m_Name: TabsSwitchButton (1)
@@ -4436,6 +4437,7 @@ GameObject:
   - component: {fileID: 9204160547195831990}
   - component: {fileID: 6036759909774723690}
   - component: {fileID: 7430388449782237019}
+  - component: {fileID: 9204160547195831991}
   - component: {fileID: 2146079978051245122}
   m_Layer: 5
   m_Name: TabsSwitchButton (1)
@@ -5033,6 +5035,7 @@ GameObject:
   - component: {fileID: 7283358632477449179}
   - component: {fileID: 5291428782440388359}
   - component: {fileID: 9058434003362486838}
+  - component: {fileID: 9058434003362486839}
   - component: {fileID: 531538043249658159}
   m_Layer: 5
   m_Name: TabsSwitchButton
@@ -5702,6 +5705,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8555727758852650330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3387164093703244842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afe93bbabdbe14f3ebfd1035b849aa40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hoverScaleFactor: 1.1
 --- !u!224 &8577491951079140339
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5759,6 +5775,7 @@ GameObject:
   - component: {fileID: 4752573419556017553}
   - component: {fileID: 7893075389468989773}
   - component: {fileID: 6435993466755601532}
+  - component: {fileID: 8807578089932553751}
   - component: {fileID: 2560119670280472421}
   m_Layer: 5
   m_Name: TabsSwitchButton
@@ -5767,6 +5784,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &8807578089932553751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8807578089932553750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afe93bbabdbe14f3ebfd1035b849aa40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hoverScaleFactor: 1.1
 --- !u!224 &8916728159966016426
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5859,6 +5889,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &9058434003362486839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6835890107296198748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afe93bbabdbe14f3ebfd1035b849aa40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hoverScaleFactor: 1.1
 --- !u!222 &9086798502715683596
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5880,6 +5923,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tabName: Skills
+--- !u!114 &9204160547195831991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4933124409602682161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afe93bbabdbe14f3ebfd1035b849aa40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hoverScaleFactor: 1.1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
