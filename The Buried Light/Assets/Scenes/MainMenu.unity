@@ -1185,6 +1185,7 @@ GameObject:
   - component: {fileID: 997601795}
   - component: {fileID: 997601794}
   - component: {fileID: 997601793}
+  - component: {fileID: 997601796}
   - component: {fileID: 997601792}
   m_Layer: 5
   m_Name: Reset Level Button
@@ -1307,6 +1308,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0ec58706e9614731abccdd1c3e4c013, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &997601796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 997601790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afe93bbabdbe14f3ebfd1035b849aa40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hoverScaleFactor: 1.1
 --- !u!1 &1216048836
 GameObject:
   m_ObjectHideFlags: 0
@@ -5096,6 +5110,7 @@ GameObject:
   - component: {fileID: 9086798502715683596}
   - component: {fileID: 4756272104198822433}
   - component: {fileID: 1873827312688415109}
+  - component: {fileID: 9086798502715683597}
   - component: {fileID: 6606373537311872485}
   m_Layer: 5
   m_Name: Start Button
@@ -5910,6 +5925,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7353238866969808155}
   m_CullTransparentMesh: 1
+--- !u!114 &9086798502715683597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7353238866969808155}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afe93bbabdbe14f3ebfd1035b849aa40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hoverScaleFactor: 1.1
 --- !u!114 &9204160547195831990
 MonoBehaviour:
   m_ObjectHideFlags: 0
