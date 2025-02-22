@@ -2876,7 +2876,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3990,7 +3990,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4738,6 +4738,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34b969104c7634eaf81bb844a375b3fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animationDuration: 0.3
+  scaleFactor: 0.9
 --- !u!1 &5701280277804374661
 GameObject:
   m_ObjectHideFlags: 0
@@ -4767,6 +4769,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 741d9387c269d4164856751a8dfb2d2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animationDuration: 0.3
+  scaleFactor: 0.9
 --- !u!224 &5711576179924119933
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4824,7 +4828,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4878,6 +4882,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a4a5e5bf2ab949c3bdfa71ecf721949, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animationDuration: 0.3
+  scaleFactor: 0.9
 --- !u!224 &6297703581701881051
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5162,7 +5168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5874,6 +5880,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ce2cebfab7314cf69905e74c06d56cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animationDuration: 0.3
+  scaleFactor: 0.9
 --- !u!114 &9058434003362486838
 MonoBehaviour:
   m_ObjectHideFlags: 0
