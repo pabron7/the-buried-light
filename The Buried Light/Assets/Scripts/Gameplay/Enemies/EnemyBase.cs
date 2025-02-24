@@ -2,6 +2,7 @@ using UnityEngine;
 using Zenject;
 using Cysharp.Threading.Tasks;
 using System;
+using DG.Tweening;
 
 /// <summary>
 /// Base class for enemies. Handles movement and orchestrates components.
@@ -119,12 +120,28 @@ public abstract class EnemyBase : MonoBehaviour, IKillable, IScoreGiver
 
     /// <summary>
     /// Triggers the visual flash effect when the enemy is damaged.
+    /// Includes a brief scale-down effect.
     /// </summary>
     private async void TriggerFlashEffect()
     {
         if (spriteRenderer == null || !gameObject.activeInHierarchy) return;
 
+        // Flash Effect
         spriteRenderer.color = flashColor;
+
+        // Scale Down Effect
+        Transform enemyTransform = transform;
+        Vector3 originalScale = enemyTransform.localScale;
+        Vector3 damagedScale = originalScale * 0.9f; 
+
+        enemyTransform.DOScale(damagedScale, flashDuration * 0.5f)
+            .SetEase(Ease.OutQuad)
+            .OnComplete(() =>
+            {
+                enemyTransform.DOScale(originalScale, flashDuration * 0.5f) 
+                    .SetEase(Ease.OutBounce);
+            });
+
         await UniTask.Delay((int)(flashDuration * 1000));
 
         if (spriteRenderer != null && gameObject.activeInHierarchy)
